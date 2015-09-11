@@ -85,43 +85,48 @@ WeinerCounter::WeinerCounter(int i){
   if (writeEprom_ == nullptr){
     throw;
   }
-  //set up connection to device
+  //initalize port
   initBox(port);
+  //open the box
   openBox();
+  //connect counters
   connectAllCounter();
+  //reset counters
   resetAllCounter();
-  int trash;
-  //set up read strings and count
+  //reset internal count
   for (int i = 0; i < 20; ++i){
     countTrack[i] = 0;
-    readString[i] = buildReadString(i + 1, trash);
   }
 }
 void WeinerCounter::initBox(int i){
+  //gives this object the serial number corresponding to the nimbox #
   serialNum = getSerialNum(i);
 }
 WeinerCounter::~WeinerCounter(){
   closeDevice();
   //free library
   FreeLibrary(hGetProcId); 
-  for (int i = 0; i < 20; ++i){
-    delete[] readString[i];
-  }
 }
 void WeinerCounter::resetAll(){
+  //reset nimbox's internal counter
   resetAllCounter();
+  //reset object internal counter
   for (int i = 0; i < 20; ++i){
     countTrack[i] = 0;
   }
 }
 void WeinerCounter::update(int arr[]){
+  //update all internal counters from device
   readAllCounter();
+  //set arr = internal count
   for (int i = 0; i < 20; ++i){
     arr[i] = countTrack[i];
   }
 }
 void WeinerCounter::update(array<int, 20> &arr){
+  //update all internal counters from device
   readAllCounter();
+  //set arr == internal count
   for (int i = 0; i < 20; ++i){
     arr[i] = countTrack[i];
   }
@@ -129,8 +134,11 @@ void WeinerCounter::update(array<int, 20> &arr){
 void WeinerCounter::updateFirstN(int n, array<int, 20> &arr){
   int read;
   int temp;
+  //loop over 1st n
   for (int i = 1; i <= n; ++i){
+    //read counter
     read = readCounter(i);
+    //do overflow calculation and increment internal count
     temp = countTrack[i - 1] % OVER;
     if (temp < read){
       countTrack[i - 1] += read - temp;
@@ -138,14 +146,17 @@ void WeinerCounter::updateFirstN(int n, array<int, 20> &arr){
     else if (temp > read){
       countTrack[i - 1] += OVER + read - temp;
     }
+    //store object internal counter into arr
     arr[i - 1] = countTrack[i - 1];
   }
 }
+
 void WeinerCounter::update(){
   readAllCounter();
 }
 void WeinerCounter::update(int i, int arr[]){
   int read = readCounter(i);
+  //do overflow calculation
   int temp = countTrack[i - 1] % OVER;
   if (temp < read){
     countTrack[i - 1] += read - temp;
@@ -153,10 +164,12 @@ void WeinerCounter::update(int i, int arr[]){
   else if (temp > read){
     countTrack[i - 1] += OVER + read - temp;
   }
+  //store result into arr
   arr[i - 1] = countTrack[i - 1];
 }
 void WeinerCounter::update(int i, array<int, 20> &arr){
   int read = readCounter(i);
+  //do overflow calculation
   int temp = countTrack[i - 1] % OVER;
   if (temp < read){
     countTrack[i - 1] += read - temp;
@@ -164,6 +177,7 @@ void WeinerCounter::update(int i, array<int, 20> &arr){
   else if (temp > read){
     countTrack[i - 1] += OVER + read - temp;
   }
+  //store result into arr
   arr[i - 1] = countTrack[i - 1];
 }
 string WeinerCounter::getSerialNum(int i){
@@ -220,7 +234,7 @@ void WeinerCounter::resetCounter(int i){
   }
   int size;
   unsigned char* c = buildResetCounterString(i, size);
-  writeDevice(c,size);
+  writeDevice(c, size);
   delete[] c;
 }
 void WeinerCounter::resetAllCounter(){
@@ -242,11 +256,21 @@ void WeinerCounter::connectCounter(int i){
   delete[] c2;
 }
 unsigned char* WeinerCounter::buildConnectCounterString1(int i, int &size){
+  /*string temp = "";
+  temp += "ET" + char(i) + char(0) + 'B' + char(0);
+  temp += 'S' + char(1) + 'B' + char(0) + 'S' + char(2) + 'B' + char(3);
+  return temp;
+  */
   unsigned char *temp = new unsigned char[14]{ 69, 84, unsigned char(i), 0, 66, 0, 83, 1, 66, 0, 83,2,66,3 };
   size = 14;
   return temp;
 }
 unsigned char* WeinerCounter::buildConnectCounterString2(int i, int &size){
+  /*string temp = "";
+  temp += 'E' + 'G' + char(i) + char(0) + 'B' + char(i) + 'S';
+  temp += char(1) + 'L' + char(0) + char(0) + char(0) + char(1);
+  temp += 'S' + char(2) + 'L' + char(0) + char(0) + char(0) + char(0);
+  return temp;*/
   unsigned char *temp = new unsigned char[20]{ 69, 71, unsigned char(i), 0, 66, unsigned char(i), 83, 1, 76, 0, 0, 0, 1, 83,2,76,0,0,0,0 };
   size = 20;
   return temp;
@@ -257,13 +281,17 @@ void WeinerCounter::connectAllCounter(){
   }
 }
 int WeinerCounter::readCounter(int i){
-  writeDevice(readString[i-1], 7);
+  int size;
+  unsigned char* c = buildReadString(i, size);
+  writeDevice(c, size);
+  delete[] c;
   return readDevice(4);
 }
 inline void WeinerCounter::readAllCounter(){
   int read;
   for (int i = 1; i <= 20; ++i){
     read = readCounter(i);
+   // cout << read << " " << countTrack[i - 1] % OVER << endl;
     if (countTrack[i - 1] % OVER < read){
       countTrack[i - 1] += read - countTrack[i - 1] % OVER;
     }
@@ -271,8 +299,15 @@ inline void WeinerCounter::readAllCounter(){
       countTrack[i - 1] += OVER + read - countTrack[i - 1] % OVER;
     }
   }
+  //return time string here
 }
 unsigned char* WeinerCounter::buildReadString(int i, int &size){
+  /*
+  string temp ="";
+  //the 1st 3 may be i
+  temp += 'E' + 'G' + char(i)+char(0) + 'S' + char(3) + 'l';
+  return temp;
+  */
   unsigned char *temp = new unsigned char[7]{ 69, 71, unsigned char(i), 0, 83, 3, 108 };
   size = 7;
   return temp;
@@ -284,7 +319,8 @@ int WeinerCounter::readDevice(int bytes){
   if (check < 0){
     throw;
   }
-  int sum = temp[3] + temp[2] * 256;
+  int sum = temp[3];
+  sum += temp[2]*256;
   
   return sum;
 }

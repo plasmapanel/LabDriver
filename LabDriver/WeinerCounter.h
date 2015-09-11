@@ -2,31 +2,45 @@
 //Author: Michael Ausilio mausilio@umich.edu
 /*
  This code base is an attempt to port the functionallity of our Nimbox from labview to C++.
+
+ NOTE: lines are labeled 1 to 20
+
+
+ NOTE: the way this device handles counting is fairly strange. An explanation of how this is done is provided below
+
+ each counter on the device can only hold maximum 65536 counts (no idea where this is from mathemattically speaking, this is just a device quirk).
+ This leads to the very real possibility that the counters may overflow in either a long term test (with a low rate), or a high rate environment. 
+ (additionally this may limit this devices effectiveness)
+ 
+ This nessitates 2 things:
+ 1. even if intermediate measurements are not required (i.e. on care about the 0 second and the 30 second count, not the counts at various steps in between)
+ the counter frequently needs to be reupdated so as to not lose counts from overflow
+ 2. additional checks when updating the count needs to be applied.
+ The math is as follows:
+
+ if the read Number % 65536 < 
+
+
+ read = number counted on device
+ temp = previous count  % 65536;
+ if (temp < read){
+ current count += read - temp;
+ }
+ else if (temp > read){
+ current count += 65536 + read - temp;
+ }
+ arr[i - 1] = countTrack[i - 1];
+
+
 */
 #ifndef WEINER_H
 #define WEINER_H
 #include "stdafx.h"
 using namespace std;
-/*
-How this device counts:
-when the device is queried for its count it will return a 4 byte array
-to convert this array use the formula temp[3] + temp[2] * 256 = total
 
-Each bin on the counter holds 65536 counts this nessitates the need for role over
-the math is
-if (count  % 65536 < read){
-count += read - count% 65536;
-}
-else if (count % 65536 > read){
-count += OVER + read - count % 65536;
-}
-
-*/
 class WeinerCounter{
 private:
-  //size of the counter's bin
   const int OVER = 65536;
-  //array that holds the count
   int countTrack[20];
   //the full file name of our dll
   const string dllLoc = "C:\\Windows\\System32\\DL700_FX2.dll";
@@ -36,128 +50,90 @@ private:
   int port;
   //mem address of our dll DL700_FX2.dll
   HINSTANCE hGetProcId;
-  //array that holds the count
-  //unsigned long count[20];
+  //array for counter
+  unsigned long count[20];
   //serial number
   string serialNum;
   //the handle that the device uses to handle connections
   uint32_t handle;
-  //arrays of strings that hold the strings required for various actions
-  unsigned char* readString[20];
 public:
-  //effects: Creates a new instance of this class by opening and preparing the box in port i. Also configures functions from dll
-  //Note: will throw errors if device is unable to be opened
+  //R: i is the nimbox number
+  //M: entire object
+  //E: sets up device so that it can be used 
   WeinerCounter(int i);
+  //R: Nothing
+  //M: entire device
+  //E: frees dll, frees connection to device, and destructs object
   ~WeinerCounter();
-  //Requires: nothing
-  //Modifies: countTrack, counter on device
-  //Effects: resests count to 0
+  //R: Nothing
+  //M: countTrack
+  //E: resets this objects internal counter back to 0
   void resetAll();
-  //requires: arr is atleast a size 20 array
-  //modifies: countTrack, arr
-  //effects: updates the object's counter and copies its values into arr
+  //R: Nothing
+  //M: countTrack and arr
+  //E: queries all lines on the device, updates countTrack to contain the correct count, then stores that into arr
   void update(int arr[]);
-  //requires: arr is atleast a size 20 array
-  //modifies: countTrack, arr
-  //effects: updates the object's counter and copies its values into arr
+  //R: Nothing
+  //M: countTrack and arr
+  //E: queries all lines on the device, updates countTrack to contain the correct count, then stores that into arr
+  //NOTE: same as above, but using a different array container
   void update(array<int, 20> &arr);
-  //requires: arr is atleast an n size array
-  //modifies: countTrack, arr
-  //effects: updates the object's 1st n counters and copies its values into arr
+  //R: Nothing
+  //M: countTrack and arr
+  //E: queries the first n lines on the device, updates countTrack to contain the correct count, then stores that into arr
   void updateFirstN(int n, array<int, 20> &arr);
-  //requires: nothing
-  //modifies: countTrack
-  //effects: updates the object's counters
+  //R: Nothing
+  //M: countTrack 
+  //E: queries all lines on the device, updates countTrack to contain the correct count
   void update();
-  //requires: arr is atleast a size i+1 array
-  //modifies: countTrack, arr
-  //effects: updates bin i and copies it value into arr[i-1] (its appropriate bin)
+  
+  //NOTE: The following functions are used for when the user does not want to have the device maintain its own count.
+  //Care should be advised so that integrity of count is maintained
+
+  //R: i is in range [1,20] and arr contains the previous count
+  //M: arr
+  //E: queries the ith line on the box then store the correct count into arr
   void update(int i, int arr[]);
-  //requires: arr is atleast a size i+1 array
-  //modifies: countTrack, arr
-  //effects: updates bin i and copies it value into arr[i-1] (its appropriate bin)
+  //R: i is in range [1,20] and arr contains the previous count
+  //M: arr
+  //E: queries the ith line on the box then store the correct count into arr
+  //NOTE: this is the same fucntion as above, just with a differnet array wrapper
   void update(int i, array<int, 20> &arr);
-  //requires:nothing
-  //modifies: nothing
-  //effects: read's the current content of the device's bin
-  //Note: This gives a value in range [0, 65536), some computations needs to be done to get actual count
-  //Note: This should be used only when sampling speed is important and roll over handling can be done
-  //in another thread
+
+
+
+ //NOTE: this following function is to be used when user only wants the raw reading on each counter (i.e. user must handle overflow calculations)
+  //R: i is in range[1,20]
+  //M: nothing
+  //E: queries the ith line on the box and returns the count
   int readCounter(int i);
+
+
+
+
+
+  //IF YOU ARE AN END USER YOU SHOULD NOT BE CONCERNED WITH THE CODE BELOW
+  //THESE ARE ESSENTIALLY REWRAPPED VERSIONS OF THE BASE DEVICE COMMANDS THAT CAN BE USED TO CREATE NEW COMMANDS
+  //CHANCES ARE YOU SHOULD CONTACT ME AT mausilio@umich.edu IF YOU WOULD LIKE HELP ADDING FUNCTIONALLITY
 private:
-  //requires: nothing
-  //modifies nothing
-  //effects: initializes box in port i
   void initBox(int i);
-  //requires: devices has been initialized
-  //modifies nothing
-  //effects: opens device
   void openBox();
-  //requires: i [1,20]
-  //modifies count
-  //effects: resets the count on channel i
   void resetCounter(int i);
-  //requires: nothing
-  //modifies count
-  //effects: resets the count on all channels
   void resetAllCounter();
-  //requires: device has been opened and intialized. i [1,20]
-  //modifies: nothing
-  //effects: connects the counter on line i
   void connectCounter(int i);
-  //requires: device has been opened and intialized.
-  //modifies: nothing
-  //effects: connects the all counters
   void connectAllCounter();
-  //requires device has been initialized properly
-  //modifies: count
-  //effects: reads device bins and stores new count in count
   inline void readAllCounter();
-  //requires: nothing
-  //modifies nothing
-  //effects: closes the connection with the box
   void closeDevice();
 private:
-  //Requires: i is in range [0,20]
-  //Modifies: nothing
-  //Effects: returns a pointer to a dynamic c-string used to reset the counter on the nim box and sets size = to its size
-  //WARNING: User must delete this array after use
   unsigned char* buildResetCounterString(int i, int &size);
-  //Requires: i is in range [0,20]
-  //Modifies: nothing
-  //Effects: returns a pointer to a dynamic c-string used to connect the counter on the nim box and sets size = to its size
-  //WARNING: User must delete this array after use
   unsigned char* buildConnectCounterString1(int i, int &size);
-  //Requires: i is in range [0,20]
-  //Modifies: nothing
-  //Effects: returns a pointer to a dynamic c-string used to connect the counter on the nim box and sets size = to its size
-  //WARNING: User must delete this array after use
   unsigned char* buildConnectCounterString2(int i, int &size);
-  //Requires: i is in range [0,20]
-  //Modifies: nothing
-  //Effects: returns a pointer to a dynamic c-string used to prep the counter for reading on the nim box and sets size = to its size
-  //WARNING: User must delete this array after use
   unsigned char* buildReadString(int i, int &size);
 private:
-  //Requires: nothing
-  //Modifies: nothing
-  //Effects: returns the Nim box in port i's serial number
   string getSerialNum(int i);
-  //requires: nothing
-  //modifies: nothing
-  //effects: opens the device
   void openDevice();
-  //requires: nothing
-  //modifies: nothing
-  //effects: returns the number of bytes waiting to be read
   int numBytesAva();
-  //Requires: size = the size of the cstring given by in
-  //Modifies: nothing
-  //Effects: writes a string to the device
   void writeDevice(unsigned char* in, int size);
-  //Requires: nothing
-  //Modifies: nothing
-  //Effects: reads bytes from device and converts it into the bin's count
   int readDevice(int bytes);
 private:
   //WARNING THESE FUNCTION HEADERS MAY NO BE CORRECT, ones with ok before have been checked and are usable
@@ -165,6 +141,11 @@ private:
   //functions directly from the dlls
   //these will be wrapped into new functions that our more c++ style for ease of use
   //these are not documented, the documentation will take place in function wrappers
+  //if a function has an ok above it it has been wrapped and tested.
+  //use others at your own risk
+  //NOTE: these functions have been lifted directly from the functions from labview
+
+
   //OK
   typedef int32_t(*_CloseDevice)(uint32_t);
   _CloseDevice closeDevice_;
