@@ -1,0 +1,16 @@
+Panel Name   MC02
+Source   Ru 
+Source Config  Static
+Gas Mixture   Ne1Ar20CF4
+Gas Pressure (Torr)   740
+R-quench (MOhm)   1000
+Trigger Setup   0
+Discriminator Thr (mV)   3
+Number RO lines   10
+RO lines 1-10
+Trigger RO   0
+Attenuation RO (db)  0
+Number HV lines 10
+HV lines  1-10
+Trigger HV	 0
+Attenuation HV (db)   0
