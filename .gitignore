@@ -5,6 +5,5 @@
 *.vcxproj
 *.filters
 *.user
-*.sln
 *.opensdf
 *.sdf
