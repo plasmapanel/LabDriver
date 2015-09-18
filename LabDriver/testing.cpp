@@ -21,7 +21,7 @@ using namespace std;
 
 int main(){
   //doAfterScanGraphMulti();
-  doVoltageScan();
+  //doVoltageScan();
   //makeTChainN(".\\CollectedData\\Ne1Ar20CF4\\740torr\\MC02_Ne1Ar20CF4_740_1436473464\\AfterPulse\\");
   //makeApGraphsN(".\\CollectedData\\Ne1Ar20CF4\\740torr\\MC02_Ne1Ar20CF4_740_1436814619\\AfterPulse\\", 100);
   //makeApDiffGraphN(".\\CollectedData\\Ne1Ar20CF4\\740torr\\MC02_Ne1Ar20CF4_740_1436814619\\AfterPulse\\");
@@ -45,6 +45,17 @@ int main(){
   mot.goZero();
   */
   //delete nim;
+  int opt = 0;
+  string option;
+  cout << "Welcome to our lab station." << endl;
+  //out something about setting up pixel layout
+  cout << "Please select your mode. (help for mode list)" << endl;
+  while (opt == 0){
+    cin >> option;
+    cin.ignore(10000, '\n');
+
+  }
+
 }
 
 

@@ -73,6 +73,7 @@
     <ClInclude Include="headers.h" />
     <ClInclude Include="HighResClock.h" />
     <ClInclude Include="LabUtilities.h" />
+    <ClInclude Include="messages.h" />
     <ClInclude Include="MotorController.h" />
     <ClInclude Include="RootGraph.h" />
     <ClInclude Include="stdafx.h" />
@@ -85,6 +86,7 @@
     <ClCompile Include="headers.cpp" />
     <ClCompile Include="HighResClock.cpp" />
     <ClCompile Include="LabUtilities.cpp" />
+    <ClCompile Include="messages.cpp" />
     <ClCompile Include="MotorController.cpp" />
     <ClCompile Include="RootGraph.cpp" />
     <ClCompile Include="stdafx.cpp" />
