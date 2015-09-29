@@ -13,10 +13,13 @@
 #include "LabUtilities.h"
 #include "VoltageControl.h"
 #include "MotorController.h"
+/*
 #include "TCanvas.h"
 #include "TH1.h"
 #include "TError.h"
 #include "TSystem.h"
+*/
+#include "messages.h"
 using namespace std;
 
 int main(){
@@ -45,14 +48,54 @@ int main(){
   mot.goZero();
   */
   //delete nim;
-  int opt = 0;
+
+  //initialize lab hardware
+  WeinerCounter *nim = nullptr;
+  VoltageControl *volt = nullptr;
+  MotorController *mot = nullptr;
+  string pixFileName;
+  cout << "What pixel config file should be used? ";
+  cin >> pixFileName;
+  cin.ignore(10000, '\n');
+  cin.clear();
+  cout << "Initializing Motor Controller." << endl;
+  try{//again need 2 add more catching
+    //also add some setup stuff about configuring panel
+    mot = new MotorController(6, 9600, pixFileName);
+  }
+  catch(...){
+    cout << "Unable to initialize Motor Controller. Please check that it is connected correctly and you are using a valid device config file\n";
+    cout << "If you are unsure what constitutes a valid setup file please consult the README." << endl;
+    exit(1);
+  }
+  cout << "Initializing NIMBox" << endl;
+  try{
+    nim = new WeinerCounter(0);
+  }
+  catch (...){ // add more catching later 2 handle things like issues with dll, wrong port, etc.
+    cout << "Unable to initalize NIMBox. Please check that it is correctly connected and setup." << endl;
+    exit(1);
+  }
+  try{//again need 2 add more catching
+    volt = new VoltageControl(5);
+  }
+  catch (...){
+    cout << "Unable to initalize Voltage Controller. Please check that it is correctly connected and setup" << endl;
+    exit(1);
+  }
+
+  bool cont = true;
   string option;
+  //NEED 2 ADD STUFF ABOUT SETTING UP THE VARIOUS PIECES OF LAB EQUIPMENT
   cout << "Welcome to our lab station." << endl;
   //out something about setting up pixel layout
   cout << "Please select your mode. (help for mode list)" << endl;
-  while (opt == 0){
+  while (cont){
+    cout << ">> ";
     cin >> option;
+    cont = handleModeOption(option, mot, nim, volt); //handle 
     cin.ignore(10000, '\n');
+    cin.clear();
 
   }
 
