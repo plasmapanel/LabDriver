@@ -5,6 +5,7 @@ This file contains all of the utilities that will be used with our lab setup
 #define LAB_UT
 #include "RootGraph.h"
 #include "WeinerCounter.h"
+#include "MotorController.h"
 #include "HighResClock.h"
 #include "VoltageControl.h"
 #include "stdafx.h"
@@ -48,15 +49,18 @@ void doWeinerCountInter(WeinerCounter *nim, double time, double sampleLength,
 void doWeinerCountInf(WeinerCounter *nim, double sampleLength,
                       double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
 //peforms a voltage scan
-void doVoltageScan();
+void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //peforms an after pulse scan on maximum of 1 pixle at a time and produces no graphs
-void doAfterScanNoGraph();
+void doAfterScanNoGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //peforms an after pulse scan on maximum of 1 pixle at a time and produces graphs
-void doAfterScanGraph();
+void doAfterScanGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //peforms an after pulse scan on multiple pixles and produces graphs
-void doAfterScanGraphMulti();
+void doAfterScanGraphMulti(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
+void doAfterScanGraphMultiAndBack(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //performs an after pulse scan on multiple pixels and produces graphs with adaptive time intervals based on a proportion
-void doAfterScanGraphMultiAdapt();
+void doAfterScanGraphMultiAdapt(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
+//initiates user free mode
+
 //IF YOU ARE USING THINS PACKAGE JUST FOR THE UTILITIES YOU DO NOT NEED TO BE CONCERNED WITH THE CODE BELOW
 //ALL CODE BELOW IS HELPER FUNCTIONS OR CONSTANTS
 //read functions query the device and push ito a queue that can be handled in another thread

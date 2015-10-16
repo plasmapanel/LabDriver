@@ -37,19 +37,29 @@ int main(){
   //doVoltageScan();
   //doWeinerCount(nim, 10 * 60, 1, 1080, hg, lines, "asd.txt");
   //doAfterPulse10("test.txt", nim, hg, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10,1000,10000);
+  
+  //MotorController mot(6, 9600, "mc.pix");
+  //cout << mot.getAbsolutePositionX() << endl;
   /*
-  MotorController mot(6, 9600, "mc30.txt");
-  //mot.stepMotor(1, 9000);
+  mot.stepMotor(2, -20000);
+  mot.stepMotor(1, 20000);
+  
   mot.setZero();
+  mot.stepMotor(2, 20000);
+  mot.stepMotor(1, -20000);
+  */
+  /*
   for (int i = 0; i < mot.getNumPixActive(); ++i){
     mot.moveToPix(i);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
   }
-  mot.goZero();
   */
+  //mot.goZero();
+  
   //delete nim;
 
   //initialize lab hardware
+  char ch;
   WeinerCounter *nim = nullptr;
   VoltageControl *volt = nullptr;
   MotorController *mot = nullptr;
@@ -62,6 +72,23 @@ int main(){
   try{//again need 2 add more catching
     //also add some setup stuff about configuring panel
     mot = new MotorController(6, 9600, pixFileName);
+    while (1){
+      cout << "Does this device need to be zeroed? (y/n) ";
+      ch = cin.get();
+      cin.ignore(10000, '\n');
+      cin.clear();
+      if (ch == 'n'){
+        break;
+      }
+      else if (ch == 'y'){
+        mot->align();
+        break;
+      }
+      else{
+        cout << "Invalid Input" << endl;
+      }
+    }
+   //NEED 2 ADD THE ZEROING OF MOTOR HERE(AKA ABOSOLUTE ZERO OF PANEL)
   }
   catch(...){
     cout << "Unable to initialize Motor Controller. Please check that it is connected correctly and you are using a valid device config file\n";
@@ -76,6 +103,7 @@ int main(){
     cout << "Unable to initalize NIMBox. Please check that it is correctly connected and setup." << endl;
     exit(1);
   }
+  cout << "Initializing Voltage Controller" << endl;
   try{//again need 2 add more catching
     volt = new VoltageControl(5);
   }
@@ -89,17 +117,21 @@ int main(){
   //NEED 2 ADD STUFF ABOUT SETTING UP THE VARIOUS PIECES OF LAB EQUIPMENT
   cout << "Welcome to our lab station." << endl;
   //out something about setting up pixel layout
-  cout << "Please select your mode. (help for mode list)" << endl;
+  cout << "Please select your mode. (type help for help)" << endl;
   while (cont){
     cout << ">> ";
+
     cin >> option;
-    cont = handleModeOption(option, mot, nim, volt); //handle 
-    cin.ignore(10000, '\n');
+    cin.ignore(10000,'\n');
     cin.clear();
+    cont = handleModeOption(option, mot, nim, volt); //handle 
+
 
   }
-
-}
-
+  delete mot;
+  delete nim;
+  delete volt;
+  
+  }
 
 

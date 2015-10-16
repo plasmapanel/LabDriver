@@ -1,12 +1,12 @@
 #include "MotorController.h"
 using namespace std;
 MotorController::MotorController(long PortNumber, long BaudRate){
-  LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Desktop\\newSetupStuff\\LabDriver\\LabDriver\\VxmDriver.dll";
+  LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Desktop\\newSetupStuff\\WORKINGLD\\LabDriver\\VxmDriver.dll";
   LoadDriver(DriverPath);
   PortOpen(PortNumber, BaudRate);
 }
 MotorController::MotorController(long PortNumber, long BaudRate, string filename){
-  LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Desktop\\newSetupStuff\\LabDriver\\LabDriver\\VxmDriver.dll";
+  LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Desktop\\newSetupStuff\\WORKINGLD\\LabDriver\\VxmDriver.dll";
   LoadDriver(DriverPath);
   PortOpen(PortNumber, BaudRate);
   setUpGrid(filename);
@@ -24,6 +24,9 @@ MotorController::~MotorController(){
 void MotorController::stepMotor(int num, int dist){
   if (num < 1 || num>2){
     throw;
+  }
+  if (num == 1){
+    dist = -dist;
   }
   if (!dist){
     throw;
@@ -77,7 +80,7 @@ void MotorController::goZero(){
 void MotorController::goTo(int x1, int y1){
   stringstream ss;
   string temp;
-  ss << "F,C,IA1M" << x1 << ",R";
+  ss << "F,C,IA1M" << -x1 << ",R";
   ss >> temp;
   char *c = new char[temp.size()];
   for (int i = 0, len = temp.size(); i < len; ++i){
@@ -100,8 +103,44 @@ void MotorController::goTo(int x1, int y1){
   delete[] c;
 
 }
-void MotorController::align(){
 
+void MotorController::goToCenter(){
+
+
+
+}
+
+void MotorController::goToBackGround(){
+}
+
+void MotorController::align(){
+  cout << "Please align motor with zero point" << endl;
+  cout << "Use commands x # and y # to move motor.(integers)" << endl;
+  cout << "Enter g when motor is aligned." << endl;
+  string cor;
+  int num;
+  while (1){
+    cout << ">>";
+    cin >> cor;
+    if (cor == "g"){
+      break;
+    }
+    else if (cor == "y"){
+      cin >> num;
+   
+      stepMotor(2, num);
+    }
+    else if (cor == "x"){
+      cin >> num;
+      stepMotor(1, num);
+    }
+    else{
+      cout << "Invalid input" << endl;
+    }
+  }
+  setZero();
+  goTo(offsetx, offsetx);
+  setZero();
 }
 void MotorController::setUpGrid(string filename){
   ifstream in(filename);
@@ -112,6 +151,12 @@ void MotorController::setUpGrid(string filename){
     throw;
   }
   if (!(in >> maxY)){
+    throw;
+  }
+  if (!(in >> offsetx)){
+    throw;
+  }
+  if (!(in >> offsety)){
     throw;
   }
   //potential 2 clean up some memory here
@@ -154,6 +199,10 @@ void MotorController::setUpGrid(string filename){
     }
   }
 }
+
+void MotorController::leaveBackGround(){
+}
+
 void MotorController::moveToPix(int x, int y){
   if (x < 1 || x > maxX || y < 1 || y > maxY){
     throw;
@@ -169,6 +218,23 @@ void MotorController::moveToPix(int num){
   }
   goTo(list[num].x, list[num].y);
 }
+
+
 const vector<string>& MotorController::getActivePixelString(){
   return listStrings;
+}
+
+int MotorController::getAbsolutePositionX(){
+  char *r = MotorPosition(2);
+  if (r[0] == '+'){
+    r = &r[1];
+  }
+  return atoi(r);
+}
+int MotorController::getAbsolutePositionY(){
+  char *r = MotorPosition(2);
+  if (r[0] == '+'){
+    r = &r[1];
+  } 
+  return atoi(r);
 }

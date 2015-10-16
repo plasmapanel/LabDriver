@@ -70,6 +70,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ComPort.h" />
+    <ClInclude Include="freeMode.h" />
     <ClInclude Include="headers.h" />
     <ClInclude Include="HighResClock.h" />
     <ClInclude Include="LabUtilities.h" />
@@ -83,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ComPort.cpp" />
+    <ClCompile Include="freeMode.cpp" />
     <ClCompile Include="headers.cpp" />
     <ClCompile Include="HighResClock.cpp" />
     <ClCompile Include="LabUtilities.cpp" />

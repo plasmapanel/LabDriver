@@ -1432,15 +1432,18 @@ static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost
   *done = true;
   t1.join();
 }
-void doVoltageScan(){
-  WeinerCounter *nim = nullptr;
-  VoltageControl *volt = nullptr;
+void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
+ // WeinerCounter *nim = nullptr;
+  //VoltageControl *volt = nullptr;
   string path = ".\\CollectedData\\";
   string runName;
   ofstream log;
   int starting;
   int stop;
   int duration;
+  int num;
+  vector<int> x;
+  vector<int> y;
   double freq;
   int step;
   char tempc;
@@ -1487,6 +1490,23 @@ void doVoltageScan(){
   cin >> duration;
   cout << "Sampling frequency (s): ";
   cin >> freq;
+  cout << "Number of Pixels being tested: ";
+  cin >> num;
+  cin.clear();
+  cin.ignore(10000, '\n');
+  x.resize(num);
+  y.resize(num);
+  for (int i = 0; i < num; ++i){
+    cout << "RO # of pixel " << i + 1 << ": ";
+    cin >> x[i];
+    cin.clear();
+    cin.ignore(10000, '\n');
+    cout << "HV # of pixel " << i + 1 << ": ";
+    cin >> y[i];
+    pix.push_back(to_string(x[i]) + "-" + to_string(x[i]));
+  }
+
+
   time_t t = time(nullptr);
   CreateDirectory(path.c_str(), NULL);
   runName = path + hg.gas + "\\";
@@ -1505,60 +1525,93 @@ void doVoltageScan(){
   log << "Step Size: " << step << endl;
   log << "Interval Duration: " << duration << endl;
   log << "Sampling Frequency: " << freq << endl;
-  log << "Intitializing Devices" << endl;
-
-  try{
-    nim = new WeinerCounter(0);
-  }
-  catch (...){
-    log << "Error Initializing Nim Box" << endl;
-    exit(0);
-  }
-  try{
-    volt = new VoltageControl(5);
-  }
-  catch (...){
-    log << "Error Intialzing High Voltage Control" << endl;
-    exit(0);
+  log << "Number of Pixels: " << num << endl;
+  log << "Pixel List: " << endl;
+  for (int i = 0; i < num; ++i){
+    log << x[i] << "-" << y[i] << endl;
   }
   log << "Turning On High Voltage" << endl;
   volt->turnOn();
-  for (int i = starting; i <= stop; i += step){
-    log << "Setting Voltage to: " << i << endl;
-    volt->setVoltage(i);
-    log << "Begin Counting" << endl;
-    temp = runName + to_string(i) + "_sor_vs.txt";
-    doWeinerCount(nim, duration, freq, i, hg, pix, temp);
-    log << "Finished Counting" << endl;
-  }
-  log << "Switching to background" << endl;
-  Beep(900, 3000);
-  if (hg.sourceConfig == "User"){
-    cout << "Please remove the source for background run." << endl;
-    while (1){
-      cout << "Has the source been removed? ";
-      cin.get(tempc);
-      cin.clear();
-      cin.ignore(10000, '\n');
-      if (tempc == 'y'){
-        break;
+
+  if (hg.sourceConfig == "Dynamic"){
+    for (int k = 0; k < num; ++k){
+      log << "Switching to pixel " << x[k] << "-" << y[k] << endl; 
+      mot->moveToPix(x[k], y[k]);
+      for (int i = starting; i <= stop; i += step){
+        log << "Setting Voltage to: " << i << endl;
+        volt->setVoltage(i);
+        log << "Begin Counting" << endl;
+        temp = runName + to_string(x[k]) + "_" + to_string(y[k]) + "_" + to_string(i) + "_sor_vs.txt";
+        doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+        log << "Finished Counting" << endl;
       }
     }
   }
   else if (hg.sourceConfig == "Static"){
-    Beep(900, 3000);
-    cout << "Please remove the source for background run." << endl;
-    while (1){
-      cout << "Has the source been removed? (y/n) ";
-      cin.clear();
-      cin.ignore(10000, '\n');
-      cin.get(tempc);
-      cin.clear();
-      cin.ignore(10000, '\n');
-      if (tempc == 'y'){
-        break;
+    mot->goToCenter();
+    for (int i = starting; i <= stop; i += step){
+      log << "Setting Voltage to: " << i << endl;
+      volt->setVoltage(i);
+      log << "Begin Counting" << endl;
+      temp = runName + "all_" + to_string(i) + "_sor_vs.txt";
+      doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+      log << "Finished Counting" << endl;
+    }
+  }
+  else if (hg.sourceConfig == "User"){
+    for (int k = 0; k < num; ++k){
+      log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
+      cout << "Please move source to pixel "<<x[k]<<"-"<<y[k]<< endl;
+      while (1){
+        cout << "Has the source been moved? ";
+        cin.get(tempc);
+        cin.clear();
+        cin.ignore(10000, '\n');
+        if (tempc == 'y'){
+          break;
+        }
+      for (int i = starting; i <= stop; i += step){
+        log << "Setting Voltage to: " << i << endl;
+        volt->setVoltage(i);
+        log << "Begin Counting" << endl;
+        temp = runName + to_string(x[k]) + "_" + to_string(y[k]) + "_" + to_string(i) + "_sor_vs.txt";
+        doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+        log << "Finished Counting" << endl;
       }
     }
+  }
+  /*
+
+    for (int i = starting; i <= stop; i += step){
+      log << "Setting Voltage to: " << i << endl;
+      volt->setVoltage(i);
+      log << "Begin Counting" << endl;
+      temp = runName + to_string(i) + "_sor_vs.txt";
+      doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+      log << "Finished Counting" << endl;
+      */
+    log << "Switching to background" << endl;
+    Beep(900, 3000);
+    if (hg.sourceConfig == "User"){
+      cout << "Please remove the source for background run." << endl;
+      while (1){
+        cout << "Has the source been removed? ";
+        cin.get(tempc);
+        cin.clear();
+        cin.ignore(10000, '\n');
+        if (tempc == 'y'){
+          break;
+        }
+      }
+    }
+  }
+  else if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
+    mot->goToBackGround();
+    //------------------------------
+    //--------WARNING--------------
+    //----------------------------
+    //when a the motor is moved to the background location it always needs to be moved out in order to be used again
+    //aka always call leaveBackGround() when done with taking a background measure ment
   }
   hg.sourceName = "bkg";
   for (int i = starting; i <= stop; i += step){
@@ -1569,16 +1622,16 @@ void doVoltageScan(){
     doWeinerCount(nim, duration, freq, i, hg, pix, temp);
     log << "Finished Counting" << endl;
   }
+  if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
+    mot->leaveBackGround();
+  }
+  
   log << "Turning off High Voltage" << endl;
   volt->turnOff();
-  delete volt;
-  delete nim;
   log << "Voltage Scan Completed" << endl;
   log.close();
 }
-void doAfterScanNoGraph(){
-  WeinerCounter *nim = nullptr;
-  VoltageControl *volt = nullptr;
+void doAfterScanNoGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
   string path = ".\\CollectedData\\";
   string runName;
   ofstream log;
@@ -1669,22 +1722,8 @@ void doAfterScanNoGraph(){
   for (int i = 0; i < num; ++i){
     log << x[i] << "-" << y[i] << endl;
   }
-  log << "Intitializing Devices" << endl;
 
-  try{
-    nim = new WeinerCounter(0);
-  }
-  catch (...){
-    log << "Error Initializing Nim Box" << endl;
-    exit(0);
-  }
-  try{
-    volt = new VoltageControl(5);
-  }
-  catch (...){
-    log << "Error Intialzing High Voltage Control" << endl;
-    exit(0);
-  }
+
   log << "Turning On High Voltage" << endl;
   volt->turnOn();
   for (int k = 0; k < num; ++k){
@@ -1718,12 +1757,8 @@ void doAfterScanNoGraph(){
 
   log << "After-Pulse Scan Completed" << endl;
   log.close();
-  delete volt;
-  delete nim;
 }
-void doAfterScanGraph(){
-  WeinerCounter *nim = nullptr;
-  VoltageControl *volt = nullptr;
+void doAfterScanGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
   string path = ".\\CollectedData\\";
   string runName;
   ofstream log;
@@ -1818,22 +1853,6 @@ void doAfterScanGraph(){
   for (int i = 0; i < num; ++i){
     log << x[i] << "-" << y[i] << endl;
   }
-  log << "Intitializing Devices" << endl;
-
-  try{
-    nim = new WeinerCounter(0);
-  }
-  catch (...){
-    log << "Error Initializing Nim Box" << endl;
-    exit(0);
-  }
-  try{
-    volt = new VoltageControl(5);
-  }
-  catch (...){
-    log << "Error Intialzing High Voltage Control" << endl;
-    exit(0);
-  }
   log << "Turning On High Voltage" << endl;
   volt->turnOn();
   for (int k = 0; k < num; ++k){
@@ -1871,13 +1890,10 @@ void doAfterScanGraph(){
   //makeApIntGraph1(runName, intLength);
   //makeApDiffGraph1(runName);
   log.close();
-  delete volt;
-  delete nim;
 }
 
-void doAfterScanGraphMulti(){
-  WeinerCounter *nim = nullptr;
-  VoltageControl *volt = nullptr;
+void doAfterScanGraphMulti(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
+
   string path = ".\\CollectedData\\";
   string runName;
   ofstream log;
@@ -1960,6 +1976,13 @@ void doAfterScanGraphMulti(){
     else if (num % numMeas != 0){
       cout << "Warning Pixels will not be measured in the same number of sets" << endl;
     }
+    mot->goToCenter();
+  }
+  else if (hg.sourceConfig == "Dynamic"){
+    numMeas = 1;
+  }
+  else if (hg.sourceConfig == "User"){
+    numMeas = 1;
   }
   cin.clear();
   cin.ignore(10000, '\n');
@@ -1992,22 +2015,6 @@ void doAfterScanGraphMulti(){
   for (int i = 0; i < num; ++i){
     log << x[i] << "-" << y[i] << endl;
   }
-  log << "Intitializing Devices" << endl;
-
-  try{
-    nim = new WeinerCounter(0);
-  }
-  catch (...){
-    log << "Error Initializing Nim Box" << endl;
-    exit(0);
-  }
-  try{
-    volt = new VoltageControl(5);
-  }
-  catch (...){
-    log << "Error Intialzing High Voltage Control" << endl;
-    exit(0);
-  }
   log << "Turning On High Voltage" << endl;
   volt->turnOn();
   if (numMeas == 1){
@@ -2027,6 +2034,9 @@ void doAfterScanGraphMulti(){
           cin.ignore(10000, '\n');
         }
       }
+      if (hg.sourceConfig == "Dynamic"){
+        mot->moveToPix(x[k], y[k]);
+      }
       log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
       for (int i = starting; i <= stop; i += step){
         log << "Setting Voltage to: " << i << endl;
@@ -2037,10 +2047,6 @@ void doAfterScanGraphMulti(){
         log << "Finished Counting" << endl;
       }
     }
-    log << "Creating Graphs" << endl;
-    //makeApGraphs1(runName);
-    //makeApIntGraph1(runName);
-    //makeApIntGraph1(runName);
   }
   else{
     for (int k = 0; k < num; k += numMeas){
@@ -2102,9 +2108,6 @@ void doAfterScanGraphMulti(){
       }
     }
     log << "Creating Graphs" << endl;
-    //makeApGraphsN(runName, intLength);
-    //makeApIntGraphN(runName, intLength);
-    //makeApDiffGraphN(runName);
   }
 
 
@@ -2113,13 +2116,272 @@ void doAfterScanGraphMulti(){
   volt->turnOff();
   log << "After-Pulse Scan Completed" << endl;
   log.close();
-  delete volt;
-  delete nim;
 }
+void doAfterScanGraphMultiAndBack(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
 
-void doAfterScanGraphMultiAdapt(){
-  WeinerCounter *nim = nullptr;
-  VoltageControl *volt = nullptr;
+  string path = ".\\CollectedData\\";
+  string runName;
+  ofstream log;
+  int starting;
+  int stop;
+  int step;
+  int num;
+  int numMeas = 1;
+  int tempNum;
+  int numSamples;
+  int intLength;
+  vector<int> x;
+  vector<int> y;
+  string temp;
+  char tempc;
+  cout << "------------------------------------------" << endl;
+  cout << "----------After-Pulse Test----------------" << endl;
+  cout << "------------------------------------------" << endl;
+  HeaderInfoGen hg;
+  while (1){
+    cout << "generate header manually or read from a file?(file/manual): ";
+    cin >> temp;
+    cin.clear();
+    cin.ignore(10000, '\n');
+    if (temp == "manual"){
+      makeGenHead(hg);
+      break;
+    }
+    else if (temp == "file"){
+      cout << "What is the name of the file? ";
+      getline(cin, temp);
+      makeGenHeadFile(hg, temp);
+      break;
+    }
+    else{
+      cout << "Invalid option" << endl;
+    }
+  }
+  cout << "Start Voltage (V): ";
+  cin >> starting;
+  cin.clear();
+  cin.ignore(10000, '\n');
+  cout << "End Voltage (V): ";
+  cin >> stop;
+  cin.clear();
+  cin.ignore(10000, '\n');
+  if (stop < starting){
+    cerr << "Invalid Voltages" << endl;
+    exit(0);
+  }
+  cout << "Step Size (V): ";
+  cin >> step;
+  cout << "Number of Pixels being tested: ";
+  cin >> num;
+  cin.clear();
+  cin.ignore(10000, '\n');
+  x.resize(num);
+  y.resize(num);
+  for (int i = 0; i < num; ++i){
+    cout << "RO # of pixel " << i + 1 << ": ";
+    cin >> x[i];
+    cin.clear();
+    cin.ignore(10000, '\n');
+    cout << "HV # of pixel " << i + 1 << ": ";
+    cin >> y[i];
+  }
+  if (hg.sourceConfig == "Static"){
+    cout << "How many pixels should be measured at once? ";
+    cin >> numMeas;
+    if (numMeas > num){
+      cout << "# measured at once > # pixels" << endl;
+      cout << "measuring all pixels at once" << endl;
+      numMeas = num;
+    }
+
+    if (!((numMeas > 0 && numMeas < 6) || (numMeas == 10))){
+      cerr << "That number of measurement has not been implemented. Your measurements will be split" << endl;
+      cerr << "Please contact mausilio@umich.edu for help" << endl;
+    }
+    else if (num % numMeas != 0){
+      cout << "Warning Pixels will not be measured in the same number of sets" << endl;
+    }
+    mot->goToCenter();
+  }
+  else if (hg.sourceConfig == "Dynamic"){
+    numMeas = 1;
+  }
+  else if (hg.sourceConfig == "User"){
+    numMeas = 1;
+  }
+  cin.clear();
+  cin.ignore(10000, '\n');
+  cout << "how many samples should be take at each voltage?(default = 10000) ";
+  cin >> numSamples;
+  /*
+  cin.clear();
+  cin.ignore(10000, '\n');
+  cout << "What interval length should be used (ms)?";
+  cin >> intLength;
+  */
+  time_t t = time(nullptr);
+  CreateDirectory(path.c_str(), NULL);
+  runName = path + hg.gas + "\\";
+  CreateDirectory(runName.c_str(), NULL);
+  runName += to_string((int)hg.pressure);
+  runName += "torr\\";
+  CreateDirectory(runName.c_str(), NULL);
+  runName += hg.panelName + "_" + hg.gas + "_" + to_string((int)hg.pressure) + "_" + to_string(t) + "\\";
+  CreateDirectory(runName.c_str(), NULL);
+  log.open(runName + "log.txt", ofstream::app);
+  runName += "AfterPulse\\";
+  CreateDirectory(runName.c_str(), NULL);
+  log << "Intitalized After-Pulse Test" << endl;
+  log << "Starting: " << starting << endl;
+  log << "Stop: " << stop << endl;
+  log << "Step Size: " << step << endl;
+  log << "Number of Pixels: " << num << endl;
+  log << "Pixel List: " << endl;
+  for (int i = 0; i < num; ++i){
+    log << x[i] << "-" << y[i] << endl;
+  }
+  log << "Turning On High Voltage" << endl;
+  volt->turnOn();
+  if (numMeas == 1){
+    for (int k = 0; k < num; ++k){
+      if (hg.sourceConfig == "User"){
+        Beep(900, 1000);
+        cout << "Please configure source for pixel " << x[k] << "-" << y[k] << endl;
+        while (1){
+          cout << "Is source placed correctly? (y/n): ";
+          cin.clear();
+          cin.ignore(10000, '\n');
+          tempc = cin.get();
+          if (tempc == 'y'){
+            break;
+          }
+          cin.clear();
+          cin.ignore(10000, '\n');
+        }
+      }
+      if (hg.sourceConfig == "Dynamic"){
+        mot->moveToPix(x[k], y[k]);
+      }
+      log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
+      for (int i = starting; i <= stop; i += step){
+        log << "Setting Voltage to: " << i << endl;
+        volt->setVoltage(i);
+        log << "Begin Counting" << endl;
+        temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "AP.txt";
+        doAfterPulse1(temp, nim, hg, x[k], y[k], i, numSamples);
+        log << "Finished Counting" << endl;
+      }
+    }
+  }
+  else{
+    for (int k = 0; k < num; k += numMeas){
+      for (int i = starting; i <= stop; i += step){
+        log << "Setting Voltage to: " << i << endl;
+        volt->setVoltage(i);
+        log << "Begin Counting" << endl;
+        if (k + numMeas > num){
+          tempNum = k - num;
+        }
+        else{
+          tempNum = numMeas;
+        }
+        temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(k - num) + "AP.txt";
+        switch (tempNum){
+        case 1:
+          doAfterPulse1(temp, nim, hg, x[k], y[k], i, numSamples);
+          break;
+        case 2:
+          doAfterPulse2(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], i, numSamples);
+          break;
+        case 3:
+          doAfterPulse3(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], i, numSamples);
+          break;
+        case 4:
+          doAfterPulse4(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], i, numSamples);
+          break;
+        case 5:
+          doAfterPulse5(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], x[k + 4], y[k + 4], i, numSamples);
+          break;
+        case 6:
+          temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(3) + "AP.txt";
+          doAfterPulse3(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], i, numSamples);
+          temp = runName + to_string(x[k + 3]) + "-" + to_string(y[k + 3]) + "_" + to_string(i) + "_" + to_string(3) + "AP.txt";
+          doAfterPulse3(temp, nim, hg, x[k + 3], y[k + 3], x[k + 4], y[k + 4], x[k + 5], y[k + 5], i, numSamples);
+          break;
+        case 7:
+          temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(4) + "AP.txt";
+          doAfterPulse4(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], i, numSamples);
+          temp = runName + to_string(x[k + 4]) + "-" + to_string(y[k + 4]) + "_" + to_string(i) + "_" + to_string(3) + "AP.txt";
+          doAfterPulse3(temp, nim, hg, x[k + 4], y[k + 4], x[k + 5], y[k + 5], x[k + 6], y[k + 6], i, numSamples);
+        case 8:
+          temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(4) + "AP.txt";
+          doAfterPulse4(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], i, numSamples);
+          temp = runName + to_string(x[k + 4]) + "-" + to_string(y[k + 4]) + "_" + to_string(i) + "_" + to_string(4) + "AP.txt";
+          doAfterPulse4(temp, nim, hg, x[k + 4], y[k + 4], x[k + 5], y[k + 5], x[k + 6], y[k + 6], x[k + 7], y[k + 7], i, numSamples);
+        case 9:
+          temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(5) + "AP.txt";
+          doAfterPulse5(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], x[k + 4], y[k + 4], i, numSamples);
+          temp = runName + to_string(x[k + 5]) + "-" + to_string(y[k + 5]) + "_" + to_string(i) + "_" + to_string(4) + "AP.txt";
+          doAfterPulse4(temp, nim, hg, x[k + 5], y[k + 5], x[k + 6], y[k + 6], x[k + 7], y[k + 7], x[k + 8], y[k + 8], i, numSamples);
+        case 10:
+          doAfterPulse10(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], x[k + 4], y[k + 4], x[k + 5], x[k + 5], x[k + 6], y[k + 6], x[k + 7], y[k + 7], x[k + 8], y[k + 8], x[k + 9], y[k + 9], i, numSamples);
+          break;
+        default:
+          break;
+        }
+        log << "Finished Counting" << endl;
+      }
+    }
+    log << "Creating Graphs" << endl;
+  }
+  log << "Switching to background" << endl;
+  
+  if (hg.sourceConfig == "User"){
+    Beep(900, 3000);
+    cout << "Please remove the source for background run." << endl;
+    while (1){
+      cout << "Has the source been removed? ";
+      cin.get(tempc);
+      cin.clear();
+      cin.ignore(10000, '\n');
+      if (tempc == 'y'){
+        break;
+      }
+    }
+  }
+  
+  else if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
+    mot->goToBackGround();
+    //------------------------------
+    //--------WARNING--------------
+    //----------------------------
+    //when a the motor is moved to the background location it always needs to be moved out in order to be used again
+    //aka always call leaveBackGround() when done with taking a background measure ment
+  }
+  vector<string> pix;
+  for (int i = 0; i < num; ++i){
+    pix.push_back(to_string(x[i]) + "-" + to_string(y[i]));
+  }
+  hg.sourceName = "bkg";
+  for (int i = starting; i <= stop; i += step){
+    log << "Setting Voltage to: " << i << endl;
+    volt->setVoltage(i);
+    log << "Begin Counting" << endl;
+    temp = runName + to_string(i) + "_bkg_vs.txt";
+    doWeinerCount(nim, 10*60, 1, i, hg, pix, temp);
+    log << "Finished Counting" << endl;
+  }
+  if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
+    mot->leaveBackGround();
+  }
+
+
+  log << "Turning Off High Voltage" << endl;
+  volt->turnOff();
+  log << "After-Pulse Scan Completed" << endl;
+  log.close();
+}
+void doAfterScanGraphMultiAdapt(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
   string path = ".\\CollectedData\\";
   string runName;
   ofstream log;
@@ -2237,22 +2499,6 @@ void doAfterScanGraphMultiAdapt(){
   for (int i = 0; i < num; ++i) {
     log << x[i] << "-" << y[i] << endl;
   }
-  log << "Intitializing Devices" << endl;
-
-  try {
-    nim = new WeinerCounter(0);
-  }
-  catch (...) {
-    log << "Error Initializing Nim Box" << endl;
-    exit(0);
-  }
-  try {
-    volt = new VoltageControl(5);
-  }
-  catch (...) {
-    log << "Error Intialzing High Voltage Control" << endl;
-    exit(0);
-  }
   log << "Turning On High Voltage" << endl;
   volt->turnOn();
   if (numMeas == 1) {
@@ -2354,9 +2600,10 @@ void doAfterScanGraphMultiAdapt(){
   volt->turnOff();
   log << "After-Pulse Scan Completed" << endl;
   log.close();
-  delete volt;
-  delete nim;
 }
+
+
+
 int findLineWithLowestRate(WeinerCounter *nim, const vector<int> &lines){
   array<int, 20> count;
   for (int i = 0; i < 20; ++i){

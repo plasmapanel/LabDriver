@@ -5,6 +5,8 @@ Motor 2 is the y
 
 baud rate is 9600 typically
 */
+#ifndef MOT_CONT
+#define MOT_CONT
 #include "VxmDriver.h"
 using namespace std;
 class MotorController{
@@ -19,12 +21,21 @@ public:
   void setUpGrid(string filename);
   void goZero();
   void goTo(int x, int y);
+  void goToCenter();
+  void goToBackGround();
+  void leaveBackGround();
   void moveToPix(int x, int y);
   int getNumPixActive();
   void moveToPix(int num);
   void align();
   const vector<string>& getActivePixelString();
+  int getAbsolutePositionX();
+  int getAbsolutePositionY();
+
 private:
+  //These are the coordinates of the zeroth pixel relative to the refrence point
+  int offsetx;
+  int offsety;
   int maxX = 0;
   int maxY = 0;
   struct Pixel{
@@ -36,3 +47,4 @@ private:
   vector<Pixel> list;
   vector<string> listStrings;
 };
+#endif
