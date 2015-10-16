@@ -68,6 +68,7 @@ int main(){
   cin >> pixFileName;
   cin.ignore(10000, '\n');
   cin.clear();
+  
   cout << "Initializing Motor Controller." << endl;
   try{//again need 2 add more catching
     //also add some setup stuff about configuring panel
@@ -95,6 +96,7 @@ int main(){
     cout << "If you are unsure what constitutes a valid setup file please consult the README." << endl;
     exit(1);
   }
+  
   cout << "Initializing NIMBox" << endl;
   try{
     nim = new WeinerCounter(0);
