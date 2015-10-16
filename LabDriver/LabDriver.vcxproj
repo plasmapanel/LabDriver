@@ -163,7 +163,7 @@
     <ClCompile Include="MotorController.cpp" />
     <ClCompile Include="RootGraph.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="testing.cpp" />
+    <ClCompile Include="LabDriver.cpp" />
     <ClCompile Include="VoltageControl.cpp" />
     <ClCompile Include="VxmDriver.cpp" />
     <ClCompile Include="WeinerCounter.cpp" />
