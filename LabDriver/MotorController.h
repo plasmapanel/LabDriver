@@ -8,6 +8,7 @@ baud rate is 9600 typically
 #ifndef MOT_CONT
 #define MOT_CONT
 #include "VxmDriver.h"
+#include "WeinerCounter.h"
 using namespace std;
 class MotorController{
 public:
@@ -28,11 +29,15 @@ public:
   int getNumPixActive();
   void moveToPix(int num);
   void align();
+  void fineAlign(WeinerCounter *nim, double time);
   const vector<string>& getActivePixelString();
   int getAbsolutePositionX();
   int getAbsolutePositionY();
 
 private:
+  //these are the values used for fine aligning the motor
+  static const int X_OFFSET = 400;
+  static const int Y_OFFSET = 400;
   //These are the coordinates of the zeroth pixel relative to the refrence point
   int offsetx;
   int offsety;

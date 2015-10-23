@@ -4,8 +4,8 @@
 #include "LabUtilities.h"
 #include "MotorController.h"
 #include "messages.h"
+#include "windows.h"
 using namespace std;
-
 int main(){
   //initialize lab hardware
   char ch;
@@ -17,7 +17,15 @@ int main(){
   cin >> pixFileName;
   cin.ignore(10000, '\n');
   cin.clear();
-  
+ 
+  cout << "Initializing NIMBox" << endl;
+  try{
+    nim = new WeinerCounter(0);
+  }
+  catch (...){ // add more catching later 2 handle things like issues with dll, wrong port, etc.
+    cout << "Unable to initalize NIMBox. Please check that it is correctly connected and setup." << endl;
+    exit(1);
+  }
   cout << "Initializing Motor Controller." << endl;
   try{//again need 2 add more catching
     //also add some setup stuff about configuring panel
@@ -30,30 +38,44 @@ int main(){
       if (ch == 'n'){
         break;
       }
-      else if (ch == 'y'){
+      if (ch == 'y'){
         mot->align();
+        while (1){
+          cout << "Would you like to do fine alignment? (y/n)" << endl;
+          ch = cin.get();
+          cin.ignore(10000, '\n');
+          cin.clear();
+          if (ch == 'y'){
+            cout << "How long would you like to measure for? (seconds)" << endl;
+            int tempI;
+            cin >> tempI;
+            cin.ignore(10000, '\n');
+            cin.clear();
+            mot->fineAlign(nim, tempI);
+            break;
+          }
+          if (ch == 'n'){
+            break;
+          }
+          else{
+            cout << "Invalid input" << endl;
+          }
+        }
         break;
       }
       else{
         cout << "Invalid Input" << endl;
       }
     }
-   //NEED 2 ADD THE ZEROING OF MOTOR HERE(AKA ABOSOLUTE ZERO OF PANEL)
+    //NEED 2 ADD THE ZEROING OF MOTOR HERE(AKA ABOSOLUTE ZERO OF PANEL)
   }
-  catch(...){
+  catch (...){
     cout << "Unable to initialize Motor Controller. Please check that it is connected correctly and you are using a valid device config file\n";
     cout << "If you are unsure what constitutes a valid setup file please consult the README." << endl;
     exit(1);
   }
-  
-  cout << "Initializing NIMBox" << endl;
-  try{
-    nim = new WeinerCounter(0);
-  }
-  catch (...){ // add more catching later 2 handle things like issues with dll, wrong port, etc.
-    cout << "Unable to initalize NIMBox. Please check that it is correctly connected and setup." << endl;
-    exit(1);
-  }
+
+
   cout << "Initializing Voltage Controller" << endl;
   try{//again need 2 add more catching
     volt = new VoltageControl(5);

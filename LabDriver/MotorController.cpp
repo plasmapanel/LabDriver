@@ -142,6 +142,12 @@ void MotorController::align(){
   goTo(offsetx, offsetx);
   setZero();
 }
+
+void MotorController::fineAlign(WeinerCounter* nim, double time){
+  //find max 
+
+}
+
 void MotorController::setUpGrid(string filename){
   ifstream in(filename);
   int numX = 0;
