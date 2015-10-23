@@ -10,6 +10,30 @@ MotorController::MotorController(long PortNumber, long BaudRate, string filename
   LoadDriver(DriverPath);
   PortOpen(PortNumber, BaudRate);
   setUpGrid(filename);
+  //set up center coord
+  int maxy, maxx, miny, minx;
+  minx = maxx = grid[1][1].x;
+  miny = maxy = grid[1][1].y;
+  for (int i = 1, leni = grid.size(); i < leni; ++i){
+    for (int j = 1, lenj = grid[i].size(); j < lenj; j++){
+      if (grid[i][j].active){
+        if (grid[i][j].x > maxx){
+          maxx = grid[i][j].x;
+        }
+        if (grid[i][j].y > maxy){
+          maxy = grid[i][j].y;
+        }
+        if (grid[i][j].x  < minx){
+          minx = grid[i][j].x;
+        }
+        if (grid[i][j].y < miny){
+          miny = grid[i][j].y;
+        }
+      }
+    }
+  }
+  centerX = static_cast<int>((maxx + minx) / 2.0);
+  centerY = static_cast<int>((maxy + miny) / 2.0);
 }
 
 MotorController::~MotorController(){
@@ -105,12 +129,11 @@ void MotorController::goTo(int x1, int y1){
 }
 
 void MotorController::goToCenter(){
-
-
-
+  goTo(centerX, centerY);
 }
 
 void MotorController::goToBackGround(){
+  goTo(100000, 100000);
 }
 
 void MotorController::align(){
@@ -143,8 +166,12 @@ void MotorController::align(){
   setZero();
 }
 
-void MotorController::fineAlign(WeinerCounter* nim, double time){
-  //find max 
+void MotorController::fineAlign(WeinerCounter* nim, double time, int xcor, int ycor){
+  moveToPix(xcor, ycor);
+  int x1, x2, y1, y2;
+  //y1 = 
+
+
 
 }
 

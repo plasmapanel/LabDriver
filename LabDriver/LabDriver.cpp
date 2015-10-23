@@ -40,18 +40,31 @@ int main(){
       }
       if (ch == 'y'){
         mot->align();
+        /*
         while (1){
-          cout << "Would you like to do fine alignment? (y/n)" << endl;
+          
+          cout << "Would you like to do fine alignment? (y/n) ";
+          cin.ignore(10000, '\n');
+          cin.clear();
           ch = cin.get();
           cin.ignore(10000, '\n');
           cin.clear();
           if (ch == 'y'){
-            cout << "How long would you like to measure for? (seconds)" << endl;
-            int tempI;
+            cout << "How long would you like to measure for? (seconds) ";
+            int tempI, xcor, ycor;
             cin >> tempI;
             cin.ignore(10000, '\n');
             cin.clear();
-            mot->fineAlign(nim, tempI);
+            cout << "Choose which pixel to fine align on." << endl;
+            cout << "What is the pixel's RO line? ";
+            cin >> xcor;
+            cin.ignore(10000, '\n');
+            cin.clear();
+            cout << "What is the pixel's HV line? ";
+            cin >> ycor;
+            cin.ignore(10000, '\n');
+            cin.clear();
+            mot->fineAlign(nim, tempI, xcor, ycor);
             break;
           }
           if (ch == 'n'){
@@ -61,6 +74,7 @@ int main(){
             cout << "Invalid input" << endl;
           }
         }
+        */
         break;
       }
       else{

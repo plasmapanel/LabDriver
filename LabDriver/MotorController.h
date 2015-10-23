@@ -29,20 +29,22 @@ public:
   int getNumPixActive();
   void moveToPix(int num);
   void align();
-  void fineAlign(WeinerCounter *nim, double time);
+  void fineAlign(WeinerCounter *nim, double time, int xcor, int ycor);
   const vector<string>& getActivePixelString();
   int getAbsolutePositionX();
   int getAbsolutePositionY();
 
 private:
   //these are the values used for fine aligning the motor
-  static const int X_OFFSET = 400;
-  static const int Y_OFFSET = 400;
+  static const int X_OFFSET = 100;
+  static const int Y_OFFSET = 200;
   //These are the coordinates of the zeroth pixel relative to the refrence point
   int offsetx;
   int offsety;
   int maxX = 0;
   int maxY = 0;
+  int centerX;
+  int centerY;
   struct Pixel{
     int x = 0;
     int y = 0;
