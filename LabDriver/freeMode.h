@@ -8,4 +8,4 @@
 void doFreeMode(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 void printFreeModeWelcome();
 void printFreeModeHelp();
-int proccessCommand(string command, bool isBack, MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
+int proccessCommand(string command, bool &isBack, MotorController *mot, WeinerCounter *nim, VoltageControl *volt);

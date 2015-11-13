@@ -114,6 +114,8 @@ static void writeInfoAfter1(boost::lockfree::spsc_queue<int, boost::lockfree::ca
   tr.Branch("data", count, "data[20]/i");
   tr.Branch("samps", &tempSamp, "samps/i");
   tr.Branch("num_pix", &tempPix, "num_pix/i");
+  tr.Branch("pixX", pixX, "pixX[20]/i");
+  tr.Branch("pixY", pixY, "pixY[20]/i");
   /////////////////////////////////////////////////////
 
 
@@ -272,6 +274,8 @@ static void writeInfoAfter2(boost::lockfree::spsc_queue<array<int, 2>, boost::lo
   tr.Branch("data", count, "data[20]/i");
   tr.Branch("samps", &tempSamp, "samps/i");
   tr.Branch("num_pix", &tempPix, "num_pix/i");
+  tr.Branch("pixX", pixX, "pixX[20]/i");
+  tr.Branch("pixY", pixY, "pixY[20]/i");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t->front();
   elapsed = t->front() - first;
@@ -445,6 +449,8 @@ static void writeInfoAfter3(boost::lockfree::spsc_queue<array<int, 3>, boost::lo
   tr.Branch("data", count, "data[20]/i");
   tr.Branch("samps", &tempSamp, "samps/i");
   tr.Branch("num_pix", &tempPix, "num_pix/i");
+  tr.Branch("pixX", pixX, "pixX[20]/i");
+  tr.Branch("pixY", pixY, "pixY[20]/i");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t->front();
   elapsed = t->front() - first;
@@ -668,6 +674,8 @@ static void writeInfoAfter4(boost::lockfree::spsc_queue<array<int, 4>, boost::lo
   tr.Branch("data", count, "data[20]/i");
   tr.Branch("samps", &tempSamp, "samps/i");
   tr.Branch("num_pix", &tempPix, "num_pix/i");
+  tr.Branch("pixX", pixX, "pixX[20]/i");
+  tr.Branch("pixY", pixY, "pixY[20]/i");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t->front();
   elapsed = t->front() - first;
@@ -818,6 +826,8 @@ static void writeInfoAfter5(boost::lockfree::spsc_queue<array<int, 5>, boost::lo
   tr.Branch("data", count, "data[20]/i");
   tr.Branch("samps", &tempSamp, "samps/i");
   tr.Branch("num_pix", &tempPix, "num_pix/i");
+  tr.Branch("pixX", pixX, "pixX[20]/i");
+  tr.Branch("pixY", pixY, "pixY[20]/i");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t->front();
   elapsed = t->front() - first;

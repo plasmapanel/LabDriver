@@ -16,24 +16,25 @@ MotorController::MotorController(long PortNumber, long BaudRate, string filename
   miny = maxy = grid[1][1].y;
   for (int i = 1, leni = grid.size(); i < leni; ++i){
     for (int j = 1, lenj = grid[i].size(); j < lenj; j++){
-      if (grid[i][j].active){
-        if (grid[i][j].x > maxx){
-          maxx = grid[i][j].x;
-        }
-        if (grid[i][j].y > maxy){
-          maxy = grid[i][j].y;
-        }
-        if (grid[i][j].x  < minx){
-          minx = grid[i][j].x;
-        }
-        if (grid[i][j].y < miny){
-          miny = grid[i][j].y;
-        }
+
+      if (grid[i][j].x > maxx){
+        maxx = grid[i][j].x;
       }
+      if (grid[i][j].y > maxy){
+        maxy = grid[i][j].y;
+      }
+      if (grid[i][j].x < minx){
+        minx = grid[i][j].x;
+      }
+      if (grid[i][j].y < miny){
+        miny = grid[i][j].y;
+      }
+
     }
   }
   centerX = static_cast<int>((maxx + minx) / 2.0);
   centerY = static_cast<int>((maxy + miny) / 2.0);
+ // cout << centerX << " " << centerY << endl;
 }
 
 MotorController::~MotorController(){
@@ -183,9 +184,11 @@ void MotorController::setUpGrid(string filename){
   if (!(in>>maxX)){
     throw;
   }
+
   if (!(in >> maxY)){
     throw;
   }
+
   if (!(in >> offsetx)){
     throw;
   }
@@ -208,6 +211,7 @@ void MotorController::setUpGrid(string filename){
     if (!(in >> grid[numX][numY].y)){
       throw;
     }
+    
     if (!(in >> t)){
       throw;
     }
@@ -226,7 +230,7 @@ void MotorController::setUpGrid(string filename){
     for (int j = 0, lenk = grid[i].size(); j < lenk; ++j){
       if (grid[i][j].active){
         list.push_back(grid[i][j]);
-        temp = to_string(grid[i][j].x) + "-" + to_string(grid[i][j].x);
+        temp = to_string(i) + "-" + to_string(j);
         listStrings.push_back(temp);
       }
     }
@@ -234,6 +238,9 @@ void MotorController::setUpGrid(string filename){
 }
 
 void MotorController::leaveBackGround(){
+  //goTo(centerX, centerY);
+  stepMotor(2, -100000);
+  goTo(centerX, centerY);
 }
 
 void MotorController::moveToPix(int x, int y){

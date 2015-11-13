@@ -50,14 +50,24 @@ void printFreeModeHelp(){
   cout << "quit          : Exits free mode." << endl;
 }
 
-int proccessCommand(string command, bool isBack, MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
+int proccessCommand(string command, bool &isBack, MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
   stringstream ss;
   string temp;
   int arg1, arg2;
   ss << command;
 
+
   if (!(ss >> temp)){
     return 1;
+  }
+  if (isBack){
+    if (temp == "lback"){
+      isBack = false;
+      mot->leaveBackGround();
+      return 0;
+  }
+    cout << "WARNING YOU MUST LEAVE THE BACK GROUND BEFORE YOU CAN CONTINUE" << endl;
+    return 0;
   }
   if (temp == "rmv"){
     ss >> arg1 >> arg2;
@@ -94,6 +104,7 @@ int proccessCommand(string command, bool isBack, MotorController *mot, WeinerCou
     return 0;
   }
   else if (temp == "lback"){
+    isBack = false;
     mot->leaveBackGround();
     return 0;
   }
@@ -131,7 +142,8 @@ int proccessCommand(string command, bool isBack, MotorController *mot, WeinerCou
     return 0;
   }
   else if (temp == "docount"){
-    ss >> arg1 >> temp;
+    string opt;
+    ss >> arg1 >> opt;
     HeaderInfoGen hg;
     HeaderInfoCounter hc;
     while (1){
@@ -157,18 +169,18 @@ int proccessCommand(string command, bool isBack, MotorController *mot, WeinerCou
     cin >> hc.voltage;
     cout << "Time Between Counts (s): ";
     cin >> hc.samplingLength;
-    if (arg1 == 0 && temp == "y"){
+    if (arg1 == 0 && opt == "y"){
       volt->setVoltage(hc.voltage);
       doWeinerCountInf(nim, hc.samplingLength, hc.voltage, hg, mot->getActivePixelString(), "freeWCout.txt");
     }
-    else if (arg1 == 0 && temp == "n"){
+    else if (arg1 == 0 && opt == "n"){
       cout << "Infinite mode needs to be user interruptable." << endl;
       return 1;
     }
-    else if (arg1 > 0 && temp == "y"){
+    else if (arg1 > 0 && opt == "y"){
       doWeinerCountInter(nim, arg1, hc.samplingLength, hc.voltage, hg, mot->getActivePixelString(), "freeWCout.txt");
     }
-    else if (arg1 > 0 && temp == "n"){
+    else if (arg1 > 0 && opt == "n"){
       doWeinerCount(nim, arg1, hc.samplingLength, hc.voltage, hg, mot->getActivePixelString(), "freeWCout.txt");
     }
     else{
