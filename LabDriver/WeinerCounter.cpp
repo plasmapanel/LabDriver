@@ -316,9 +316,11 @@ int WeinerCounter::readDevice(int bytes){
   uint8_t temp[4];
   int check;
   check = readDevice_(handle, (uint32_t)bytes, temp);
+  /*
   if (check < 0){
     throw;
   }
+  */
   int sum = temp[3];
   sum += temp[2]*256;
   

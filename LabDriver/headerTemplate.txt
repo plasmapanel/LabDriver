@@ -1,5 +1,5 @@
 Panel Name   MC16
-Source   Sr 
+Source   Ru 
 Source Config  Dynamic
 Gas Mixture   Ne1Ar20CF4
 Gas Pressure (Torr)   740
