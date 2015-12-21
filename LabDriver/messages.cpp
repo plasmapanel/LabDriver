@@ -6,11 +6,15 @@ bool handleModeOption(string option, MotorController *mot, WeinerCounter *nim, V
   if (option == "vscan") {
     cout << "Initiating Voltage Scan" << endl;
     executeVScan(mot, nim, volt);
+    cin.ignore(10000, '\n');
+    cin.clear();
     return promptQuit();
   }
   else if (option == "apscan") {
     cout << "Initiating After-Pulse Scan" << endl;
     executeAPScan(mot, nim, volt);
+    cin.ignore(10000, '\n');
+    cin.clear();
     return promptQuit();
   }
   else if (option == "free") {
@@ -21,6 +25,8 @@ bool handleModeOption(string option, MotorController *mot, WeinerCounter *nim, V
   else if (option == "combo"){
     cout << "Initiating Combo Scan" << endl;
     executeCombo(mot, nim, volt);
+    cin.ignore(10000, '\n');
+    cin.clear();
     return promptQuit();
   }
   else if (option == "help"){
@@ -62,6 +68,60 @@ void executeFree(MotorController *mot, WeinerCounter *nim, VoltageControl *volt)
 void executeCombo(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
   doAfterScanGraphMultiAndBack(mot, nim, volt);
 }
+
+bool isPixValid(string filename){
+  int ro, hv, holding;
+  char tempc;
+  ifstream in(filename);
+  //ro line
+  if (!(in >> ro)){
+    cout << "Invalid file" << endl;
+    return false;
+  }
+  //hv line
+  if (!(in >> hv)){
+    cout << "Invalid file" << endl;
+    return false;
+  }
+  //offset line
+  if (!(in >> holding)){
+    cout << "Invalid file" << endl;
+    return false;
+  }
+  if (!(in >> holding)){
+    cout << "Invalid file" << endl;
+    return false;
+  }
+  //start looking at pixel lines
+  while (in.peek() != EOF){
+    if (!(in >> holding) || holding > ro ){
+      cout << "Invalid file" << endl;
+      return false;
+    }
+    if (!(in>>tempc) || tempc != '-'){
+      cout << "Invalid file" << endl;
+      return false;
+    }
+    if (!(in >> holding) || holding > hv){
+      cout << "Invalid file" << endl;
+      return false;
+    }
+    if (!(in >> holding)){
+      cout << "Invalid file" << endl;
+      return false;
+    }
+    if (!(in >> holding)){
+      cout << "Invalid file" << endl;
+      return false;
+    }
+    if (!(in>>tempc) || !(tempc == 'n' || tempc == 'y')){
+      cout << "Invalid file" << endl;
+      return false;
+    }
+  }
+  return true;
+}
+
 bool promptQuit(){
   char temp;
   cout << "Would you like to quit? (y/n): ";

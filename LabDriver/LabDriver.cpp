@@ -13,11 +13,12 @@ int main(){
   VoltageControl *volt = nullptr;
   MotorController *mot = nullptr;
   string pixFileName;
-  cout << "What pixel config file should be used? ";
-  cin >> pixFileName;
-  cin.ignore(10000, '\n');
-  cin.clear();
- 
+  do{
+    cout << "What pixel config file should be used? ";
+    cin >> pixFileName;
+    cin.ignore(10000, '\n');
+    cin.clear();
+  } while (!isPixValid(pixFileName));
   cout << "Initializing NIMBox" << endl;
   try{
     nim = new WeinerCounter(0);
@@ -30,58 +31,39 @@ int main(){
   try{//again need 2 add more catching
     //also add some setup stuff about configuring panel
     mot = new MotorController(6, 9600, pixFileName);
-    while (1){
+    bool cont = true;
+    while (cont){
       cout << "Does this device need to be zeroed? (y/n) ";
       ch = cin.get();
       cin.ignore(10000, '\n');
       cin.clear();
       if (ch == 'n'){
+        cont = false;
         break;
       }
       if (ch == 'y'){
-        mot->align();
-        /*
         while (1){
-          
-          cout << "Would you like to do fine alignment? (y/n) ";
-          cin.ignore(10000, '\n');
-          cin.clear();
+          cout << "Are you sure, this will unzero the current alignment? (y/n) ";
           ch = cin.get();
           cin.ignore(10000, '\n');
           cin.clear();
-          if (ch == 'y'){
-            cout << "How long would you like to measure for? (seconds) ";
-            int tempI, xcor, ycor;
-            cin >> tempI;
-            cin.ignore(10000, '\n');
-            cin.clear();
-            cout << "Choose which pixel to fine align on." << endl;
-            cout << "What is the pixel's RO line? ";
-            cin >> xcor;
-            cin.ignore(10000, '\n');
-            cin.clear();
-            cout << "What is the pixel's HV line? ";
-            cin >> ycor;
-            cin.ignore(10000, '\n');
-            cin.clear();
-            mot->fineAlign(nim, tempI, xcor, ycor);
-            break;
-          }
           if (ch == 'n'){
             break;
           }
+          if (ch == 'y'){
+            cont = false;
+            mot->align();
+            break;
+          }
           else{
-            cout << "Invalid input" << endl;
+            cout << "Invalid Input" << endl;
           }
         }
-        */
-        break;
       }
       else{
         cout << "Invalid Input" << endl;
       }
     }
-    //NEED 2 ADD THE ZEROING OF MOTOR HERE(AKA ABOSOLUTE ZERO OF PANEL)
   }
   catch (...){
     cout << "Unable to initialize Motor Controller. Please check that it is connected correctly and you are using a valid device config file\n";

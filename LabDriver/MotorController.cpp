@@ -150,12 +150,27 @@ void MotorController::align(){
       break;
     }
     else if (cor == "y"){
+      if (cin.peek() == EOF || cin.peek() == '\n' || cin.peek() == ' ' || cin.peek() == '\t'){
+        continue;
+      }
       cin >> num;
-   
+      if (cin.fail()){
+        cin.clear();
+        cin.ignore(10000, '\n');
+        continue;
+      }
       stepMotor(2, num);
     }
     else if (cor == "x"){
+      if (cin.peek() == EOF || cin.peek() == '\n' || cin.peek() == ' ' || cin.peek() == '\t'){
+        continue;
+      }
       cin >> num;
+      if (cin.fail()){
+        cin.clear();
+        cin.ignore(10000, '\n');
+        continue;
+      }
       stepMotor(1, num);
     }
     else{
@@ -168,9 +183,8 @@ void MotorController::align(){
 }
 
 void MotorController::fineAlign(WeinerCounter* nim, double time, int xcor, int ycor){
-  moveToPix(xcor, ycor);
-  int x1, x2, y1, y2;
-  //y1 = 
+  //moveToPix(xcor, ycor);
+  //int x1, x2, y1, y2; 
 
 
 

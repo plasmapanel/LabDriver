@@ -93,7 +93,7 @@ return 1;
 //--------------------------------- Release Driver Function Pointers -----------------------------
 long ReleaseDriver()
 {
-	FreeLibrary(HwndDriver);
+ 	FreeLibrary(HwndDriver);
 	return 1;
 }
 

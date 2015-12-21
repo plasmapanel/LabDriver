@@ -22,10 +22,11 @@ After-pulse Scan
 	instructions:
 		1.Specify how you want to edit header information
 			-if manual is selected user will be prompted for values
-			-if file is selected header will be read from a template (in same directory as .exe) a template is included with the desired form
+			-if file is selected header will be read from a template (headerTemplate.txt in same directory as .exe).
+			    A template is included with the desired form
 			NOTE: There are 3 modes for use here
 				1.User: The user is required to position source in proper place. The max pixels that will be looked at at a time is 1.
-				2.Dynamic: The VXM will automatically position source. NOTE: THIS HAS NOT BEEN IMPLEMENTED YET.
+				2.Dynamic: The VXM will automatically position source.
 				3.Static: The source should be fixed. Multiple pixels may be looked at concurrently
 		2. Enter Setup information (start voltage, end voltage, step size, number of pixels to be looked at, their coordinates). If Statuc mode is selected user will also be prompted for the number of concurrent pixels. NOTE: not all combinations have not been implemented yet. If they haven't been user will be alerted. NOTE: the number of pixels being measured at once has an effect on the sampling rate. These rates are detail below.
 		3.Run will commence.
@@ -53,15 +54,53 @@ Voltage Scan
 			-if file is selected header will be read from a template (in same directory as .exe) a template is included with the desired form
 			Note: Differences between source configs has not been implemented
 	2. Enter Setup information (start voltage, end voltage, step size, number of pixels to be looked at, their coordinates).
-	3.Run will commence.
-	4.logs, graphs, and data output will be saved in the appropriate directory of Collected Data
+	3. Run will commence.
+	4. logs, graphs, and data output will be saved in the appropriate directory of Collected Data
 
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+config file formating : to be added
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 How to Use:
+Running:
+eventually will be compiled to own executable. For now just run using the green local windows debugger button in visual studios
 
 
+
+Startup:
+When starting up program you will be prompted for a few options:
+1.panel config file- (mc.pix is one set up for current microcavities, see this file for formatting)
+2.Does panel need to be zeroed- y should only be answered if the panel was just put in.
+  if the panel is already configured select n (it takes a lot of time).
+
+
+From here you are able to select what mode to run in.
+Running:
+5 options:
+
+  doing an apscan/combo scan is almost always preferable (even for straight voltage-scans)
+  because it samples at a higher rate and produces similar data.
+  
+    quit   - quits the lab station software"
+    free   - initiates free mode. In free mode, user has direct control of lab station equipment.
+    vscan  - initiates a voltage scan. Parameters for this test are set before running.
+    apscan - initiates an after-pulse scan. Parameters for this test are set before running.
+    combo  - initiates a combination voltage and after-pulse scan. Parameters for this run are set before running.
+
+Setting up scan:
+  1.you will be asked if you want to setup the scan from a file or from command line
+      -presetup file is in program directory and titled headerTemplate.txt
+  2.you will then be asked for parameters such as :
+    -voltage range
+    -voltage step-size
+    -how many pixels to measure
+    -how many pixels to measure at once (Note: this option is only given in Static mode (i.e. source is fixed))
+    -what their readout lines/ hv lines (again in pixel config file mc.pix, the y tag on a pixel line idicate which pixel is instrumented)
+    -how many samples to take (for a single line 1 sample = ~4ms)
+  3. then run will run
+Free mode:
+  NOTE: command handling is not robust yet so be careful
+  1. type ? for option list
 
 
 
