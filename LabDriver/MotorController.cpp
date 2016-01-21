@@ -150,7 +150,7 @@ void MotorController::align(){
       break;
     }
     else if (cor == "y"){
-      if (cin.peek() == EOF || cin.peek() == '\n' || cin.peek() == ' ' || cin.peek() == '\t'){
+      if (cin.peek() == EOF || cin.peek() == '\n' || cin.peek() == '\t'){
         continue;
       }
       cin >> num;
@@ -162,7 +162,7 @@ void MotorController::align(){
       stepMotor(2, num);
     }
     else if (cor == "x"){
-      if (cin.peek() == EOF || cin.peek() == '\n' || cin.peek() == ' ' || cin.peek() == '\t'){
+      if (cin.peek() == EOF || cin.peek() == '\n'  || cin.peek() == '\t'){
         continue;
       }
       cin >> num;

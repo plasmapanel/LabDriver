@@ -1571,7 +1571,7 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
   else if (hg.sourceConfig == "User"){
     for (int k = 0; k < num; ++k){
       log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
-      cout << "Please move source to pixel "<<x[k]<<"-"<<y[k]<< endl;
+      cout << "Please move source to pixel " << x[k] << "-" << y[k] << endl;
       while (1){
         cout << "Has the source been moved? ";
         cin.get(tempc);
@@ -1580,6 +1580,7 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
         if (tempc == 'y'){
           break;
         }
+      }
       for (int i = starting; i <= stop; i += step){
         log << "Setting Voltage to: " << i << endl;
         volt->setVoltage(i);
@@ -1590,32 +1591,22 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
       }
     }
   }
-  /*
-
-    for (int i = starting; i <= stop; i += step){
-      log << "Setting Voltage to: " << i << endl;
-      volt->setVoltage(i);
-      log << "Begin Counting" << endl;
-      temp = runName + to_string(i) + "_sor_vs.txt";
-      doWeinerCount(nim, duration, freq, i, hg, pix, temp);
-      log << "Finished Counting" << endl;
-      */
-    log << "Switching to background" << endl;
+  log << "Switching to background" << endl;
+    
+  if (hg.sourceConfig == "User"){
     Beep(900, 3000);
-    if (hg.sourceConfig == "User"){
-      cout << "Please remove the source for background run." << endl;
-      while (1){
-        cout << "Has the source been removed? ";
-        cin.get(tempc);
-        cin.clear();
-        cin.ignore(10000, '\n');
-        if (tempc == 'y'){
-          break;
-        }
+    cout << "Please remove the source for background run." << endl;
+    while (1){
+      cout << "Has the source been removed? ";
+      cin.get(tempc);
+      cin.clear();
+      cin.ignore(10000, '\n');
+      if (tempc == 'y'){
+        break;
       }
     }
   }
-  else if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
+  if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
     mot->goToBackGround();
     //------------------------------
     //--------WARNING--------------
@@ -1641,6 +1632,174 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
   log << "Voltage Scan Completed" << endl;
   log.close();
 }
+
+void doVoltageScanFile(MotorController* mot, WeinerCounter* nim, VoltageControl* volt){
+  string path = ".\\CollectedData\\";
+  string runName;
+  ofstream log;
+  int starting;
+  int stop;
+  int duration;
+  int num;
+  vector<int> x;
+  vector<int> y;
+  double freq;
+  int step;
+  char tempc;
+  string temp;
+  vector<string> pix;
+  cout << "------------------------------------------" << endl;
+  cout << "------------Voltage Scan------------------" << endl;
+  cout << "------------------------------------------" << endl;
+  HeaderInfoGen hg;
+  while (1){
+    cout << "generate header manually or read from a file?(file/manual): ";
+    cin >> temp;
+    cin.clear();
+    cin.ignore(10000, '\n');
+    if (temp == "manual"){
+      makeGenHead(hg);
+      break;
+    }
+    else if (temp == "file"){
+      cout << "What is the name of the file? ";
+      getline(cin, temp);
+      makeGenHeadFile(hg, temp);
+      break;
+    }
+    else{
+      cout << "Invalid option" << endl;
+    }
+  }
+  do{
+    cout << "What is the name of your run setup file? ";
+    getline(cin, temp);
+  } while (!makeVSRun(temp, starting, stop, step, duration, freq, num, x, y) && cout << "Invalid file, see readme for for setup." << endl);
+  for (int i = 0; i < num; ++i){
+    pix.push_back(to_string(x[i]) + "-" + to_string(x[i]));
+  }
+
+
+  time_t t = time(nullptr);
+  CreateDirectory(path.c_str(), NULL);
+  runName = path + hg.gas + "\\";
+  CreateDirectory(runName.c_str(), NULL);
+  runName += to_string((int)hg.pressure);
+  runName += +"torr\\";
+  CreateDirectory(runName.c_str(), NULL);
+  runName += hg.panelName + "_" + hg.gas + "_" + to_string((int)hg.pressure) + "_" + to_string(t) + "\\";
+  CreateDirectory(runName.c_str(), NULL);
+  log.open(runName + "log.txt", ofstream::ate);
+  runName += "VoltageScan\\";
+  CreateDirectory(runName.c_str(), NULL);
+  log << "Intitalized Voltage Scan Run" << endl;
+  /*
+  log << "Starting: " << starting << endl;
+  log << "Stop: " << stop << endl;
+  log << "Step Size: " << step << endl;
+  log << "Interval Duration: " << duration << endl;
+  log << "Sampling Frequency: " << freq << endl;
+  log << "Number of Pixels: " << num << endl;
+  log << "Pixel List: " << endl;
+  */
+  for (int i = 0; i < num; ++i){
+    log << x[i] << "-" << y[i] << endl;
+  }
+  log << "Turning On High Voltage" << endl;
+  volt->turnOn();
+
+  if (hg.sourceConfig == "Dynamic"){
+    for (int k = 0; k < num; ++k){
+      log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
+      mot->moveToPix(x[k], y[k]);
+      for (int i = starting; i <= stop; i += step){
+        log << "Setting Voltage to: " << i << endl;
+        volt->setVoltage(i);
+        log << "Begin Counting" << endl;
+        temp = runName + to_string(x[k]) + "_" + to_string(y[k]) + "_" + to_string(i) + "_sor_vs.txt";
+        doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+        log << "Finished Counting" << endl;
+      }
+    }
+  }
+  else if (hg.sourceConfig == "Static"){
+    mot->goToCenter();
+    for (int i = starting; i <= stop; i += step){
+      log << "Setting Voltage to: " << i << endl;
+      volt->setVoltage(i);
+      log << "Begin Counting" << endl;
+      temp = runName + "all_" + to_string(i) + "_sor_vs.txt";
+      doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+      log << "Finished Counting" << endl;
+    }
+  }
+  else if (hg.sourceConfig == "User"){
+    for (int k = 0; k < num; ++k){
+      log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
+      cout << "Please move source to pixel " << x[k] << "-" << y[k] << endl;
+      while (1){
+        cout << "Has the source been moved? ";
+        cin.get(tempc);
+        cin.clear();
+        cin.ignore(10000, '\n');
+        if (tempc == 'y'){
+          break;
+        }
+      }
+      for (int i = starting; i <= stop; i += step){
+        log << "Setting Voltage to: " << i << endl;
+        volt->setVoltage(i);
+        log << "Begin Counting" << endl;
+        temp = runName + to_string(x[k]) + "_" + to_string(y[k]) + "_" + to_string(i) + "_sor_vs.txt";
+        doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+        log << "Finished Counting" << endl;
+      }
+    }
+  }
+  log << "Switching to background" << endl;
+
+  if (hg.sourceConfig == "User"){
+    Beep(900, 3000);
+    cout << "Please remove the source for background run." << endl;
+    while (1){
+      cout << "Has the source been removed? ";
+      cin.get(tempc);
+      cin.clear();
+      cin.ignore(10000, '\n');
+      if (tempc == 'y'){
+        break;
+      }
+    }
+  }
+  if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
+    mot->goToBackGround();
+    //------------------------------
+    //--------WARNING--------------
+    //----------------------------
+    //when a the motor is moved to the background location it always needs to be moved out in order to be used again
+    //aka always call leaveBackGround() when done with taking a background measure ment
+  }
+  hg.sourceName = "bkg";
+  for (int i = starting; i <= stop; i += step){
+    log << "Setting Voltage to: " << i << endl;
+    volt->setVoltage(i);
+    log << "Begin Counting" << endl;
+    temp = runName + to_string(i) + "_bkg_vs.txt";
+    doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+    log << "Finished Counting" << endl;
+  }
+  if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
+    mot->leaveBackGround();
+  }
+
+  log << "Turning off High Voltage" << endl;
+  volt->turnOff();
+  log << "Voltage Scan Completed" << endl;
+  log.close();
+
+
+}
+
 void doAfterScanNoGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
   string path = ".\\CollectedData\\";
   string runName;

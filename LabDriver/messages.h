@@ -15,6 +15,7 @@ void printAPScanHelp();
 void printFreeHelp();
 void printComboHelp();
 void executeVScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
+void executeVScanFile(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 void executeAPScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 void executeFree(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 void executeCombo(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);

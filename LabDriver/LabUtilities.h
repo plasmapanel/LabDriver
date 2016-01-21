@@ -8,6 +8,7 @@ This file contains all of the utilities that will be used with our lab setup
 #include "MotorController.h"
 #include "HighResClock.h"
 #include "VoltageControl.h"
+#include "headers.h"
 #include "stdafx.h"
 #include "headers.h"
 #include "CImg-1.6.5_pre062415\CImg.h"
@@ -50,6 +51,7 @@ void doWeinerCountInf(WeinerCounter *nim, double sampleLength,
                       double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
 //peforms a voltage scan
 void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
+void doVoltageScanFile(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //peforms an after pulse scan on maximum of 1 pixle at a time and produces no graphs
 void doAfterScanNoGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //peforms an after pulse scan on maximum of 1 pixle at a time and produces graphs

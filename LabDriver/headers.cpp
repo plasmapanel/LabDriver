@@ -168,3 +168,106 @@ void makeGenHeadFile(HeaderInfoGen &hg, string file){
   in >> hg.attenHV;
 
 }
+bool isHeaderValid(string filename){
+  /*
+  string hold;
+  double tempd;
+  ifstream in(filename);
+  if (!(in >> hold) || hold != "Panel"){
+    return false;
+  }
+  if (!(in >> hold) || hold != "Name"){
+    return false;
+  }
+  in >> ws;
+  if (!(getline(in, hold))){
+    return false;
+  }
+  if (!(in >> hold) || hold != "Source"){
+    return false;
+  }
+  in >> ws;
+  if (!getline(in, hold)){
+    return false;
+  }
+  /////////////////////
+  if (!(in >> hold) || hold != "Source"){
+    return false;
+  }
+  if (!(in >> hold) || hold != "Config"){
+    return false;
+  }
+  in >> ws;
+  if (!getline(in, hold) || !(hold == "Source" || hold == "Dynamic" || hold == "User")){
+    return false;
+  }
+  if (!(in >> hold) || hold != "Gas"){
+    return false;
+  }
+  if (!(in >> hold) || hold != "Mixture"){
+    return false;
+  }
+  in >> ws;
+  if (!getline(in, hold)){
+    return false;
+  }
+  if (!(in >> hold) || hold != "Gas"){
+    return false;
+  }
+  if (!(in >> hold) || hold != "Pressure"){
+    return false;
+  }
+  if (!(in >> hold) || hold != "(Torr)"){
+    return false;
+  }
+  in >> ws;
+  if (!(in >> tempd)){
+    return false;
+  }
+  in >> trash >> trash;
+  in >> ws;
+  in >> hg.quench;
+  if (!(in >> hold) || hold != "R-quench"){
+    return false;
+  }
+  if (!(in >> hold) || hold != "(MOhm)"){
+    return false;
+  }
+  in >> ws;
+  */
+}
+bool makeVSRun(string file, int &start, int &stop, int &step, int &interval, double &freq, int &numPix, vector<int> &pixX, vector<int> &pixY){
+  ifstream in(file);
+  if (! (in >> start)){
+    return false;
+  }
+  if (!(in >> stop)){
+    return false;
+  }
+  if (start > stop){
+    return false;
+  }
+  if (!(in >> step)){
+    return false;
+  }
+  if (!(in >> interval)){
+    return false;
+  }
+  if (!(in >> freq)){
+    return false;
+  }
+  if (!(in >> numPix)){
+    return false;
+  }
+  int tempX, tempY;
+  for (int i = 0; i < numPix && in >> tempX >> tempY; ++i){
+    pixX.push_back(tempX);
+    pixY.push_back(tempY);
+  }
+  if (numPix != pixX.size() || numPix != pixY.size()){
+    pixX.clear();
+    pixY.clear();
+    return false;
+  }
+  return true;
+}

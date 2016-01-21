@@ -1,11 +1,11 @@
-Panel Name   MC16
-Source   Ru 
+Panel Name   MC22
+Source   Sr 
 Source Config  Dynamic
-Gas Mixture   Ne1Ar20CF4
+Gas Mixture   79Ne20C2F61Ar
 Gas Pressure (Torr)   740
 R-quench (MOhm)   1000/500/200
 Trigger Setup   0
-Discriminator Thr (mV)   3
+Discriminator Thr (mV)   1000
 Number RO lines   10
 RO lines 1-10
 Trigger RO   0
