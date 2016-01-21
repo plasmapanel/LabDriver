@@ -1,3 +1,5 @@
+#ifndef MESSAGES_H
+#define MESSAGES_H
 #include <iostream>
 #include "LabUtilities.h"
 #include "VoltageControl.h"
@@ -20,3 +22,4 @@ void executeAPScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
 void executeFree(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 void executeCombo(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 bool isPixValid(string filename);
+#endif
