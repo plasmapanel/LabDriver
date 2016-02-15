@@ -141,5 +141,8 @@ static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost
 static void userInterrupt(atomic<bool> *t);
 int findLineWithLowestRate(WeinerCounter *nim, const vector<int> &lines);
 double findHighestRate(WeinerCounter *nim, const vector<int> &lines);
+double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLength = 1);
+//measures all 20 lines and stores there times/ count in the vectors
+void measureLines(WeinerCounter* nim, double time, double &actualTime, vector<int> &count,double intervalLength = 1);
 const int OVER = 65536;
 #endif

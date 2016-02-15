@@ -2867,3 +2867,87 @@ double findHighestRate(WeinerCounter *nim, const vector<int> &lines){
   return maxCount / std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
   return 0;
 }
+
+void measureLines(WeinerCounter* nim, double time, double& actualTime, vector<int>& count, double intervalLength){
+
+  count.resize(20);
+  for (int i = 0; i < 20; ++i){
+    count[i] = 0;
+  }
+  int numSamps = ceil(time / intervalLength);
+  chrono::duration<int, milli> dur((int)(intervalLength * 1000) - 29);
+  HighResClock::time_point t, start;
+  std::chrono::duration<double> elapsed;
+  nim->resetAll();
+  start = HighResClock::now();
+  this_thread::sleep_for(dur);
+  for (int i = 0; i < numSamps; ++i){
+    t = HighResClock::now();
+    count[0] = nim->readCounter(1);
+    count[1] = nim->readCounter(2);
+    count[2] = nim->readCounter(3);
+    count[3] = nim->readCounter(4);
+    count[4] = nim->readCounter(5);
+    count[5] = nim->readCounter(6);
+    count[6] = nim->readCounter(7);
+    count[7] = nim->readCounter(8);
+    count[8] = nim->readCounter(9);
+    count[9] = nim->readCounter(10);
+    count[10] = nim->readCounter(11);
+    count[11] = nim->readCounter(12);
+    count[12] = nim->readCounter(13);
+    count[13] = nim->readCounter(14);
+    count[14] = nim->readCounter(15);
+    count[15] = nim->readCounter(16);
+    count[16] = nim->readCounter(17);
+    count[17] = nim->readCounter(18);
+    count[18] = nim->readCounter(19);
+    count[19] = nim->readCounter(20);
+    this_thread::sleep_for(dur);
+  }
+  elapsed = t - start;
+  actualTime = elapsed.count();
+}
+
+double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLength){
+  if (lineNum < 1 || lineNum > 20){
+    return -1;
+  }
+  array<int, 20> count;
+  for (int i = 0; i < 20; ++i){
+    count[i] = 0;
+  }
+  int numSamps = ceil(time / intervalLength);
+  chrono::duration<int, milli> dur((int)(intervalLength * 1000) - 29);
+  HighResClock::time_point t, start;
+  std::chrono::duration<double> elapsed;
+  nim->resetAll();
+  start = HighResClock::now();
+  this_thread::sleep_for(dur);
+  for (int i = 0; i < numSamps; ++i){
+    t = HighResClock::now();
+    count[0] = nim->readCounter(1);
+    count[1] = nim->readCounter(2);
+    count[2] = nim->readCounter(3);
+    count[3] = nim->readCounter(4);
+    count[4] = nim->readCounter(5);
+    count[5] = nim->readCounter(6);
+    count[6] = nim->readCounter(7);
+    count[7] = nim->readCounter(8);
+    count[8] = nim->readCounter(9);
+    count[9] = nim->readCounter(10);
+    count[10] = nim->readCounter(11);
+    count[11] = nim->readCounter(12);
+    count[12] = nim->readCounter(13);
+    count[13] = nim->readCounter(14);
+    count[14] = nim->readCounter(15);
+    count[15] = nim->readCounter(16);
+    count[16] = nim->readCounter(17);
+    count[17] = nim->readCounter(18);
+    count[18] = nim->readCounter(19);
+    count[19] = nim->readCounter(20);
+    this_thread::sleep_for(dur);
+  }
+  elapsed = t - start;
+  return count[lineNum-1] / elapsed.count();
+}

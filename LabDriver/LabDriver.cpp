@@ -5,6 +5,7 @@
 #include "MotorController.h"
 #include "messages.h"
 #include "windows.h"
+#include "VxmDriver.h" //remove this
 using namespace std;
 int main(){
   //initialize lab hardware
@@ -52,7 +53,7 @@ int main(){
           }
           if (ch == 'y'){
             cont = false;
-            mot->align();
+            mot->align(nim);
             break;
           }
           else{
@@ -71,7 +72,6 @@ int main(){
     exit(1);
   }
 
-
   cout << "Initializing Voltage Controller" << endl;
   try{//again need 2 add more catching
     volt = new VoltageControl(5);
@@ -80,6 +80,7 @@ int main(){
     cout << "Unable to initalize Voltage Controller. Please check that it is correctly connected and setup" << endl;
     exit(1);
   }
+
 
   bool cont = true;
   string option;

@@ -103,12 +103,48 @@ Free mode:
   1. type ? for option list
 
 
+---------------------------------------------------------------------------------
+Config Files:
 
-
-
-
-
-
+1. Panel setup file - configures location of pixels for in terms of motor coordinates
+   units are in steps 400 steps = 1 mm
+   format
+   <# RO lines>
+   <# of HV lines>
+   <x offset from alignment point to 1st pixel><y offset from alignment point to 1st pixel>
+   //this is followed by many definition of pixel location that are of the form
+   <#RO>-<#HV> <xcoord> <ycoord> <y/n corresponding to if instrumented or not>
+2. Header template - sets up the static configuration header for a panel
+   exampe of format:
+    Panel Name   MC22
+    Source   Sr 
+    Source Config  Dynamic/Static/User
+    Gas Mixture   79Ne20C2F61Ar
+    Gas Pressure (Torr)   740
+    R-quench (MOhm)   1000/500/200
+    Trigger Setup   0
+    Discriminator Thr (mV)   1000
+    Number RO lines   10
+    RO lines 1-10
+    Trigger RO   0
+    Attenuation RO (db)  0
+    Number HV lines 10
+    HV lines  1-10
+    Trigger HV	 0
+    Attenuation HV (db)   0
+3. Voltage Scan Configuration - sets up run parameters for a voltage scan. This is an alternative to entering these values on the command line
+    format:
+    <start voltage (integer)>
+    <stop voltage (integer)>
+    <voltage step (inter)>
+    <duration of each set of data collections>
+    <sampling frequency>
+    <# pixels>
+    //followed by a list of coordinates of each pixels. The number of pixels needs to match the number of tuples given.
+    <RO1> <HV1>
+    <RO2> <HV2>
+    ...
+    <RO#> <HV#>
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 Code Layout:
 There are 4 base components to this code base:

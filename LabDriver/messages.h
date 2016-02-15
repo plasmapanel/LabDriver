@@ -21,5 +21,6 @@ void executeVScanFile(MotorController *mot, WeinerCounter *nim, VoltageControl *
 void executeAPScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 void executeFree(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 void executeCombo(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
+void executeMap(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 bool isPixValid(string filename);
 #endif
