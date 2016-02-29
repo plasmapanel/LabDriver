@@ -81,7 +81,7 @@ int main(){
     exit(1);
   }
 
-
+  //mot->test();
   bool cont = true;
   string option;
   //NEED 2 ADD STUFF ABOUT SETTING UP THE VARIOUS PIECES OF LAB EQUIPMENT

@@ -1,7 +1,7 @@
 #include "MotorController.h"
 #include "LabUtilities.h"
 using namespace std;
-static const int STEP_WAIT_TIME = 20000; //this is the timeout time for checking for '^' this stops the program from hanging if it is not found
+static const int STEP_WAIT_TIME = 10000; //this is the timeout time for checking for '^' this stops the program from hanging if it is not found
 //this should be set such that it is long enough where the motor waits for the longest possible move to complete
 MotorController::MotorController(long PortNumber, long BaudRate){
   LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Desktop\\newSetupStuff\\WORKINGLD\\LabDriver\\VxmDriver.dll";
@@ -171,7 +171,7 @@ void MotorController::goToNoWait(int x1, int y1){
 }
 
 void MotorController::goToCenter(){
-  goTo(centerX, centerY);
+  goToNoWait(centerX, centerY);
 }
 
 void MotorController::goToBackGround(){
@@ -382,6 +382,28 @@ void MotorController::moveToPix(int x, int y){
   //goTo(grid[x][y].x, grid[x][y].y);
   goToNoWait(grid[x][y].x, grid[x][y].y);
 }
+
+void MotorController::test(){
+
+  char * tempc = ""; //= PortReadReply();
+  stringstream ss;
+  string temp;
+  ss << "F,C,I" << 1 << "M" << 1000 << ",R";
+  ss >> temp;
+  char *c = new char[temp.size()];
+  for (int i = 0, len = temp.size(); i < len; ++i){
+    c[i] = temp[i];
+  }
+  PortSendCommands(c);
+  chrono::duration<int, milli> dur(200);
+  this_thread::sleep_for(dur);
+  do{
+    tempc = PortReadReply();
+    cout << tempc << endl;
+    this_thread::sleep_for(dur);
+  } while (strcmp(tempc, "^") != 0);
+}
+
 int MotorController::getNumPixActive(){
   return list.size();
 }
@@ -418,7 +440,7 @@ void MotorController::mapPixel(string filename, WeinerCounter *nim, int pixX, in
   out << "maxStepX: " << maxStepX << endl;
   out << "maxStepY: " << maxStepY << endl;
   vector<int>count;
-  double actualTime;
+  double actualTime = 0;
   vector<tuple<int, int, double>> mapping;
   vector<int> xoffset, yoffset;
   chrono::duration<int, milli> dur(800);
@@ -436,9 +458,8 @@ void MotorController::mapPixel(string filename, WeinerCounter *nim, int pixX, in
   stepMotorNoWait(2, yoffset[0]);
   this_thread::sleep_for(dur);
   this_thread::sleep_for(dur);
-  bool goBack = true;
   for (int i = 0, leni = xoffset.size(); i < leni; ++i){
-    for (int j = 0, lenj = yoffset.size(); j < lenj && goBack; ++j){
+    for (int j = 0, lenj = yoffset.size(); j < lenj; ++j){
       measureLines(nim, timeToMeasure, actualTime, count);
       out << xoffset[i] << " " << yoffset[j] << " " << actualTime;
       for (int k = 0; k < 20; ++k){
@@ -448,45 +469,55 @@ void MotorController::mapPixel(string filename, WeinerCounter *nim, int pixX, in
       stepMotorNoWait(2, maxStepY);
       this_thread::sleep_for(dur);
     }
-    for (int j = yoffset.size() - 1; j >= 0 && !goBack; --j){
-      measureLines(nim, timeToMeasure, actualTime, count);
-      out << xoffset[i] << " " << yoffset[j] << " " << actualTime;
-      for (int k = 0; k < 20; ++k){
-        out << " " << count[k];
-      }
-      out << endl;
-      stepMotorNoWait(2, -maxStepY);
-      this_thread::sleep_for(dur);
-    }
-    goBack = !goBack;
+    stepMotorNoWait(2, (yoffset.size())*-maxStepY);
+    this_thread::sleep_for(dur*3);
     stepMotorNoWait(1, maxStepX);
     this_thread::sleep_for(dur);
   }
-  /*
+}
+
+void MotorController::mapPanel(string filename, WeinerCounter* nim, double timeToMeasure, int maxOffsetX, int maxOffsetY, int maxStepX, int maxStepY){
+  ofstream out(filename);
+  out <<"Whole Panel" << endl;
+  out << "timeToMeasure: " << timeToMeasure << endl;
+  out << "maxOffsetX: " << maxOffsetX << endl;
+  out << "maxOffsetY: " << maxOffsetY << endl;
+  out << "maxStepX: " << maxStepX << endl;
+  out << "maxStepY: " << maxStepY << endl;
+  vector<int>count;
+  double actualTime = 0;
+  vector<tuple<int, int, double>> mapping;
+  vector<int> xoffset, yoffset;
+  chrono::duration<int, milli> dur(800);
+  //fill out cordinate vector
+  for (int i = -maxOffsetX; i <= maxOffsetX; i += maxStepX){
+    xoffset.push_back(i);
+  }
+  for (int i = -maxOffsetY; i <= maxOffsetY; i += maxStepY){
+    yoffset.push_back(i);
+  }
+  goToCenter();
+  this_thread::sleep_for(dur * 10);
+  stepMotorNoWait(1, xoffset[0]);
+  this_thread::sleep_for(dur*10);
+  stepMotorNoWait(2, yoffset[0]);
+  this_thread::sleep_for(dur*10);
   for (int i = 0, leni = xoffset.size(); i < leni; ++i){
-    moveToPix(pixX, pixY);
-    stepMotor(1, xoffset[i]);
-    stepMotorNoWait(2, yoffset[0]);
-    this_thread::sleep_for(dur);
     for (int j = 0, lenj = yoffset.size(); j < lenj; ++j){
       measureLines(nim, timeToMeasure, actualTime, count);
-      out << xoffset[i] << " " << yoffset[j] << " "<<actualTime;
+      out << xoffset[i] << " " << yoffset[j] << " " << actualTime;
       for (int k = 0; k < 20; ++k){
-        out <<" "<< count[k];
+        out << " " << count[k];
       }
       out << endl;
-      //out << xoffset[i] << " " << yoffset[j] << " " << findRate(nim, pixX, timeToMeasure) << endl;
       stepMotorNoWait(2, maxStepY);
       this_thread::sleep_for(dur);
     }
+    stepMotorNoWait(2, (yoffset.size())*-maxStepY);
+    this_thread::sleep_for(dur * 10);
+    stepMotorNoWait(1, maxStepX);
+    this_thread::sleep_for(dur);
   }
-  */
-  /*
-  vector<tuple<int, int, double>> map = computePixelMap(nim, pixX, pixY, timeToMeasure, maxOffsetX, maxOffsetY, maxStepX, maxStepY);
-  for (int i = 0, leni = map.size(); i < leni; ++i){
-    out << get<0>(map[i]) << " " << get<1>(map[i]) << " " << get<2>(map[i]) << endl;
-  }
-  */
 }
 
 int MotorController::getAbsolutePositionY(){

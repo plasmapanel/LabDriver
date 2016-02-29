@@ -37,6 +37,7 @@ public:
   void goToBackGround();
   void leaveBackGround();
   void moveToPix(int x, int y);
+  void test();
   //void moveToPix(int x, int y);
   int getNumPixActive();
   void moveToPix(int num);
@@ -47,6 +48,9 @@ public:
   int getAbsolutePositionX();
   int getAbsolutePositionY();
   void mapPixel(string filename, WeinerCounter *nim, int pixX, int pixY, double timeToMeasure = TIME_TO_MEASURE,
+    int maxOffsetX = MAX_OFFSET_X, int maxOffsetY = MAX_OFFSET_Y,
+    int maxStepX = MAX_STEP_X, int maxStepY = MAX_STEP_Y);
+  void mapPanel(string filename, WeinerCounter *nim, double timeToMeasure = TIME_TO_MEASURE,
     int maxOffsetX = MAX_OFFSET_X, int maxOffsetY = MAX_OFFSET_Y,
     int maxStepX = MAX_STEP_X, int maxStepY = MAX_STEP_Y);
 
