@@ -1,6 +1,6 @@
 Panel Name   MC22
-Source   Sr 
-Source Config  Dynamic
+Source   bkg
+Source Config  Static
 Gas Mixture   79Ne20C2F61Ar
 Gas Pressure (Torr)   740
 R-quench (MOhm)   1000/500/200
