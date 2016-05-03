@@ -80,8 +80,6 @@ int main(){
     cout << "Unable to initalize Voltage Controller. Please check that it is correctly connected and setup" << endl;
     exit(1);
   }
-
-  //mot->test();
   bool cont = true;
   string option;
   //NEED 2 ADD STUFF ABOUT SETTING UP THE VARIOUS PIECES OF LAB EQUIPMENT
@@ -103,5 +101,3 @@ int main(){
   delete volt;
   
   }
-
-

@@ -23,6 +23,13 @@ bool handleModeOption(string option, MotorController *mot, WeinerCounter *nim, V
     cin.clear();
     return promptQuit();
   }
+  else if (option == "apscanCount") {
+    cout << "Initiating After-Pulse Count Scan" << endl;
+    executeAPScanCount(mot, nim, volt);
+    cin.ignore(10000, '\n');
+    cin.clear();
+    return promptQuit();
+  }
   else if (option == "free") {
     cout << "Initiating Free Mode" << endl;
     executeFree(mot, nim, volt);
@@ -53,6 +60,7 @@ bool handleModeOption(string option, MotorController *mot, WeinerCounter *nim, V
     volt->turnOn();
     mot->fineAlign(nim, filename, time);
     volt->turnOff();
+    return promptQuit();
   }
   else if (option == "map"){
     cout << "Intitiating Mapping" << endl;
@@ -81,6 +89,7 @@ bool handleModeOption(string option, MotorController *mot, WeinerCounter *nim, V
     cout << "vscan  - initiates a voltage scan. Parameters for this test are set before running." << endl;
     cout << "vscanFile  - initiates a voltage scan. Parameters for this test are set before running." << endl;
     cout << "apscan - initiates an after-pulse scan. Parameters for this test are set before running." << endl;
+    cout << "apscanCount - initiates an after-pulse scan that is limited by line count." << endl;
     cout << "combo  - initiates a combination voltage and after-pulse scan. Parameters for this run are set before running." << endl;
     cout << "map    - initiates a mapping of a pixel. This characterizes the rate over the area near the pixel" << endl;
     cout << "mapPanel    - initiates a mapping of a pixel. This characterizes the rate over the entire panel" << endl;
@@ -107,7 +116,9 @@ void executeVScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt
 void executeVScanFile(MotorController* mot, WeinerCounter* nim, VoltageControl* volt){
   doVoltageScanFile(mot, nim, volt);
 }
-
+void executeAPScanCount(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
+  doAfterScanGraphMultiCount(mot, nim, volt);
+}
 void executeAPScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
   doAfterScanGraphMulti(mot, nim, volt);
 }

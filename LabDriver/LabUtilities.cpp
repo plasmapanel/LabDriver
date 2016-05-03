@@ -1,5 +1,8 @@
 #include "LabUtilities.h"
 #include <iomanip>
+#include <functional>
+
+using Spsc = boost::lockfree::spsc_queue < int, boost::lockfree::capacity<10000> > ;
 //Dunction used for converting weiner counter bin value to a count value
 //used in afterpulse tests
 inline static void correctCount(int &count, int next);
@@ -940,11 +943,35 @@ void doAfterPulse10(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg
   atomic<bool> done = false;
   thread t2(writeInfoAfter10, &q, &t, &done, fileName, ha, hg);
   readFromPixAfter10(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, &done, &q, &t, nim, numReadings);
-
-
-  
   t2.join();
 }
+
+void doAfterPulseNCountStop(string fileName, WeinerCounter* nim, const HeaderInfoGen& hg, const vector<int>& x, const vector<int>& y, int voltage, int countStop, int numReadings){
+  //assert(x.size() == y.size());
+  HeaderInfoAfter ha;
+  ha.numPixels = x.size();
+  ha.numReadings = numReadings;
+  ha.voltage = voltage;
+  stringstream ss;
+  string temp;
+  for (int i = 0, leni = x.size(); i < leni; ++i){
+    ss.str(std::string());
+    ss.clear();
+    ss << x[i] << "-" << y[i];
+    ss >> temp;
+    ha.pixels.push_back(temp);
+  }
+  vector < boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>> > q(x.size());
+  boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
+  atomic<bool> done = false;
+  atomic<bool> control = false;
+  thread t2(writeInfoAfterN,ref(q), ref(t), &done, &control, fileName, ha, hg, countStop);
+  readFromPixAfterNCountStop(x, &done, &control, q, t, nim, numReadings);
+  if (t2.joinable()){
+    t2.join();
+  }
+}
+
 static void readFromPixAfter10(int pix1, int pix2, int pix3, int pix4, int pix5, int pix6, int pix7, int pix8, int pix9, int pix10, atomic<bool> *done, boost::lockfree::spsc_queue<array<int, 10>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, WeinerCounter *nim, int readings){
   array<int, 10> arr;
   nim->resetAll();
@@ -1122,6 +1149,193 @@ static void writeInfoAfter10(boost::lockfree::spsc_queue<array<int, 10>, boost::
   }
   tr.Write();
   f.Save();
+}
+void readFromPixAfterNCountStop(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>>> &q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> &t, WeinerCounter* nim, int readings){
+  //assert(q->size() == pix.size());
+  int size = pix.size();
+  int readingCheck = 4 * 1000 / size / .5;
+  nim->resetAll();
+  t.push(HighResClock::now());
+  for (int i = 0; i < readings && !*control; ++i){
+    t.push(HighResClock::now());
+    for (int j = 0; j < size; ++j){
+      q[j].push(nim->readCounter(pix[j]));
+    }
+  }
+  *done = true;
+}
+static bool checkq(const boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>> &x){
+  return x.read_available() == 0;
+}
+static bool checkqg(const boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>> &x){
+  return x.read_available() > 0;
+}
+static bool checkqe(const boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>> &x){
+  return x.read_available() == 0;
+}
+void writeInfoAfterN(vector<boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>>>& q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>>& t, atomic<bool>* done, atomic<bool> *control, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg, int countStop){
+  //assert(q.size() < 20);
+  this_thread::sleep_for(chrono::microseconds(1000));
+  std::chrono::duration<double, std::milli> elapsed;
+  ofstream out;
+  out.open(fileName);
+  out << hg << ha;
+  out << " Time (ms)   ";
+  for (int i = 0, leni = ha.pixels.size(); i < leni; ++i){
+    out <<"Count "<< left << setw(13) << ha.pixels[i];
+  }
+   out<<endl;
+  
+  //should use something like std bind here
+  while (any_of(q.begin(), q.end(), checkq) || t.read_available() == 0){}
+  
+  this_thread::sleep_for(chrono::microseconds(1000));
+  
+  int count[20],prev[20];
+  for (int i = 0, leni = q.size(); i < leni; ++i){ count[i] = prev[i] = q[i].front(); }
+  for (int i = q.size(); i < 20; ++i){ count[i] = prev[i] = 0; }
+  
+  ////////////////////////////////////////////////////
+  string tempst;
+  tempst = fileName.substr(0, fileName.size() - 4);
+  tempst += ".root";
+  TFile f(tempst.c_str(), "RECREATE");
+  tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) AP";
+  TTree tr("ap", tempst.c_str());
+  char  tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
+  strcpy(tempPanel, hg.panelName.c_str());
+  strcpy(tempSource, hg.sourceName.c_str());
+  strcpy(tempGas, hg.gas.c_str());
+  strcpy(tempSetup, hg.sourceConfig.c_str());
+  strcpy(tempRO, hg.roLines.c_str());
+  strcpy(tempHV, hg.linesHV.c_str());
+  strcpy(tempTrigHV, hg.triggerHV.c_str());
+  strcpy(tempTrigRO, hg.triggerRO.c_str());
+  Double_t tstamp, tempPress, tempVolt, tempDiscThr, tempQuench, tempNumHv, tempNumRo, tempAttenRo, tempAttenHV;
+  tempPress = hg.pressure;
+  tempVolt = ha.voltage;
+  tempDiscThr = hg.discThresh;
+  tempQuench = hg.quench;
+  tempNumHv = hg.numHV;
+  tempNumRo = hg.numRO;
+  tempAttenRo = hg.attenRO;
+  tempAttenHV = hg.attenHV;
+  Int_t pixX[20];
+  Int_t pixY[20];
+  char holding[30];
+  for (int i = 0, len = ha.pixels.size(); i < len; ++i){
+    strcpy(holding, ha.pixels[i].c_str());
+    pixX[i] = atoi(strtok(holding, "-"));
+    pixY[i] = atoi(strtok(nullptr, "-"));
+  }
+  for (int i = ha.pixels.size(); i < 20; ++i){
+    pixX[i] = 0;
+    pixY[i] = 0;
+  }
+  Int_t tempSamp = ha.numReadings;
+  Int_t tempPix = ha.numPixels;
+  tr.Branch("panel", tempPanel, "panel[200]/C");
+  tr.Branch("source", tempSource, "source[200]/C");
+  tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
+  tr.Branch("gasmix", tempGas, "gasmix[200]/C");
+  tr.Branch("press", &tempPress, "press/D");
+  tr.Branch("hvVal", &tempVolt, "hvVal/D");
+  tr.Branch("disThr", &tempDiscThr, "disThr/D");
+  tr.Branch("quench", &tempQuench, "quench/D");
+  tr.Branch("trg_ro", tempTrigRO, "trg_ro[200]/C");
+  tr.Branch("dB_ro", &tempAttenRo, "dB_ro/s");
+  tr.Branch("nch_ro", &tempNumRo, "nch_ro/s");
+  tr.Branch("line_ro", tempRO, "line_ro[200]/C");
+  tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
+  tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
+  tr.Branch("nch_hv", &tempNumHv, "nch_hv/s");
+  tr.Branch("line_hv", tempHV, "line_hv[200]/C");
+  tr.Branch("tstamp", &tstamp, "tstamp/D");
+  tr.Branch("data", count, "data[20]/i");
+  tr.Branch("samps", &tempSamp, "samps/i");
+  tr.Branch("num_pix", &tempPix, "num_pix/i");
+  tr.Branch("pixX", pixX, "pixX[20]/i");
+  tr.Branch("pixY", pixY, "pixY[20]/i");
+  /////////////////////////////////////////////////////
+  HighResClock::time_point first = t.front();
+  elapsed = t.front() - first;
+  tstamp = elapsed.count();
+  out << setw(9) << fixed << setprecision(2) << elapsed.count();
+  for (int i = 0, leni = q.size(); i < leni; ++i){
+    out << "    " << setw(13) << count[i];
+  }
+  out << endl;
+  
+  //this should be changed to a for_each wtih memfn
+  //for_each(q.begin(), q.end(), mem_fn(&Spsc::pop));
+  for (auto &x : q){
+    x.pop();
+  }
+  
+  t.pop();
+  tr.Fill();
+  while (!*done){
+    this_thread::sleep_for(chrono::microseconds(10));
+    while (all_of(q.begin(), q.end(), checkqg)  && t.read_available() > 0){
+      for (int i = 0, leni = q.size(); i < leni; ++i){
+        prev[i] = count[i];
+        correctCount(count[i], q[i].front());
+      }
+      for (int i = 0, leni = q.size(); i < leni; ++i){
+        if (count[i] > prev[i]){
+          ////////////above this is fine
+          elapsed = t.front() - first;
+          tstamp = elapsed.count();
+          out << setw(9) << fixed << setprecision(2) << elapsed.count();
+          bool countCheck = true;
+          for (int j = 0, lenj = q.size(); j < lenj; ++j){
+            out << "    " << setw(13) << count[j];
+            if (count[j] < countStop){
+              countCheck = false;
+            }
+            if (countCheck){
+              *control = true;
+            }
+          }
+          out << endl;
+          tr.Fill();
+          break;
+
+        }
+      }
+      for (auto &x : q){
+        x.pop();
+      }
+      t.pop();
+    }
+  }
+  this_thread::sleep_for(chrono::microseconds(1000));
+  while (!t.empty() && !any_of(q.begin(), q.end(), checkqe)){
+    for (int i = 0, leni = q.size(); i < q.size(); ++i){
+      prev[i] = count[i];
+      correctCount(count[i], q[i].front());
+    }
+    for (int i = 0, leni = q.size(); i < leni; ++i){
+      if (count[i] > prev[i]){
+        elapsed = t.front() - first;
+        tstamp = elapsed.count();
+        out << setw(9) << fixed << setprecision(2) << elapsed.count();
+        for (int j = 0, lenj = q.size(); j < lenj; ++j){
+          out << "    " << setw(13) << count[j];
+        }
+        out << endl;
+        tr.Fill();
+        break;
+      }
+      for (auto &x : q){
+        x.pop();
+      }
+      t.pop();
+    }
+  }
+  tr.Write();
+  f.Save();
+  
 }
 
 
@@ -2771,7 +2985,174 @@ void doAfterScanGraphMultiAdapt(MotorController *mot, WeinerCounter *nim, Voltag
   log.close();
 }
 
+void doAfterScanGraphMultiCount(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
 
+  string path = ".\\CollectedData\\";
+  string runName;
+  ofstream log;
+  int starting;
+  int stop;
+  int step;
+  int num;
+  int numMeas = 1;
+  int tempNum;
+  int numSamples;
+  int intLength;
+  int maxCount;
+  vector<int> x;
+  vector<int> y;
+  string temp;
+  char tempc;
+  cout << "------------------------------------------" << endl;
+  cout << "----------After-Pulse Test----------------" << endl;
+  cout << "------------------------------------------" << endl;
+  HeaderInfoGen hg;
+  while (1){
+    cout << "generate header manually or read from a file?(file/manual): ";
+    cin >> temp;
+    cin.clear();
+    cin.ignore(10000, '\n');
+    if (temp == "manual"){
+      makeGenHead(hg);
+      break;
+    }
+    else if (temp == "file"){
+      cout << "What is the name of the file? ";
+      getline(cin, temp);
+      makeGenHeadFile(hg, temp);
+      break;
+    }
+    else{
+      cout << "Invalid option" << endl;
+    }
+  }
+  cout << "Start Voltage (V): ";
+  cin >> starting;
+  cin.clear();
+  cin.ignore(10000, '\n');
+  cout << "End Voltage (V): ";
+  cin >> stop;
+  cin.clear();
+  cin.ignore(10000, '\n');
+  if (stop < starting){
+    cerr << "Invalid Voltages" << endl;
+    exit(0);
+  }
+  cout << "Step Size (V): ";
+  cin >> step;
+  cout << "Number of Pixels being tested: ";
+  cin >> num;
+  cin.clear();
+  cin.ignore(10000, '\n');
+  x.resize(num);
+  y.resize(num);
+  for (int i = 0; i < num; ++i){
+    cout << "RO # of pixel " << i + 1 << ": ";
+    cin >> x[i];
+    cin.clear();
+    cin.ignore(10000, '\n');
+    cout << "HV # of pixel " << i + 1 << ": ";
+    cin >> y[i];
+  }
+  if (hg.sourceConfig == "Static"){
+    cout << "How many pixels should be measured at once? ";
+    cin >> numMeas;
+    if (numMeas > num){
+      cout << "# measured at once > # pixels" << endl;
+      cout << "measuring all pixels at once" << endl;
+      numMeas = num;
+    }
+    else if (num % numMeas != 0){
+      cout << "Warning Pixels will not be measured in the same number of sets" << endl;
+    }
+    mot->goToCenter();
+  }
+  else if (hg.sourceConfig == "Dynamic"){
+    numMeas = 1;
+  }
+  else if (hg.sourceConfig == "User"){
+    numMeas = 1;
+  }
+  cin.clear();
+  cin.ignore(10000, '\n');
+  cout << "how many samples, at most, should be take at each voltage?(default = 10000) ";
+  cin >> numSamples;
+  cin.clear();
+  cin.ignore(10000, '\n');
+  cout << "What is the maximum number of counts each line should read? ";
+  cin >> maxCount;
+  /*
+  cin.clear();
+  cin.ignore(10000, '\n');
+  cout << "What interval length should be used (ms)?";
+  cin >> intLength;
+  */
+  time_t t = time(nullptr);
+  CreateDirectory(path.c_str(), NULL);
+  runName = path + hg.gas + "\\";
+  CreateDirectory(runName.c_str(), NULL);
+  runName += to_string((int)hg.pressure);
+  runName += "torr\\";
+  CreateDirectory(runName.c_str(), NULL);
+  runName += hg.panelName + "_" + hg.gas + "_" + to_string((int)hg.pressure) + "_" + to_string(t) + "\\";
+  CreateDirectory(runName.c_str(), NULL);
+  log.open(runName + "log.txt", ofstream::app);
+  runName += "AfterPulse\\";
+  CreateDirectory(runName.c_str(), NULL);
+  log << "Intitalized After-Pulse Test" << endl;
+  log << "Starting: " << starting << endl;
+  log << "Stop: " << stop << endl;
+  log << "Step Size: " << step << endl;
+  log << "Number of Pixels: " << num << endl;
+  log << "Pixel List: " << endl;
+  for (int i = 0; i < num; ++i){
+    log << x[i] << "-" << y[i] << endl;
+  }
+  log << "Turning On High Voltage" << endl;
+  volt->turnOn();
+    for (int k = 0; k < num; k += numMeas){
+      for (int i = starting; i <= stop; i += step){
+        if (hg.sourceConfig == "User" && numMeas == 1){
+          Beep(900, 1000);
+          cout << "Please configure source for pixel " << x[k] << "-" << y[k] << endl;
+          while (1){
+            cout << "Is source placed correctly? (y/n): ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            tempc = cin.get();
+            if (tempc == 'y'){
+              break;
+            }
+            cin.clear();
+            cin.ignore(10000, '\n');
+          }
+          log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
+        }
+        if (hg.sourceConfig == "Dynamic" && numMeas == 1){
+          mot->moveToPix(x[k], y[k]);
+          log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
+        }
+        log << "Setting Voltage to: " << i << endl;
+        volt->setVoltage(i);
+        log << "Begin Counting" << endl;
+        if (k + numMeas > num){
+          tempNum = k - num;
+        }
+        else{
+          tempNum = numMeas;
+        }
+        temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(k - num) + "AP.txt";
+        vector<int> tempX(x.begin() + k, x.begin() + k + tempNum);
+        vector<int> tempY(y.begin() + k, y.begin() + k + tempNum);
+        doAfterPulseNCountStop(temp, nim, hg, tempX, tempY, i, maxCount, numSamples);
+        log << "Finished Counting" << endl;
+      }
+    }
+  log << "Turning Off High Voltage" << endl;
+  volt->turnOff();
+  log << "After-Pulse Scan Completed" << endl;
+  log.close();
+}
 
 int findLineWithLowestRate(WeinerCounter *nim, const vector<int> &lines){
   array<int, 20> count;

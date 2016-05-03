@@ -1,9 +1,9 @@
 Panel Name   MC22
-Source   bkg
+Source   Ru
 Source Config  Static
-Gas Mixture   79Ne20C2F61Ar
+Gas Mixture   80Ne17C2F63Ar
 Gas Pressure (Torr)   740
-R-quench (MOhm)   1000/500/200
+R-quench (MOhm)   1000/500
 Trigger Setup   0
 Discriminator Thr (mV)   1000
 Number RO lines   10

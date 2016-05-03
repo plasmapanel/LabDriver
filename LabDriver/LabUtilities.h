@@ -38,6 +38,10 @@ void doAfterPulse5(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg,
 void doAfterPulse10(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int x1, int y1,
                     int x2, int y2, int x3, int y3, int x4, int y4, int x5, int y5, int x6, int y6,
                     int x7, int y7, int x8, int y8, int x9, int y9, int x10, int y10, int voltage, int numReadings = 100000);
+
+void doAfterPulseNCountStop(string fileName, WeinerCounter* nim, const HeaderInfoGen& hg, const vector<int>& x,
+                            const vector<int>& y, int voltage, int countStop = 1, int numReadings = 100000);
+
 //uses the nim box to produce a counter file for the entire device saved in a file with the name fileName
 //counter functions
 //time-dependent non interruptable version
@@ -61,6 +65,7 @@ void doAfterScanGraphMulti(MotorController *mot, WeinerCounter *nim, VoltageCont
 void doAfterScanGraphMultiAndBack(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //performs an after pulse scan on multiple pixels and produces graphs with adaptive time intervals based on a proportion
 void doAfterScanGraphMultiAdapt(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
+void doAfterScanGraphMultiCount(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //initiates user free mode
 
 //IF YOU ARE USING THINS PACKAGE JUST FOR THE UTILITIES YOU DO NOT NEED TO BE CONCERNED WITH THE CODE BELOW
@@ -121,6 +126,12 @@ static void writeInfoAfter10(boost::lockfree::spsc_queue<array<int, 10>, boost::
                              boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t,
                              atomic<bool> *done, string fileName, const HeaderInfoAfter &ha, const HeaderInfoGen &hg);
 
+static void readFromPixAfterNCountStop(const vector<int> &pix, atomic<bool> *done, atomic<bool> *control, vector < boost::lockfree::spsc_queue < int,
+  boost::lockfree::capacity < 10000 > > > &q, boost::lockfree::spsc_queue < HighResClock::time_point,
+  boost::lockfree::capacity < 10000 > > &t, WeinerCounter *nim, int readings);
+static void writeInfoAfterN(vector<boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>>>& q,
+  boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>>& t, atomic<bool>* done, atomic<bool> *control, string fileName,
+                            const HeaderInfoAfter& ha, const HeaderInfoGen& hg, int countStop);
 //counter helper functions
 static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q,
                              boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done,

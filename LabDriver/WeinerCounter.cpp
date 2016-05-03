@@ -182,9 +182,6 @@ void WeinerCounter::update(int i, array<int, 20> &arr){
 }
 string WeinerCounter::getSerialNum(int i){
  char *temp = getSerialNum_((uint16_t)i);
- if (!temp){
-   throw;
- }
  return temp;
 }
 void WeinerCounter::openDevice(){
@@ -197,10 +194,6 @@ void WeinerCounter::openDevice(){
 }
 void WeinerCounter::closeDevice(){
   int temp = closeDevice_(handle);
-  if (temp < 0){
-    //throw if device opening fails
-    throw;
-  }
 }
 void WeinerCounter::openBox(){
   openDevice();
@@ -209,7 +202,7 @@ int WeinerCounter::numBytesAva(){
   int32_t temp1;
   uint32_t temp2;
   temp1 = numBytesAva_(handle, &temp2);
-  return (int)temp1;
+  return static_cast<int>(temp1);
 }
 
 void WeinerCounter::writeDevice(unsigned char* in, int size){
@@ -218,9 +211,6 @@ void WeinerCounter::writeDevice(unsigned char* in, int size){
   //this is the number of bytes that are being sent (ie length of string)
   //1 char = 1 byt
   temp = writeDevice_(handle, size, in);
-  if (temp < 0){
-    throw;
-  }
 }
 
 unsigned char* WeinerCounter::buildResetCounterString(int i, int &size){
@@ -316,11 +306,6 @@ int WeinerCounter::readDevice(int bytes){
   uint8_t temp[4];
   int check;
   check = readDevice_(handle, (uint32_t)bytes, temp);
-  /*
-  if (check < 0){
-    throw;
-  }
-  */
   int sum = temp[3];
   sum += temp[2]*256;
   
