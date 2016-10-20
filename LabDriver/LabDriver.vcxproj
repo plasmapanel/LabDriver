@@ -71,7 +71,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\plasmapanel\Documents\boost_1_58_0\boost_1_58_0; C:\root\include;C:\Python27\include; C:\CImg;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\boost_1_58_0;C:\Users\nristow\Documents\root\include;C:\Python27\include;C:\CImg\CImg-1.7.8</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;  %(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -81,7 +81,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\plasmapanel\Documents\boost_1_58_0\boost_1_58_0\stage\lib;C:\root\bin; C:\root\lib; C:\Python27\libs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\boost_1_58_0\lib32-msvc-12.0;C:\boost_1_58_0\boost_1_58_0\stage\lib;C:\Users\nristow\Documents\root\lib;C:\Users\nristow\Documents\root\bin;C:\root\bin;C:\root\lib;C:\Python27\libs</AdditionalLibraryDirectories>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;libCore.lib;libGPad.lib;libGui.lib;libGraf.lib;libTree.lib;libHist.lib;libCint.lib;libRint.lib;libCore.lib;libGPad.lib;libGui.lib;libGraf.lib;libTree.lib;libHist.lib;libCint.lib;libRint.lib;libRIO.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>

@@ -11,7 +11,7 @@ This file contains all of the utilities that will be used with our lab setup
 #include "headers.h"
 #include "stdafx.h"
 #include "headers.h"
-#include "CImg-1.6.5_pre062415\CImg.h"
+#include "CImg.h"
 #include "TTree.h"
 #include "TFile.h"
 using namespace std;
