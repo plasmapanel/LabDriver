@@ -28,7 +28,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     button_6 = new wxButton(this, wxID_ANY, _("Home X"));
     button_3 = new wxButton(this, wxID_ANY, _("Y-"));
     button_7 = new wxButton(this, wxID_ANY, _("Home Y"));
-    const wxString combo_box_1_choices[] = {};
+    const wxString combo_box_1_choices[3] = {};
     combo_box_1 = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, combo_box_1_choices, wxCB_READONLY);
 
     set_properties();

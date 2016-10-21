@@ -71,9 +71,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\nristow\Documents\wxWidgets-3.1.0\include\msvc;C:\Users\nristow\Documents\wxWidgets-3.1.0\include;C:\boost_1_58_0;C:\Users\nristow\Documents\root\include;C:\Python27\include;C:\CImg\CImg-1.7.8</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nristow\Documents\wxWidgets-3.1.0\include;C:\Users\nristow\Documents\wxWidgets-3.1.0\include\msvc;C:\boost_1_58_0;C:\Users\nristow\Documents\root\include;C:\Python27\include;C:\CImg\CImg-1.7.8</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;  %(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;WXUSINGDLL;wxMSVC_VERSION_AUTO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -81,7 +81,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\nristow\Documents\wxWidgets-3.1.0;C:\boost_1_58_0\lib32-msvc-12.0;C:\boost_1_58_0\boost_1_58_0\stage\lib;C:\Users\nristow\Documents\root\lib;C:\Users\nristow\Documents\root\bin;C:\root\bin;C:\root\lib;C:\Python27\libs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\nristow\Documents\wxWidgets-3.1.0\lib\vc120_dll;C:\boost_1_58_0\lib32-msvc-12.0;C:\boost_1_58_0\boost_1_58_0\stage\lib;C:\Users\nristow\Documents\root\lib;C:\Users\nristow\Documents\root\bin;C:\root\bin;C:\root\lib;C:\Python27\libs</AdditionalLibraryDirectories>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;libCore.lib;libGPad.lib;libGui.lib;libGraf.lib;libTree.lib;libHist.lib;libCint.lib;libRint.lib;libCore.lib;libGPad.lib;libGui.lib;libGraf.lib;libTree.lib;libHist.lib;libCint.lib;libRint.lib;libRIO.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -160,7 +160,9 @@
     <ClCompile Include="headers.cpp" />
     <ClCompile Include="HighResClock.cpp" />
     <ClCompile Include="LabUtilities.cpp" />
-    <ClCompile Include="LabView.cpp" />
+    <ClCompile Include="LabView.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="messages.cpp" />
     <ClCompile Include="MotorController.cpp" />
     <ClCompile Include="RootGraph.cpp" />
