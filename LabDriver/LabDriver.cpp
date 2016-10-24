@@ -2,6 +2,8 @@
 #include "LabDriver.h"
 #include "LabView.h"
 
+wxIMPLEMENT_APP(LabDriver);
+
 LabDriver::LabDriver()
 {
 }
@@ -12,9 +14,8 @@ LabDriver::~LabDriver()
 
 bool LabDriver::OnInit()
 {
-	wxFrame* mainFrame = new wxFrame(nullptr, wxID_ANY, L"MyProject");
-	mainFrame->Show(true);
+	MainFrame* labView = new MainFrame(nullptr, wxID_ANY, "Title");
+	labView->Show(true);
 	return true;
 }
 
-wxIMPLEMENT_APP(LabDriver);

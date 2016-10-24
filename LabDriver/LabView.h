@@ -34,11 +34,13 @@ public:
     // end wxGlade
 
     MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_FRAME_STYLE);
-
+	void onQuit(wxCommandEvent& event);
 private:
     // begin wxGlade: MainFrame::methods
     void set_properties();
     void do_layout();
+	void do_events();
+	//void onQuit(wxCommandEvent&);
     // end wxGlade
 
 protected:
@@ -53,6 +55,9 @@ protected:
     wxButton* button_7;
     wxComboBox* combo_box_1;
     // end wxGlade
+
+	wxMenuBar *menubar;
+	wxMenu *file;
 }; // wxGlade: end class
 
 

@@ -1,0 +1,31 @@
+﻿Build started 10/24/2016 12:26:05 PM.
+Project "C:\Users\nristow\Source\Repos\LabDrivers1\LabDriver\LabDriver.vcxproj" on node 2 (Build target(s)).
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\nristow\Documents\wxWidgets-3.1.0\include" /I"C:\Users\nristow\Documents\wxWidgets-3.1.0\include\msvc" /IC:\boost_1_58_0 /IC:\Users\nristow\Documents\root\include /IC:\Python27\include /I"C:\CImg\CImg-1.7.8" /Zi /nologo /W3 /WX- /sdl /Od /Ob2 /Oi /Ot /Oy- /GL /D _UNICODE /D UNICODE /D _MBCS /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D WXUSINGDLL /D wxMSVC_VERSION_AUTO /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt LabView.cpp
+  LabView.cpp
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\nristow\Source\Repos\LabDrivers1\Debug\LabDriver.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\nristow\Documents\wxWidgets-3.1.0\lib\vc120_dll" /LIBPATH:"C:\boost_1_58_0\lib32-msvc-12.0" /LIBPATH:C:\boost_1_58_0\boost_1_58_0\stage\lib /LIBPATH:C:\Users\nristow\Documents\root\lib /LIBPATH:C:\Users\nristow\Documents\root\bin /LIBPATH:C:\root\bin /LIBPATH:C:\root\lib /LIBPATH:C:\Python27\libs kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib libCore.lib libGPad.lib libGui.lib libGraf.lib libTree.lib libHist.lib libCint.lib libRint.lib libCore.lib libGPad.lib libGui.lib libGraf.lib libTree.lib libHist.lib libCint.lib libRint.lib libRIO.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\nristow\Source\Repos\LabDrivers1\Debug\LabDriver.pdb" /OPT:REF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\nristow\Source\Repos\LabDrivers1\Debug\LabDriver.lib" /MACHINE:X86 Debug\ComPort.obj
+  Debug\freeMode.obj
+  Debug\headers.obj
+  Debug\HighResClock.obj
+  Debug\LabUtilities.obj
+  Debug\LabView.obj
+  Debug\messages.obj
+  Debug\MotorController.obj
+  Debug\RootGraph.obj
+  Debug\stdafx.obj
+  Debug\LabDriver.obj
+  Debug\VoltageControl.obj
+  Debug\VxmDriver.obj
+  Debug\WeinerCounter.obj
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/OPT:REF' specification
+  ComPort.obj : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
+  Generating code
+  Finished generating code
+  LabDriver.vcxproj -> C:\Users\nristow\Source\Repos\LabDrivers1\Debug\LabDriver.exe
+Done Building Project "C:\Users\nristow\Source\Repos\LabDrivers1\LabDriver\LabDriver.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:33.74

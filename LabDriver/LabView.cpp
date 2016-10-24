@@ -31,8 +31,17 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     const wxString combo_box_1_choices[3] = {};
     combo_box_1 = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, combo_box_1_choices, wxCB_READONLY);
 
+	// own code
+	menubar = new wxMenuBar;
+	file = new wxMenu;
+
+
+
     set_properties();
+	do_events();
     do_layout();
+
+
     // end wxGlade
 }
 
@@ -55,7 +64,7 @@ void MainFrame::do_layout()
     grid_sizer_2->Add(up, 0, wxEXPAND, 0);
     grid_sizer_2->Add(button_2, 0, wxEXPAND, 0);
     grid_sizer_2->Add(button_5, 0, wxALIGN_CENTER, 0);
-    grid_sizer_2->Add(button_4, 0, wxALIGN_CENTER|wxEXPAND, 0);
+    grid_sizer_2->Add(button_4, 0, wxALIGN_CENTER, 0);// |wxEXPAND
     grid_sizer_2->Add(button_6, 0, wxALIGN_CENTER, 0);
     grid_sizer_2->Add(button_3, 0, wxEXPAND, 0);
     grid_sizer_2->Add(button_7, 0, wxALIGN_CENTER, 0);
@@ -64,7 +73,22 @@ void MainFrame::do_layout()
     sizer_1->Add(grid_sizer_1, 1, 0, 0);
     SetSizer(sizer_1);
     sizer_1->Fit(this);
+
+	file->Append(wxID_EXIT, wxT("&Quit"));
+	menubar->Append(file, wxT("&File"));
+	SetMenuBar(menubar);
+
     Layout();
     // end wxGlade
 }
 
+void MainFrame::do_events()
+{
+	Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(MainFrame::onQuit));
+}
+
+void MainFrame::onQuit(wxCommandEvent& WXUNUSED(event))
+{
+	Close(true);
+}
