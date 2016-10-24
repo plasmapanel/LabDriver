@@ -144,6 +144,7 @@
     <ClInclude Include="freeMode.h" />
     <ClInclude Include="headers.h" />
     <ClInclude Include="HighResClock.h" />
+    <ClInclude Include="LabDriver.h" />
     <ClInclude Include="LabUtilities.h" />
     <ClInclude Include="LabView.h" />
     <ClInclude Include="messages.h" />
@@ -167,7 +168,9 @@
     <ClCompile Include="MotorController.cpp" />
     <ClCompile Include="RootGraph.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="LabDriver.cpp" />
+    <ClCompile Include="LabDriver.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">UNICODE;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="VoltageControl.cpp" />
     <ClCompile Include="VxmDriver.cpp" />
     <ClCompile Include="WeinerCounter.cpp" />
