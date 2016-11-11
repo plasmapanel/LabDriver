@@ -40,8 +40,22 @@ private:
     void set_properties();
     void do_layout();
 	void do_events();
+
 	//void onQuit(wxCommandEvent&);
     // end wxGlade
+
+	int distanceToMove;
+
+	void yUpButtonClicked(wxCommandEvent&);
+	void yDownButtonClicked(wxCommandEvent&);
+	void xLeftButtonClicked(wxCommandEvent&);
+	void xRightButtonClicked(wxCommandEvent&);
+	void distanceBoxClicked(wxCommandEvent&);
+	void homeButtonClicked(wxCommandEvent&);
+	void goToHomeButtonClicked(wxCommandEvent&);
+	void goToXHomeButtonClicked(wxCommandEvent&);
+	void goToYHomeButtonClicked(wxCommandEvent&);
+	int convertDistance(int);
 
 protected:
     // begin wxGlade: MainFrame::attributes
@@ -54,10 +68,12 @@ protected:
     wxButton* button_3;
     wxButton* button_7;
     wxComboBox* combo_box_1;
+	wxRadioBox* distanceBox;
     // end wxGlade
 
 	wxMenuBar *menubar;
 	wxMenu *file;
+	wxMenu *edit;
 }; // wxGlade: end class
 
 

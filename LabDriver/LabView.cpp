@@ -10,11 +10,15 @@
 //
 
 #include "LabView.h"
+#include "MotorController.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
+const float STEPPERTURN = 400/25.4; //TODO change this to be se from within the header dialog
 
+//MotorController mot(6, 9600);
+extern MotorController* mot;
 
 MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
     wxFrame(parent, id, title, pos, size, style)
@@ -22,26 +26,53 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
     // begin wxGlade: MainFrame::MainFrame
     button_8 = new wxButton(this, wxID_ANY, _("Set Home"));
     up = new wxButton(this, wxID_ANY, _("Y+"));
+	up->Bind(wxEVT_BUTTON, &MainFrame::yUpButtonClicked, this);
     button_2 = new wxButton(this, wxID_ANY, _("X-"));
-    button_5 = new wxButton(this, wxID_ANY, _("Home XY"));
-    button_4 = new wxButton(this, wxID_ANY, _("X+"));
+	button_2->Bind(wxEVT_BUTTON, &MainFrame::xLeftButtonClicked, this);
+	button_5 = new wxButton(this, wxID_ANY, _("Home XY"));	
+	button_5->Bind(wxEVT_BUTTON, &MainFrame::homeButtonClicked, this);
+	button_4 = new wxButton(this, wxID_ANY, _("X+"));
+	button_4->Bind(wxEVT_BUTTON, &MainFrame::xRightButtonClicked, this);
     button_6 = new wxButton(this, wxID_ANY, _("Home X"));
-    button_3 = new wxButton(this, wxID_ANY, _("Y-"));
+	//up->Bind(wxEVT_BUTTON, &MainFrame::goToXHomeButtonClicked, this);
+	button_3 = new wxButton(this, wxID_ANY, _("Y-"));
+	button_3->Bind(wxEVT_BUTTON, &MainFrame::yDownButtonClicked, this);
     button_7 = new wxButton(this, wxID_ANY, _("Home Y"));
+	//up->Bind(wxEVT_BUTTON, &MainFrame::goToYHomeButtonClicked, this);
     const wxString combo_box_1_choices[3] = {};
     combo_box_1 = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, combo_box_1_choices, wxCB_READONLY);
 
+	wxArrayString distanceBoxLabels;
+	distanceBoxLabels.Add("0.01");
+	distanceBoxLabels.Add("0.10");
+	distanceBoxLabels.Add("1.00");
+	distanceBoxLabels.Add("5.00");
+	distanceBoxLabels.Add("10.00");
+
+	distanceBox = new wxRadioBox(this, wxID_ANY, "Distance (mm)", wxDefaultPosition, wxDefaultSize,
+		distanceBoxLabels, 5, wxRA_SPECIFY_COLS);
+	distanceBox->Bind(wxEVT_RADIOBOX, &MainFrame::distanceBoxClicked, this);
 	// own code
 	menubar = new wxMenuBar;
 	file = new wxMenu;
+	edit = new wxMenu;
 
 
+	wxStatusBar status = new wxStatusBar(this, wxID_ANY);
+	//int x;
+	//int y;
 
-    set_properties();
+	//int* w = &x;
+	//int* h = &y;
+
+
+	//GetSize(w, h);
+	//wxSize frameSize(x, y);
+	//SetMinSize(size);
+
+	set_properties();
 	do_events();
-    do_layout();
-
-
+	do_layout();
     // end wxGlade
 }
 
@@ -60,8 +91,10 @@ void MainFrame::do_layout()
     wxBoxSizer* sizer_1 = new wxBoxSizer(wxVERTICAL);
     wxGridSizer* grid_sizer_1 = new wxGridSizer(3, 2, 0, 0);
     wxGridSizer* grid_sizer_2 = new wxGridSizer(3, 3, 0, 0);
+	wxGridSizer* distance = new wxGridSizer(1, 3, 0, 0);
     grid_sizer_2->Add(button_8, 0, wxALIGN_CENTER, 0);
     grid_sizer_2->Add(up, 0, wxEXPAND, 0);
+	grid_sizer_2->Add(0, 0);
     grid_sizer_2->Add(button_2, 0, wxEXPAND, 0);
     grid_sizer_2->Add(button_5, 0, wxALIGN_CENTER, 0);
     grid_sizer_2->Add(button_4, 0, wxALIGN_CENTER, 0);// |wxEXPAND
@@ -69,6 +102,9 @@ void MainFrame::do_layout()
     grid_sizer_2->Add(button_3, 0, wxEXPAND, 0);
     grid_sizer_2->Add(button_7, 0, wxALIGN_CENTER, 0);
     grid_sizer_1->Add(grid_sizer_2, 1, 0, 0);
+	grid_sizer_1->Add(0, 0);
+	grid_sizer_1->Add(distanceBox, 0, 0, 0);
+
     grid_sizer_1->Add(combo_box_1, 0, wxALIGN_CENTER, 0);
     sizer_1->Add(grid_sizer_1, 1, 0, 0);
     SetSizer(sizer_1);
@@ -92,3 +128,78 @@ void MainFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 {
 	Close(true);
 }
+
+void MainFrame::yUpButtonClicked(wxCommandEvent & event)
+{
+	//distanceToMove = distanceBox->GetSelection();
+	mot->stepMotor(2, distanceToMove);
+
+}
+
+void MainFrame::yDownButtonClicked(wxCommandEvent & event)
+{
+	//distanceToMove = distanceBox->GetSelection();
+	mot->stepMotor(2, -distanceToMove);
+
+}
+
+void MainFrame::xLeftButtonClicked(wxCommandEvent & event)
+{
+	//distanceToMove = distanceBox->GetSelection();
+	mot->stepMotor(1, distanceToMove);
+
+}
+
+void MainFrame::xRightButtonClicked(wxCommandEvent & event)
+{
+	//distanceToMove = distanceBox->GetSelection();
+	mot->stepMotor(1, -distanceToMove);
+
+}
+
+void MainFrame::homeButtonClicked(wxCommandEvent & event)
+{
+	//distanceToMove = distanceBox->GetSelection();
+	mot->setZeroX();
+	mot->setZeroY();
+}
+
+void MainFrame::goToHomeButtonClicked(wxCommandEvent & event)
+{
+	//distanceToMove = distanceBox->GetSelection();
+	mot->goZero();
+}
+
+void MainFrame::distanceBoxClicked(wxCommandEvent & event)
+{
+	distanceToMove = convertDistance(distanceBox->GetSelection());
+}
+
+int MainFrame::convertDistance(int radioButton)
+{
+	int ret;
+	switch (radioButton)
+	{
+	case 0:
+		ret = (int) (0.01 * STEPPERTURN);
+		break;
+	case 1:
+		ret = (int)(0.1 * STEPPERTURN);
+		break;
+	case 2:
+		ret = (int)(1.0 * STEPPERTURN);
+		break;
+	case 3:
+		ret = (int)(5.0 * STEPPERTURN);
+		break;
+	case 4:
+		ret = (int)(10.0 * STEPPERTURN);
+		break;
+	default:
+		ret = -100;
+		break;
+	}
+
+	return ret;
+}
+	
