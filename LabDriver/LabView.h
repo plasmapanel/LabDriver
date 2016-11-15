@@ -45,6 +45,7 @@ private:
     // end wxGlade
 
 	int distanceToMove;
+	string scanType;
 
 	void yUpButtonClicked(wxCommandEvent&);
 	void yDownButtonClicked(wxCommandEvent&);
@@ -56,6 +57,7 @@ private:
 	void goToXHomeButtonClicked(wxCommandEvent&);
 	void goToYHomeButtonClicked(wxCommandEvent&);
 	int convertDistance(int);
+	void scanChooser(wxCommandEvent&);
 
 protected:
     // begin wxGlade: MainFrame::attributes
@@ -67,13 +69,16 @@ protected:
     wxButton* button_6;
     wxButton* button_3;
     wxButton* button_7;
-    wxComboBox* combo_box_1;
+    wxChoice* combo_box_1;
 	wxRadioBox* distanceBox;
     // end wxGlade
 
 	wxMenuBar *menubar;
 	wxMenu *file;
 	wxMenu *edit;
+
+	wxMenuItem* pref;
+	wxMenuItem* header;
 }; // wxGlade: end class
 
 

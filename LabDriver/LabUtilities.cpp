@@ -1732,6 +1732,7 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
 
 
   time_t t = time(nullptr);
+  // TODO: add identifier to first directory, possibly panel name?
   CreateDirectory(path.c_str(), NULL);
   runName = path + hg.gas + "\\";
   CreateDirectory(runName.c_str(), NULL);

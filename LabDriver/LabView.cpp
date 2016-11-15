@@ -11,14 +11,17 @@
 
 #include "LabView.h"
 #include "MotorController.h"
+#include "VoltageControlNI.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-const float STEPPERTURN = 400/25.4; //TODO change this to be se from within the header dialog
+const float STEPPERTURN = 400;
+const float STEPPERMM = STEPPERTURN/25.4; //TODO change this to be se from within the header dialog
 
 //MotorController mot(6, 9600);
 extern MotorController* mot;
+extern VoltageNI* volt;
 
 MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
     wxFrame(parent, id, title, pos, size, style)
@@ -39,9 +42,9 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	button_3->Bind(wxEVT_BUTTON, &MainFrame::yDownButtonClicked, this);
     button_7 = new wxButton(this, wxID_ANY, _("Home Y"));
 	//up->Bind(wxEVT_BUTTON, &MainFrame::goToYHomeButtonClicked, this);
-    const wxString combo_box_1_choices[3] = {};
-    combo_box_1 = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, combo_box_1_choices, wxCB_READONLY);
-
+    const wxString combo_box_1_choices[3] = {"Free","Pixel Scan", "Pixel Map"};
+	combo_box_1 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 3, combo_box_1_choices, 0L, wxDefaultValidator, wxT("Scan Type"));
+	combo_box_1->Bind(wxEVT_CHOICE, scanChooser, this);
 	wxArrayString distanceBoxLabels;
 	distanceBoxLabels.Add("0.01");
 	distanceBoxLabels.Add("0.10");
@@ -56,9 +59,10 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	menubar = new wxMenuBar;
 	file = new wxMenu;
 	edit = new wxMenu;
-
-
-	wxStatusBar status = new wxStatusBar(this, wxID_ANY);
+	
+	wxStatusBar* m_statusBar2;
+	//wxStatusBar status = new wxStatusBar(this, wxID_ANY);
+	m_statusBar2 = this->CreateStatusBar(1, wxST_SIZEGRIP, wxID_ANY);
 	//int x;
 	//int y;
 
@@ -89,7 +93,7 @@ void MainFrame::do_layout()
 {
     // begin wxGlade: MainFrame::do_layout
     wxBoxSizer* sizer_1 = new wxBoxSizer(wxVERTICAL);
-    wxGridSizer* grid_sizer_1 = new wxGridSizer(3, 2, 0, 0);
+    wxGridSizer* grid_sizer_1 = new wxGridSizer(2, 2, 0, 0);
     wxGridSizer* grid_sizer_2 = new wxGridSizer(3, 3, 0, 0);
 	wxGridSizer* distance = new wxGridSizer(1, 3, 0, 0);
     grid_sizer_2->Add(button_8, 0, wxALIGN_CENTER, 0);
@@ -110,10 +114,22 @@ void MainFrame::do_layout()
     SetSizer(sizer_1);
     sizer_1->Fit(this);
 
+	wxMenuItem* pref;
+	pref = new wxMenuItem(edit, wxID_ANY, wxString(wxT("pref")), wxEmptyString, wxITEM_NORMAL);
+	edit->Append(pref);
+
 	file->Append(wxID_EXIT, wxT("&Quit"));
+	//edit->Append(pref, _("Item1"));
+	//edit->Append(header);
 	menubar->Append(file, wxT("&File"));
+	menubar->Append(edit, wxT("&Edit"));
+
+
+	//pref = new wxMenuItem(edit, wxID_ANY, wxT("&Preferences"));
+	//header = new wxMenuItem(edit, wxID_ANY, wxT("&Edit Header"));
 	SetMenuBar(menubar);
 
+	Fit();
     Layout();
     // end wxGlade
 }
@@ -181,19 +197,19 @@ int MainFrame::convertDistance(int radioButton)
 	switch (radioButton)
 	{
 	case 0:
-		ret = (int) (0.01 * STEPPERTURN);
+		ret = (int) (0.01 * STEPPERMM);
 		break;
 	case 1:
-		ret = (int)(0.1 * STEPPERTURN);
+		ret = (int)(0.1 * STEPPERMM);
 		break;
 	case 2:
-		ret = (int)(1.0 * STEPPERTURN);
+		ret = (int)(1.0 * STEPPERMM);
 		break;
 	case 3:
-		ret = (int)(5.0 * STEPPERTURN);
+		ret = (int)(5.0 * STEPPERMM);
 		break;
 	case 4:
-		ret = (int)(10.0 * STEPPERTURN);
+		ret = (int)(10.0 * STEPPERMM);
 		break;
 	default:
 		ret = -100;
@@ -201,5 +217,26 @@ int MainFrame::convertDistance(int radioButton)
 	}
 
 	return ret;
+}
+
+void MainFrame::scanChooser(wxCommandEvent & event)
+{
+	int scanChosen = combo_box_1->GetSelection();
+
+	switch (scanChosen)
+	{
+	case 0:
+		scanType = "Free";
+		break;
+	case 1:
+		scanType = "PixelScan";
+		break;
+	case 2:
+		scanType = "PixelMap";
+		break;
+	default:
+		scanType = "None";
+		break;
+	}
 }
 	

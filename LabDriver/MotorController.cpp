@@ -485,6 +485,7 @@ void MotorController::mapPanel(string filename, WeinerCounter* nim, double timeT
   out << "maxStepX: " << maxStepX << endl;
   out << "maxStepY: " << maxStepY << endl;
   vector<int>count;
+
   double actualTime = 0;
   vector<tuple<int, int, double>> mapping;
   vector<int> xoffset, yoffset;
