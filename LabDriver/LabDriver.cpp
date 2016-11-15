@@ -1,4 +1,5 @@
 #include <wx/wxprec.h>
+#include <wx/xrc/
 #include "LabDriver.h"
 #include "LabView.h"
 #include "MotorController.h"
@@ -30,3 +31,7 @@ bool LabDriver::OnInit()
 	return true;
 }
 
+bool LabDriver::OnInit()
+{
+	wxXmlResource::Get()->
+}

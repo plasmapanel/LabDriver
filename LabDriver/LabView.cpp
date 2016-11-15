@@ -44,7 +44,7 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	//up->Bind(wxEVT_BUTTON, &MainFrame::goToYHomeButtonClicked, this);
     const wxString combo_box_1_choices[3] = {"Free","Pixel Scan", "Pixel Map"};
 	combo_box_1 = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 3, combo_box_1_choices, 0L, wxDefaultValidator, wxT("Scan Type"));
-	combo_box_1->Bind(wxEVT_CHOICE, scanChooser, this);
+	combo_box_1->Bind(wxEVT_CHOICE, &MainFrame::scanChooser, this);
 	wxArrayString distanceBoxLabels;
 	distanceBoxLabels.Add("0.01");
 	distanceBoxLabels.Add("0.10");
@@ -93,7 +93,9 @@ void MainFrame::do_layout()
 {
     // begin wxGlade: MainFrame::do_layout
     wxBoxSizer* sizer_1 = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* chosenType = new wxBoxSizer(wxHORIZONTAL);
     wxGridSizer* grid_sizer_1 = new wxGridSizer(2, 2, 0, 0);
+	wxBoxSizer* leftSide = new wxBoxSizer(wxVERTICAL);
     wxGridSizer* grid_sizer_2 = new wxGridSizer(3, 3, 0, 0);
 	wxGridSizer* distance = new wxGridSizer(1, 3, 0, 0);
     grid_sizer_2->Add(button_8, 0, wxALIGN_CENTER, 0);
@@ -105,14 +107,24 @@ void MainFrame::do_layout()
     grid_sizer_2->Add(button_6, 0, wxALIGN_CENTER, 0);
     grid_sizer_2->Add(button_3, 0, wxEXPAND, 0);
     grid_sizer_2->Add(button_7, 0, wxALIGN_CENTER, 0);
+	chosenType->Add(combo_box_1);
+
+
+
+	//leftSide->Add(grid_sizer_2);
+	//leftSide->Add(distanceBox);
+	//leftSide->Add(chosenType);
+	//sizer_1->Add(leftSide);
+
     grid_sizer_1->Add(grid_sizer_2, 1, 0, 0);
 	grid_sizer_1->Add(0, 0);
 	grid_sizer_1->Add(distanceBox, 0, 0, 0);
 
-    grid_sizer_1->Add(combo_box_1, 0, wxALIGN_CENTER, 0);
-    sizer_1->Add(grid_sizer_1, 1, 0, 0);
-    SetSizer(sizer_1);
-    sizer_1->Fit(this);
+
+    //grid_sizer_1->Add(chosenType, 1, 0);
+   sizer_1->Add(grid_sizer_1, 1, 0, 0);
+    //SetSizer(sizer_1);
+    //sizer_1->Fit(this);
 
 	wxMenuItem* pref;
 	pref = new wxMenuItem(edit, wxID_ANY, wxString(wxT("pref")), wxEmptyString, wxITEM_NORMAL);
@@ -221,7 +233,7 @@ int MainFrame::convertDistance(int radioButton)
 
 void MainFrame::scanChooser(wxCommandEvent & event)
 {
-	int scanChosen = combo_box_1->GetSelection();
+	static int scanChosen = combo_box_1->GetSelection();
 
 	switch (scanChosen)
 	{
