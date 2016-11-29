@@ -4,12 +4,12 @@ using namespace std;
 static const int STEP_WAIT_TIME = 10000; //this is the timeout time for checking for '^' this stops the program from hanging if it is not found
 //this should be set such that it is long enough where the motor waits for the longest possible move to complete
 MotorController::MotorController(long PortNumber, long BaudRate){
-  LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Desktop\\newSetupStuff\\WORKINGLD\\LabDriver\\VxmDriver.dll";
+  LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Documents\\devlibs\\vxmdriver\\VxmDriver.dll";
   LoadDriver(DriverPath);
   PortOpen(PortNumber, BaudRate);
 }
 MotorController::MotorController(long PortNumber, long BaudRate, string filename){
-  LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Desktop\\newSetupStuff\\WORKINGLD\\LabDriver\\VxmDriver.dll";
+  LPCSTR DriverPath = "C:\\Users\\plasmapanel\\Documents\\devlibs\\vxmdriver\\VxmDriver.dll";
   LoadDriver(DriverPath);
   PortOpen(PortNumber, BaudRate);
   setUpGrid(filename);

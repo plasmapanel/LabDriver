@@ -16,116 +16,150 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-const float STEPPERTURN = 400;
-const float STEPPERMM = STEPPERTURN/25.4; //TODO change this to be se from within the header dialog
+const float MMPERSTEP = 0.0050;
+//const float STEPPERMM = STEPPERTURN/25.4; //TODO change this to be se from within the header dialog
 
-//MotorController mot(6, 9600);
-extern MotorController* mot;
-extern VoltageNI* volt;
 
-void MainFrame::do_events()
+
+MotorController* mot;
+VoltageNI* volt;
+
+
+
+BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
-	Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(MainFrame::onQuit));
+	//mot = new MotorController(3, 9600);
+	//volt = new VoltageNI();
 }
 
-void MainFrame::onQuit(wxCommandEvent& WXUNUSED(event))
+void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 {
 	Close(true);
 }
-
-void MainFrame::yUpButtonClicked(wxCommandEvent & event)
+//
+void BigFrame::yUpButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
 	mot->stepMotor(2, distanceToMove);
 
 }
 
-void MainFrame::yDownButtonClicked(wxCommandEvent & event)
+void BigFrame::yDownButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
 	mot->stepMotor(2, -distanceToMove);
 
 }
 
-void MainFrame::xLeftButtonClicked(wxCommandEvent & event)
+void BigFrame::xLeftButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
 	mot->stepMotor(1, distanceToMove);
 
 }
 
-void MainFrame::xRightButtonClicked(wxCommandEvent & event)
+void BigFrame::xRightButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
 	mot->stepMotor(1, -distanceToMove);
 
 }
 
-void MainFrame::homeButtonClicked(wxCommandEvent & event)
+void BigFrame::homeButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
 	mot->setZeroX();
 	mot->setZeroY();
 }
 
-void MainFrame::goToHomeButtonClicked(wxCommandEvent & event)
+void BigFrame::goToHomeButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
 	mot->goZero();
 }
 
-void MainFrame::distanceBoxClicked(wxCommandEvent & event)
+void BigFrame::distanceBoxClicked(wxCommandEvent & event)
 {
 	distanceToMove = convertDistance(distanceBox->GetSelection());
 }
-
-int MainFrame::convertDistance(int radioButton)
+//
+int BigFrame::convertDistance(int radioButton)
 {
 	int ret;
 	switch (radioButton)
 	{
 	case 0:
-		ret = (int) (0.01 * STEPPERMM);
+		ret = (int) (0.01 / MMPERSTEP);
 		break;
 	case 1:
-		ret = (int)(0.1 * STEPPERMM);
+		ret = (int)(0.1 / MMPERSTEP);
 		break;
 	case 2:
-		ret = (int)(1.0 * STEPPERMM);
+		ret = (int)(1.0 / MMPERSTEP);
 		break;
 	case 3:
-		ret = (int)(5.0 * STEPPERMM);
+		ret = (int)(5.0 / MMPERSTEP);
 		break;
 	case 4:
-		ret = (int)(10.0 * STEPPERMM);
+		ret = (int)(10.0 / MMPERSTEP);
 		break;
 	default:
-		ret = -100;
+		ret = 0;
 		break;
 	}
 
 	return ret;
 }
+//
+//void MainFrame::scanChooser(wxCommandEvent & event)
+//{
+//	static int scanChosen = combo_box_1->GetSelection();
+//
+//	switch (scanChosen)
+//	{
+//	case 0:
+//		scanType = "Free";
+//		break;
+//	case 1:
+//		scanType = "PixelScan";
+//		break;
+//	case 2:
+//		scanType = "PixelMap";
+//		break;
+//	default:
+//		scanType = "None";
+//		break;
+//	}
+//}
 
-void MainFrame::scanChooser(wxCommandEvent & event)
+//wxStaticBoxSizer* test;
+
+void BigFrame::toggleHV(wxCommandEvent& event)
 {
-	static int scanChosen = combo_box_1->GetSelection();
-
-	switch (scanChosen)
+	int voltageStatus = m_radioBox3->GetSelection();
+	if (voltageStatus == 0)
 	{
-	case 0:
-		scanType = "Free";
-		break;
-	case 1:
-		scanType = "PixelScan";
-		break;
-	case 2:
-		scanType = "PixelMap";
-		break;
-	default:
-		scanType = "None";
-		break;
+		//string voltage = m_textCtrl22->GetLineText(0);
+		//volt->setVoltage(stoi(voltage));
+		volt->voltageOn();
+	}
+	if (voltageStatus == 1)
+		volt->voltageOff();
+}
+
+void BigFrame::setStartVoltage(wxCommandEvent& event)
+{
+	string voltage = m_textCtrl22->GetLineText(0);
+	volt->setVoltage(stoi(voltage));
+}
+
+void BigFrame::motorControllerConnectClicked(wxCommandEvent & event)
+{
+	static bool connected = false;
+
+	if (!connected)
+	{
+		mot = new MotorController(3, 9600);
+		connected = true;
 	}
 }
-	

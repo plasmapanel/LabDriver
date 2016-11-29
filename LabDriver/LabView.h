@@ -16,6 +16,7 @@
 #include <wx/image.h>
 #include <wx/intl.h>
 #include <string>
+#include "LabViewVirtual.h"
 
 #ifndef APP_CATALOG
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
@@ -28,59 +29,27 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
-class MainFrame: public wxFrame {
+class BigFrame : public MainFrame
+{
 public:
-    // begin wxGlade: MainFrame::ids
-    // end wxGlade
-
-    MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_FRAME_STYLE);
-	void onQuit(wxCommandEvent& event);
-private:
-    // begin wxGlade: MainFrame::methods
-    void set_properties();
-    void do_layout();
-	void do_events();
-
-	//void onQuit(wxCommandEvent&);
-    // end wxGlade
-
-	int distanceToMove;
-	std::string scanType = "";
-
-	void yUpButtonClicked(wxCommandEvent&);
-	void yDownButtonClicked(wxCommandEvent&);
-	void xLeftButtonClicked(wxCommandEvent&);
-	void xRightButtonClicked(wxCommandEvent&);
-	void distanceBoxClicked(wxCommandEvent&);
-	void homeButtonClicked(wxCommandEvent&);
-	void goToHomeButtonClicked(wxCommandEvent&);
-	void goToXHomeButtonClicked(wxCommandEvent&);
-	void goToYHomeButtonClicked(wxCommandEvent&);
+	BigFrame(wxWindow* parent );
+	void distanceBoxClicked(wxCommandEvent& event);
 	int convertDistance(int);
-	void scanChooser(wxCommandEvent&);
+	void onQuit(wxCommandEvent& WXUNUSED(event)); 
+	void yUpButtonClicked(wxCommandEvent & event);
+	void yDownButtonClicked(wxCommandEvent & event);
+	void xLeftButtonClicked(wxCommandEvent & event);
+	void xRightButtonClicked(wxCommandEvent & event);
+	void homeButtonClicked(wxCommandEvent & event);
+	void goToHomeButtonClicked(wxCommandEvent & event);
+	void toggleHV(wxCommandEvent& event);
+	void setStartVoltage(wxCommandEvent& event);
+	void BigFrame::motorControllerConnectClicked(wxCommandEvent & event);
 
-protected:
-    // begin wxGlade: MainFrame::attributes
-    wxButton* button_8;
-    wxButton* up;
-    wxButton* button_2;
-    wxButton* button_5;
-    wxButton* button_4;
-    wxButton* button_6;
-    wxButton* button_3;
-    wxButton* button_7;
-    wxChoice* combo_box_1;
-	wxRadioBox* distanceBox;
-    // end wxGlade
+private:
+	int distanceToMove = 400;
 
-	wxMenuBar *menubar;
-	wxMenu *file;
-	wxMenu *edit;
 
-	wxMenuItem* pref;
-	wxMenuItem* header;
-}; // wxGlade: end class
-
+};
 
 #endif // ..PY_H

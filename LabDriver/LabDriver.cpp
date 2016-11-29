@@ -1,5 +1,4 @@
 #include <wx/wxprec.h>
-#include <wx/xrc/
 #include "LabDriver.h"
 #include "LabView.h"
 #include "MotorController.h"
@@ -7,9 +6,9 @@
 
 wxIMPLEMENT_APP(LabDriver);
 
-MotorController *mot = nullptr;
+//MotorController *mot = nullptr;
 WeinerCounter *nim = nullptr;
-VoltageNI *volt = nullptr;
+//VoltageNI *volt = nullptr;
 
 
 LabDriver::LabDriver()
@@ -25,13 +24,12 @@ bool LabDriver::OnInit()
 {
 
 
-	mot = new MotorController(3, 9600);
-	MainFrame* labView = new MainFrame(nullptr, wxID_ANY, "Title");
-	labView->Show(true);
+	//mot = new MotorController(3, 9600);
+	//volt = new VoltageNI();
+	
+	//MainFrame* labView = new MainFrame(nullptr, wxID_ANY);
+	BigFrame* thisFrame = new BigFrame(nullptr);
+	thisFrame->Show(true);
 	return true;
 }
 
-bool LabDriver::OnInit()
-{
-	wxXmlResource::Get()->
-}
