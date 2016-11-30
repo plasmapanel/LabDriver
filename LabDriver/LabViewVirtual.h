@@ -8,8 +8,6 @@
 #ifndef __LABVIEWVIRTUAL_H__
 #define __LABVIEWVIRTUAL_H__
 
-//#include <wx/wx.h>
-
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/string.h>
@@ -174,7 +172,9 @@ class MainFrame : public wxFrame
 		wxStatusBar* m_statusBar1;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void onQuit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void openHeaderFrame( wxCommandEvent& event ) { event.Skip(); }
+		virtual void openPanelFrame( wxCommandEvent& event ) { event.Skip(); }
 		virtual void portSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void motorControllerConnectClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void motorControllerDisconnectClicked( wxCommandEvent& event ) { event.Skip(); }

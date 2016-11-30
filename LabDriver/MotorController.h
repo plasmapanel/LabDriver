@@ -42,6 +42,7 @@ public:
   int getNumPixActive();
   void moveToPix(int num);
   void align(WeinerCounter* nim);
+  void portClose();
   
   void fineAlign(WeinerCounter* nim,string filename, double time);
   const vector<string>& getActivePixelString();

@@ -610,3 +610,8 @@ void MotorController::findOffsetToMax(WeinerCounter *nim, int pixX, int pixY, in
     out << 0 << " " << yoffset[i] << yRate[i] << endl;
   }
 }
+
+void MotorController::portClose()
+{
+	PortClose();
+}

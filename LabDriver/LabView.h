@@ -44,7 +44,10 @@ public:
 	void goToHomeButtonClicked(wxCommandEvent & event);
 	void toggleHV(wxCommandEvent& event);
 	void setStartVoltage(wxCommandEvent& event);
-	void BigFrame::motorControllerConnectClicked(wxCommandEvent & event);
+	void motorControllerConnectClicked(wxCommandEvent & event);
+	void motorControllerDisconnectClicked(wxCommandEvent & event);
+	void HVConnectClicked(wxCommandEvent & event);
+	void BigFrame::openPanelFrame(wxCommandEvent& event);
 
 private:
 	int distanceToMove = 400;

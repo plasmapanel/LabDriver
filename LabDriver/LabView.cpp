@@ -11,25 +11,29 @@
 
 #include "LabView.h"
 #include "MotorController.h"
+#include "VoltageControl.h"
 #include "VoltageControlNI.h"
+#include "Panel.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-const float MMPERSTEP = 0.0050;
+const double MMPERSTEP = 0.0050;
 //const float STEPPERMM = STEPPERTURN/25.4; //TODO change this to be se from within the header dialog
 
 
 
 MotorController* mot;
 VoltageNI* volt;
+VoltageControl* volt2;
+Panel* panelConfig;
 
 
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
 	//mot = new MotorController(3, 9600);
-	//volt = new VoltageNI();
+	volt = new VoltageNI();
 }
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
@@ -40,7 +44,12 @@ void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 void BigFrame::yUpButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
-	mot->stepMotor(2, distanceToMove);
+	try
+	{
+		mot->stepMotor(2, distanceToMove);
+	}
+	catch (...)
+	{ }
 
 }
 
@@ -139,9 +148,11 @@ void BigFrame::toggleHV(wxCommandEvent& event)
 	int voltageStatus = m_radioBox3->GetSelection();
 	if (voltageStatus == 0)
 	{
-		//string voltage = m_textCtrl22->GetLineText(0);
-		//volt->setVoltage(stoi(voltage));
-		volt->voltageOn();
+		string voltage = m_textCtrl22->GetLineText(0);
+
+			volt->setVoltage(stoi(voltage));
+			volt->voltageOn();
+
 	}
 	if (voltageStatus == 1)
 		volt->voltageOff();
@@ -150,7 +161,7 @@ void BigFrame::toggleHV(wxCommandEvent& event)
 void BigFrame::setStartVoltage(wxCommandEvent& event)
 {
 	string voltage = m_textCtrl22->GetLineText(0);
-	volt->setVoltage(stoi(voltage));
+	
 }
 
 void BigFrame::motorControllerConnectClicked(wxCommandEvent & event)
@@ -162,4 +173,20 @@ void BigFrame::motorControllerConnectClicked(wxCommandEvent & event)
 		mot = new MotorController(3, 9600);
 		connected = true;
 	}
+}
+
+void BigFrame::motorControllerDisconnectClicked(wxCommandEvent & event)
+{
+	//mot->portClose();
+}
+
+void BigFrame::HVConnectClicked(wxCommandEvent & event)
+{
+	//volt = new VoltageNI();
+}
+
+void BigFrame::openPanelFrame(wxCommandEvent& event) 
+{ 
+	panelConfig = new Panel(this);
+	panelConfig->Show(true);
 }

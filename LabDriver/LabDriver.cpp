@@ -22,12 +22,6 @@ LabDriver::~LabDriver()
 
 bool LabDriver::OnInit()
 {
-
-
-	//mot = new MotorController(3, 9600);
-	//volt = new VoltageNI();
-	
-	//MainFrame* labView = new MainFrame(nullptr, wxID_ANY);
 	BigFrame* thisFrame = new BigFrame(nullptr);
 	thisFrame->Show(true);
 	return true;

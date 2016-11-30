@@ -363,6 +363,10 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	menuHeader = new wxMenuItem( edit, wxID_ANY, wxString( wxT("Header") ) , wxEmptyString, wxITEM_NORMAL );
 	edit->Append( menuHeader );
 	
+	wxMenuItem* m_menuItem5;
+	m_menuItem5 = new wxMenuItem( edit, wxID_ANY, wxString( wxT("Panel") ) , wxEmptyString, wxITEM_NORMAL );
+	edit->Append( m_menuItem5 );
+	
 	m_menubar2->Append( edit, wxT("Edit") ); 
 	
 	this->SetMenuBar( m_menubar2 );
@@ -558,7 +562,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxString m_radioBox3Choices[] = { wxT("On"), wxT("Off") };
 	int m_radioBox3NChoices = sizeof( m_radioBox3Choices ) / sizeof( wxString );
 	m_radioBox3 = new wxRadioBox( sbSizer5->GetStaticBox(), wxID_ANY, wxT("High Voltage"), wxDefaultPosition, wxDefaultSize, m_radioBox3NChoices, m_radioBox3Choices, 2, wxRA_SPECIFY_COLS );
-	m_radioBox3->SetSelection( 1 );
+	m_radioBox3->SetSelection( 0 );
 	fgSizer2->Add( m_radioBox3, 0, wxALL, 5 );
 	
 	m_staticText49 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Output File Name"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -600,7 +604,9 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	this->Connect( menu_quit->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onQuit ) );
 	this->Connect( menuHeader->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openHeaderFrame ) );
+	this->Connect( m_menuItem5->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openPanelFrame ) );
 	m_choice2->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MainFrame::portSelected ), NULL, this );
 	m_button15->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::motorControllerConnectClicked ), NULL, this );
 	m_button16->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::motorControllerDisconnectClicked ), NULL, this );
@@ -635,7 +641,9 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 MainFrame::~MainFrame()
 {
 	// Disconnect Events
+	this->Disconnect( wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onQuit ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openHeaderFrame ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openPanelFrame ) );
 	m_choice2->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MainFrame::portSelected ), NULL, this );
 	m_button15->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::motorControllerConnectClicked ), NULL, this );
 	m_button16->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::motorControllerDisconnectClicked ), NULL, this );
