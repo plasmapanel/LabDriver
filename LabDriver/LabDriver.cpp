@@ -7,7 +7,7 @@
 wxIMPLEMENT_APP(LabDriver);
 
 //MotorController *mot = nullptr;
-WeinerCounter *nim = nullptr;
+//WeinerCounter *nim = nullptr;
 //VoltageNI *volt = nullptr;
 
 

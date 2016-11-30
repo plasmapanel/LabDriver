@@ -590,6 +590,9 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	preview = new wxButton( this, wxID_ANY, wxT("Run Preview"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer17->Add( preview, 0, wxALIGN_CENTER|wxALL, 5 );
 	
+	m_button19 = new wxButton( this, wxID_ANY, wxT("Connect NIM"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer17->Add( m_button19, 0, wxALL, 5 );
+	
 	
 	fgSizer3->Add( bSizer17, 1, wxEXPAND, 5 );
 	
@@ -636,6 +639,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	start->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::startSelected ), NULL, this );
 	stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
 	preview->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::previewSelected ), NULL, this );
+	m_button19->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::connectNIMClicked ), NULL, this );
 }
 
 MainFrame::~MainFrame()
@@ -673,6 +677,7 @@ MainFrame::~MainFrame()
 	start->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::startSelected ), NULL, this );
 	stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
 	preview->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::previewSelected ), NULL, this );
+	m_button19->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::connectNIMClicked ), NULL, this );
 	
 }
 

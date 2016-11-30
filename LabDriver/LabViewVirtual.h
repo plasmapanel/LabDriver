@@ -169,6 +169,7 @@ class MainFrame : public wxFrame
 		wxButton* start;
 		wxButton* stop;
 		wxButton* preview;
+		wxButton* m_button19;
 		wxStatusBar* m_statusBar1;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -204,6 +205,7 @@ class MainFrame : public wxFrame
 		virtual void startSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void stopSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void previewSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void connectNIMClicked( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
