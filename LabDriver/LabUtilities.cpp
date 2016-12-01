@@ -1656,7 +1656,7 @@ static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost
   *done = true;
   t1.join();
 }
-void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
+void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message){
  // WeinerCounter *nim = nullptr;
   //VoltageControl *volt = nullptr;
   string path = ".\\CollectedData\\";

@@ -14,6 +14,7 @@ This file contains all of the utilities that will be used with our lab setup
 #include "CImg.h"
 #include "TTree.h"
 #include "TFile.h"
+#include "Messages.h"
 using namespace std;
 
 //USER FUNCIONS
