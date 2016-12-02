@@ -14,6 +14,7 @@
 #include "VoltageControl.h"
 #include "VoltageControlNI.h"
 #include "Panel.h"
+#include "messages.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -28,6 +29,7 @@ VoltageNI* volt;
 VoltageControl* volt2;
 Panel* panelConfig;
 HeaderEdit* HeaderWindow;
+Messages* message;
 
 
 
@@ -35,6 +37,7 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
 	//mot = new MotorController(3, 9600);
 	volt = new VoltageNI();
+	message = new Messages();
 }
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
@@ -206,7 +209,7 @@ void BigFrame::setEndVoltage(wxCommandEvent & event)
 void BigFrame::updateButtonClicked(wxCommandEvent& event)
 {
 	int startvoltage, endvoltage, xoffset, yoffset, xstepsize, ystepsize, voltagestepsize, dwelltime;
-	int numsteps;
+	int numsteps, frequency;
 	double totaltime;
 	//string filename;
 
@@ -226,8 +229,18 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	dwelltime = wxAtoi(m_textCtrl42->GetLineText(0));
 	totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize* dwelltime;
 
+	frequency = wxAtoi(m_textCtrl43->GetLineText(0));
+
 	m_textCtrl46->SelectAll();
 	m_textCtrl46->WriteText(wxString::Format(wxT("%f"), totaltime / 3600));
+
+	message->frequency = frequency;
+	message->maxOffsetX = xoffset;
+	message->maxStepX = xstepsize;
+	message->time = dwelltime;
+	message->voltageStart = startvoltage;
+	message->voltageEnd = endvoltage;
+
 }
 
 void markButtonClicked(wxCommandEvent& event)

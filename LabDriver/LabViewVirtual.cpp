@@ -401,7 +401,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxString m_choice1Choices[] = { wxT("Free"), wxT("Pixel Scan"), wxT("Pixel Map"), wxT("Line Scan") };
 	int m_choice1NChoices = sizeof( m_choice1Choices ) / sizeof( wxString );
 	m_choice1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1NChoices, m_choice1Choices, 0 );
-	m_choice1->SetSelection( 0 );
+	m_choice1->SetSelection( 3 );
 	m_choice1->SetToolTip( wxT("Sets the type of scan. \nFree: Control the position of the drive and voltage settings manually.\nVoltage Scan: Do a voltage scan across multiple pixels") );
 	
 	sbSizer5->Add( m_choice1, 0, wxALL, 5 );
@@ -480,7 +480,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	fgSizer2->Add( m_textCtrl42, 0, wxALL, 5 );
 	
-	m_staticText48 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("MyLabel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText48 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Sample Frequency"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText48->Wrap( -1 );
 	fgSizer2->Add( m_staticText48, 0, wxALL, 5 );
 	

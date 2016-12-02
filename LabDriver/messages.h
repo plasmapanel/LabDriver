@@ -36,6 +36,7 @@ public:
 	int maxOffsetY, maxStepX;
 	int maxStepY;
 	int voltageStart, voltageStep, voltageEnd;
+	int frequency;
 
 	std::vector<int> pixX, pixY;
 
