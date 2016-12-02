@@ -1,8 +1,9 @@
 #include "freeMode.h"
+#include "messages.h"
 
+//TODO: Remove this file, unnecessary with gui.
 
-
-void doFreeMode(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
+void doFreeMode(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message){
   printFreeModeWelcome();
   string command;
   bool isBack = false;
@@ -50,7 +51,7 @@ void printFreeModeHelp(){
   cout << "quit          : Exits free mode." << endl;
 }
 
-int proccessCommand(string command, bool &isBack, MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
+int proccessCommand(string command, bool &isBack, MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message){
   stringstream ss;
   string temp;
   int arg1, arg2;
@@ -130,7 +131,7 @@ int proccessCommand(string command, bool &isBack, MotorController *mot, WeinerCo
     return 0;
   }
   else if (temp == "dovs"){
-    doVoltageScan(mot, nim, volt);
+    doVoltageScan(mot, nim, volt, message);
     return 0;
   }
   else if (temp == "doaps"){

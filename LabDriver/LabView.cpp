@@ -18,7 +18,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-const double MMPERSTEP = 0.0050;
+
 //const float STEPPERMM = STEPPERTURN/25.4; //TODO change this to be se from within the header dialog
 
 
@@ -27,6 +27,7 @@ MotorController* mot;
 VoltageNI* volt;
 VoltageControl* volt2;
 Panel* panelConfig;
+HeaderEdit* HeaderWindow;
 
 
 
@@ -119,27 +120,29 @@ int BigFrame::convertDistance(int radioButton)
 
 	return ret;
 }
-//
-//void MainFrame::scanChooser(wxCommandEvent & event)
-//{
-//	static int scanChosen = combo_box_1->GetSelection();
-//
-//	switch (scanChosen)
-//	{
-//	case 0:
-//		scanType = "Free";
-//		break;
-//	case 1:
-//		scanType = "PixelScan";
-//		break;
-//	case 2:
-//		scanType = "PixelMap";
-//		break;
-//	default:
-//		scanType = "None";
-//		break;
-//	}
-//}
+
+void BigFrame::scanTypeSelected(wxCommandEvent & event)
+{
+	static int scanChosen = m_choice1->GetSelection();
+	switch (scanChosen)
+	{
+	case 0:
+		scanType = "Free";
+		break;
+	case 1:
+		scanType = "PixelScan";
+		break;
+	case 2:
+		scanType = "PixelMap";
+		break;
+	case 3:
+		scanType = "LineScan";
+		break;
+	default:
+		scanType = "None";
+		break;
+	}
+}
 
 //wxStaticBoxSizer* test;
 
@@ -160,7 +163,7 @@ void BigFrame::toggleHV(wxCommandEvent& event)
 
 void BigFrame::setStartVoltage(wxCommandEvent& event)
 {
-	string voltage = m_textCtrl22->GetLineText(0);
+	//string voltage = m_textCtrl22->GetLineText(0);
 	
 }
 
@@ -189,4 +192,150 @@ void BigFrame::openPanelFrame(wxCommandEvent& event)
 { 
 	panelConfig = new Panel(this);
 	panelConfig->Show(true);
+}
+
+void BigFrame::setEndVoltage(wxCommandEvent & event)
+{
+	//m_textCtrl23->SelectAll();
+	//if (wxAtoi(m_textCtrl22->GetLineText(0)) >= wxAtoi(m_textCtrl23->GetLineText(0)))
+	//{
+	//	m_textCtrl23->WriteText(m_textCtrl22->GetLineText(0));
+	//}
+}
+
+void BigFrame::updateButtonClicked(wxCommandEvent& event)
+{
+	int startvoltage, endvoltage, xoffset, yoffset, xstepsize, ystepsize, voltagestepsize, dwelltime;
+	int numsteps;
+	double totaltime;
+	//string filename;
+
+	startvoltage = wxAtoi(m_textCtrl22->GetLineText(0));
+	endvoltage = wxAtoi(m_textCtrl23->GetLineText(0));
+	voltagestepsize = wxAtoi(m_textCtrl40->GetLineText(0));
+	numsteps = (endvoltage - startvoltage) / voltagestepsize;
+	
+	m_textCtrl45->SelectAll();
+	m_textCtrl45->WriteText(wxString::Format(wxT("%i"), numsteps));
+
+	xoffset = wxAtoi(m_textCtrl18->GetLineText(0));
+	yoffset = wxAtoi(m_textCtrl19->GetLineText(0));
+	xstepsize = wxAtoi(m_textCtrl20->GetLineText(0));
+	ystepsize = wxAtoi(m_textCtrl21->GetLineText(0));
+
+	dwelltime = wxAtoi(m_textCtrl42->GetLineText(0));
+	totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize* dwelltime;
+
+	m_textCtrl46->SelectAll();
+	m_textCtrl46->WriteText(wxString::Format(wxT("%f"), totaltime / 3600));
+}
+
+void markButtonClicked(wxCommandEvent& event)
+{
+
+}
+
+void BigFrame::setHome(wxCommandEvent& event)
+{
+	mot->setZero();
+}
+
+void BigFrame::goToHome(wxCommandEvent& event)
+{
+	mot->goZero();
+}
+
+HeaderEdit::HeaderEdit(wxWindow* parent) : header(parent)
+{
+
+}
+
+void BigFrame::openHeaderFrame(wxCommandEvent& event)
+{
+	if (!HeaderWindow)
+		HeaderWindow = new HeaderEdit(this);
+	HeaderWindow->Show(true);
+}
+
+string HeaderEdit::getSourceConfig()
+{
+	switch (m_radioBox1->GetSelection())
+	{
+	case 0:
+		return string("Dynamic");
+		break;
+	case 1:
+		return string("Static");
+		break;
+	case 2:
+		return string("User");
+		break;
+	default:
+		return string("Not Selected");
+		break;
+	}
+}
+
+void HeaderEdit::headerOkClicked(wxCommandEvent& event)
+{
+	copyData();
+	Show(false);
+}
+void HeaderEdit::headerCancelClicked(wxCommandEvent& event)
+{
+	Show(false);
+}
+
+void HeaderEdit::saveHeader(wxCommandEvent& event)
+{
+	int once = 0;
+	copyData();
+	string fullpath;
+	wxFileDialog* SaveDialog = new wxFileDialog(
+		this, _("Choose a location to save to"), wxEmptyString, wxString(headerInfo.panelName),
+		wxEmptyString, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition);
+
+	if (SaveDialog->ShowModal() == wxID_CANCEL)
+		SaveDialog->Destroy();     // the user changed idea...
+
+
+	if (SaveDialog->ShowModal() == wxID_OK && once == 0) // if the user click "Save" instead of "Cancel"
+	{
+
+		fullpath = SaveDialog->GetPath() + SaveDialog->GetFilename();
+		wxMessageBox(fullpath);
+		ofstream file;
+		file.open(fullpath);
+
+		file << headerInfo;
+		file.close();
+		//makeGenHeadFile(headerInfo, fullpath);
+		once++;
+	}
+	SaveDialog->Destroy();
+}
+
+void HeaderEdit::openHeader(wxCommandEvent& event)
+{
+
+}
+
+void HeaderEdit::copyData()
+{
+	headerInfo.panelName = m_textCtrl1->GetLineText(0);
+	headerInfo.sourceName = m_textCtrl11->GetLineText(0);
+	headerInfo.sourceConfig = getSourceConfig();
+	headerInfo.triggerSetup = m_textCtrl1322->GetLineText(0);
+	headerInfo.gas = m_textCtrl13->GetLineText(0);
+	headerInfo.pressure = wxAtof(m_textCtrl131->GetLineText(0));
+	headerInfo.discThresh = wxAtof(m_textCtrl48->GetLineText(0));
+	headerInfo.quench = wxAtof(m_textCtrl132->GetLineText(0));
+	headerInfo.numRO = wxAtoi(m_textCtrl47->GetLineText(0));
+	headerInfo.roLines = m_textCtrl1321->GetLineText(0);
+	headerInfo.triggerRO = m_textCtrl1322->GetLineText(0);
+	headerInfo.attenRO = wxAtof(m_textCtrl24->GetLineText(0));
+	headerInfo.numHV = wxAtoi(m_textCtrl1324->GetLineText(0));
+	headerInfo.linesHV = m_textCtrl1325->GetLineText(0);
+	headerInfo.triggerHV = m_textCtrl1323->GetLineText(0);
+	headerInfo.attenHV = wxAtof(m_textCtrl1326->GetLineText(0));
 }

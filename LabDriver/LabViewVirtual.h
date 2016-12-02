@@ -17,9 +17,8 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/textctrl.h>
-#include <wx/sizer.h>
 #include <wx/radiobox.h>
-#include <wx/gbsizer.h>
+#include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/button.h>
 #include <wx/bitmap.h>
@@ -28,6 +27,7 @@
 #include <wx/menu.h>
 #include <wx/frame.h>
 #include <wx/choice.h>
+#include <wx/gbsizer.h>
 #include <wx/statusbr.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -50,64 +50,56 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl13;
 		wxStaticText* m_staticText141;
 		wxTextCtrl* m_textCtrl131;
-		wxStaticText* m_staticText1424;
-		wxTextCtrl* m_textCtrl1324;
-		wxStaticText* m_staticText1425;
-		wxTextCtrl* m_textCtrl1325;
+		wxStaticText* m_staticText1426;
+		wxTextCtrl* m_textCtrl1326;
 		wxStaticText* m_staticText1423;
 		wxTextCtrl* m_textCtrl1323;
 		wxStaticText* m_staticText142;
 		wxTextCtrl* m_textCtrl132;
-		wxStaticText* m_staticText1426;
-		wxTextCtrl* m_textCtrl1326;
+		wxStaticText* m_staticText1424;
+		wxTextCtrl* m_textCtrl1324;
+		wxStaticText* m_staticText1425;
+		wxTextCtrl* m_textCtrl1325;
 		wxStaticText* m_staticText13;
 		wxTextCtrl* m_textCtrl12;
+		wxStaticText* m_staticText49;
+		wxTextCtrl* m_textCtrl47;
 		wxStaticText* m_staticText1421;
 		wxTextCtrl* m_textCtrl1321;
-		wxStaticText* m_staticText1422;
-		wxTextCtrl* m_textCtrl1322;
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_textCtrl24;
+		wxStaticText* m_staticText1422;
+		wxTextCtrl* m_textCtrl1322;
+		wxStaticText* discThr;
+		wxTextCtrl* m_textCtrl48;
 		wxButton* m_button1;
 		wxButton* m_button2;
 		wxMenuBar* m_menubar1;
 		wxMenu* m_menu1;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void panelNameChange( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setPanelName( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setSource( wxFocusEvent& event ) { event.Skip(); }
-		virtual void setSourceName( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setSourceType( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setGas( wxFocusEvent& event ) { event.Skip(); }
-		virtual void gasEntered( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setPressure( wxFocusEvent& event ) { event.Skip(); }
-		virtual void pressureEntered( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setNumHVLines( wxFocusEvent& event ) { event.Skip(); }
-		virtual void numberOfHVLinesEntered( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setHVLines( wxFocusEvent& event ) { event.Skip(); }
-		virtual void HVLinesEntered( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setHVVoltage( wxFocusEvent& event ) { event.Skip(); }
-		virtual void HVTriggerVoltageEntered( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setQuench( wxFocusEvent& event ) { event.Skip(); }
-		virtual void quenceResistanceEntered( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setHVAtten( wxFocusEvent& event ) { event.Skip(); }
-		virtual void attenuationEntered( wxCommandEvent& event ) { event.Skip(); }
+		virtual void setHVVoltage( wxFocusEvent& event ) { event.Skip(); }
+		virtual void setQuench( wxFocusEvent& event ) { event.Skip(); }
+		virtual void setNumHVLines( wxFocusEvent& event ) { event.Skip(); }
+		virtual void setHVLines( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setTriggerVoltage( wxFocusEvent& event ) { event.Skip(); }
-		virtual void triggerVoltageEntered( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setROLines( wxFocusEvent& event ) { event.Skip(); }
-		virtual void readoutLinesEntered( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setROTrigerVoltage( wxFocusEvent& event ) { event.Skip(); }
-		virtual void readoutTriggerEntered( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setROAtten( wxFocusEvent& event ) { event.Skip(); }
-		virtual void readoutAttenuationTriggered( wxCommandEvent& event ) { event.Skip(); }
+		virtual void setROTrigerVoltage( wxFocusEvent& event ) { event.Skip(); }
 		virtual void headerOkClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void headerCancelClicked( wxCommandEvent& event ) { event.Skip(); }
+		virtual void openHeader( wxCommandEvent& event ) { event.Skip(); }
+		virtual void saveHeader( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 968,626 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 905,626 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~header();
 	
@@ -166,6 +158,11 @@ class MainFrame : public wxFrame
 		wxRadioBox* m_radioBox3;
 		wxStaticText* m_staticText49;
 		wxTextCtrl* m_textCtrl44;
+		wxButton* m_button20;
+		wxStaticText* m_staticText471;
+		wxTextCtrl* m_textCtrl45;
+		wxStaticText* m_staticText481;
+		wxTextCtrl* m_textCtrl46;
 		wxButton* start;
 		wxButton* stop;
 		wxButton* preview;
@@ -183,6 +180,7 @@ class MainFrame : public wxFrame
 		virtual void HVDisconnectClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setHome( wxCommandEvent& event ) { event.Skip(); }
 		virtual void yUpButtonClicked( wxCommandEvent& event ) { event.Skip(); }
+		virtual void markButtonClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void xLeftButtonClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void goToHome( wxCommandEvent& event ) { event.Skip(); }
 		virtual void xRightButtonClicked( wxCommandEvent& event ) { event.Skip(); }
@@ -196,12 +194,13 @@ class MainFrame : public wxFrame
 		virtual void setXStepSize( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setYStepSize( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setStartVoltage( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setEndVoltage( wxCommandEvent& event ) { event.Skip(); }
+		virtual void setEndVoltage( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setVoltageStepSize( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setNumPixels( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setDwellTime( wxCommandEvent& event ) { event.Skip(); }
 		virtual void toggleHV( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setOutFilename( wxCommandEvent& event ) { event.Skip(); }
+		virtual void updateButtonClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void startSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void stopSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void previewSelected( wxCommandEvent& event ) { event.Skip(); }

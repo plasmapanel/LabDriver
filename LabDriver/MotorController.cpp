@@ -530,8 +530,7 @@ int MotorController::getAbsolutePositionY(){
 }
 
 vector<tuple<int, int, double>> MotorController::computePixelMap(WeinerCounter *nim, int pixX, int pixY, double timeToMeasure,
-  int maxOffsetX, int maxOffsetY,
-  int maxStepX, int maxStepY){
+  int maxOffsetX, int maxOffsetY, int maxStepX, int maxStepY){
   vector<tuple<int, int, double>> mapping;
   vector<int> xoffset, yoffset;
   //fill out cordinate vector

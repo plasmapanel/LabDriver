@@ -55,7 +55,7 @@ void doWeinerCountInter(WeinerCounter *nim, double time, double sampleLength,
 void doWeinerCountInf(WeinerCounter *nim, double sampleLength,
                       double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
 //peforms a voltage scan
-void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
+void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message);
 void doVoltageScanFile(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
 //peforms an after pulse scan on maximum of 1 pixle at a time and produces no graphs
 void doAfterScanNoGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
@@ -157,4 +157,8 @@ double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLen
 //measures all 20 lines and stores there times/ count in the vectors
 void measureLines(WeinerCounter* nim, double time, double &actualTime, vector<int> &count,double intervalLength = 1);
 const int OVER = 65536;
+
+//for GUI
+void doLineScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message);
+
 #endif

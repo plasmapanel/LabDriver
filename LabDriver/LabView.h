@@ -17,12 +17,15 @@
 #include <wx/intl.h>
 #include <string>
 #include "LabViewVirtual.h"
+#include "headers.h"
 
 #ifndef APP_CATALOG
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
 #endif
 
+#define TRAVELPERSTEP 0.0050
 
+const double MMPERSTEP = TRAVELPERSTEP;
 // begin wxGlade: ::dependencies
 // end wxGlade
 
@@ -48,11 +51,34 @@ public:
 	void motorControllerDisconnectClicked(wxCommandEvent & event);
 	void HVConnectClicked(wxCommandEvent & event);
 	void BigFrame::openPanelFrame(wxCommandEvent& event);
+	void scanTypeSelected(wxCommandEvent & event);
+	void setEndVoltage(wxCommandEvent & event);
+	void updateButtonClicked(wxCommandEvent& event);
+	void setHome(wxCommandEvent& event);
+	void goToHome(wxCommandEvent& event);
+	void openHeaderFrame(wxCommandEvent& event);
+	
+
 
 private:
 	int distanceToMove = 400;
+	std::string scanType;
 
 
 };
 
+class HeaderEdit : public header
+{
+public:
+	HeaderEdit(wxWindow* parent);
+	HeaderInfoGen headerInfo;
+	void headerOkClicked(wxCommandEvent& event);
+	void headerCancelClicked(wxCommandEvent& event);
+	void saveHeader(wxCommandEvent& event);
+	void openHeader(wxCommandEvent& event);
+	void copyData();
+
+private:
+	string getSourceConfig();
+};
 #endif // ..PY_H

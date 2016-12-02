@@ -19,56 +19,31 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Panel Information") ), wxHORIZONTAL );
 	
-	wxGridBagSizer* gbSizer3;
-	gbSizer3 = new wxGridBagSizer( 0, 0 );
-	gbSizer3->SetFlexibleDirection( wxBOTH );
-	gbSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	wxBoxSizer* bSizer2;
-	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
-	
 	m_staticText1 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Panel Name"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	bSizer2->Add( m_staticText1, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	sbSizer1->Add( m_staticText1, 0, wxALL, 5 );
 	
 	m_textCtrl1 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_textCtrl1, 0, wxALL, 5 );
-	
-	
-	gbSizer3->Add( bSizer2, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer30;
-	bSizer30 = new wxBoxSizer( wxHORIZONTAL );
+	sbSizer1->Add( m_textCtrl1, 0, wxALL, 5 );
 	
 	m_staticText11 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Source"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
-	bSizer30->Add( m_staticText11, 0, wxALL, 5 );
+	sbSizer1->Add( m_staticText11, 0, wxALL, 5 );
 	
 	m_textCtrl11 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer30->Add( m_textCtrl11, 0, wxALL, 5 );
-	
-	
-	gbSizer3->Add( bSizer30, wxGBPosition( 0, 3 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
+	sbSizer1->Add( m_textCtrl11, 0, wxALL, 5 );
 	
 	wxString m_radioBox1Choices[] = { wxT("Static"), wxT("Dynamic"), wxT("User") };
 	int m_radioBox1NChoices = sizeof( m_radioBox1Choices ) / sizeof( wxString );
 	m_radioBox1 = new wxRadioBox( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Source Setup"), wxDefaultPosition, wxDefaultSize, m_radioBox1NChoices, m_radioBox1Choices, 1, wxRA_SPECIFY_ROWS );
-	m_radioBox1->SetSelection( 1 );
-	gbSizer3->Add( m_radioBox1, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	
-	
-	sbSizer1->Add( gbSizer3, 1, wxEXPAND, 5 );
+	m_radioBox1->SetSelection( 0 );
+	sbSizer1->Add( m_radioBox1, 0, wxALL, 5 );
 	
 	
 	bSizer21->Add( sbSizer1, 1, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Gas Information") ), wxHORIZONTAL );
-	
-	wxGridBagSizer* gbSizer4;
-	gbSizer4 = new wxGridBagSizer( 0, 0 );
-	gbSizer4->SetFlexibleDirection( wxBOTH );
-	gbSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
@@ -80,24 +55,15 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_textCtrl13 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_textCtrl13, 0, wxALL, 5 );
 	
-	
-	gbSizer4->Add( bSizer3, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer31;
-	bSizer31 = new wxBoxSizer( wxHORIZONTAL );
-	
 	m_staticText141 = new wxStaticText( sbSizer3->GetStaticBox(), wxID_ANY, wxT("Pressure (Torr)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText141->Wrap( -1 );
-	bSizer31->Add( m_staticText141, 0, wxALL, 5 );
+	bSizer3->Add( m_staticText141, 0, wxALL, 5 );
 	
 	m_textCtrl131 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer31->Add( m_textCtrl131, 0, wxALL, 5 );
+	bSizer3->Add( m_textCtrl131, 0, wxALL, 5 );
 	
 	
-	gbSizer4->Add( bSizer31, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	
-	sbSizer3->Add( gbSizer4, 1, wxEXPAND, 5 );
+	sbSizer3->Add( bSizer3, 1, wxEXPAND, 5 );
 	
 	
 	bSizer21->Add( sbSizer3, 1, wxEXPAND, 5 );
@@ -105,89 +71,58 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("High Voltage") ), wxVERTICAL );
 	
-	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 0, 0, 0 );
-	fgSizer2->SetFlexibleDirection( wxVERTICAL );
-	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
 	wxBoxSizer* bSizer324;
 	bSizer324 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText1424 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Number of HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1424->Wrap( -1 );
-	bSizer324->Add( m_staticText1424, 0, wxALL, 5 );
+	m_staticText1426 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Attenuation:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1426->Wrap( -1 );
+	bSizer324->Add( m_staticText1426, 0, wxALL, 5 );
 	
-	m_textCtrl1324 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer324->Add( m_textCtrl1324, 0, wxALL, 5 );
-	
-	
-	fgSizer2->Add( bSizer324, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer325;
-	bSizer325 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText1425 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1425->Wrap( -1 );
-	bSizer325->Add( m_staticText1425, 0, wxALL, 5 );
-	
-	m_textCtrl1325 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer325->Add( m_textCtrl1325, 0, wxALL, 5 );
-	
-	
-	fgSizer2->Add( bSizer325, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer323;
-	bSizer323 = new wxBoxSizer( wxHORIZONTAL );
+	m_textCtrl1326 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer324->Add( m_textCtrl1326, 0, wxALL, 5 );
 	
 	m_staticText1423 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Trigger Voltage"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1423->Wrap( -1 );
-	bSizer323->Add( m_staticText1423, 0, wxALL, 5 );
+	bSizer324->Add( m_staticText1423, 0, wxALL, 5 );
 	
 	m_textCtrl1323 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer323->Add( m_textCtrl1323, 0, wxALL, 5 );
+	bSizer324->Add( m_textCtrl1323, 0, wxALL, 5 );
 	
 	
-	fgSizer2->Add( bSizer323, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer32;
-	bSizer32 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText142 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Quench Resistance:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText142->Wrap( -1 );
-	bSizer32->Add( m_staticText142, 0, wxALL, 5 );
-	
-	m_textCtrl132 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer32->Add( m_textCtrl132, 0, wxALL, 5 );
-	
-	
-	fgSizer2->Add( bSizer32, 1, wxEXPAND, 5 );
+	sbSizer2->Add( bSizer324, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer326;
 	bSizer326 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText1426 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Attenuation:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1426->Wrap( -1 );
-	bSizer326->Add( m_staticText1426, 0, wxALL, 5 );
+	m_staticText142 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Quench Resistance:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText142->Wrap( -1 );
+	bSizer326->Add( m_staticText142, 0, wxALL, 5 );
 	
-	m_textCtrl1326 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer326->Add( m_textCtrl1326, 0, wxALL, 5 );
+	m_textCtrl132 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer326->Add( m_textCtrl132, 0, wxALL, 5 );
+	
+	m_staticText1424 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Number of HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1424->Wrap( -1 );
+	bSizer326->Add( m_staticText1424, 0, wxALL, 5 );
+	
+	m_textCtrl1324 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer326->Add( m_textCtrl1324, 0, wxALL, 5 );
+	
+	m_staticText1425 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1425->Wrap( -1 );
+	bSizer326->Add( m_staticText1425, 0, wxALL, 5 );
+	
+	m_textCtrl1325 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer326->Add( m_textCtrl1325, 0, wxALL, 5 );
 	
 	
-	fgSizer2->Add( bSizer326, 1, wxEXPAND, 5 );
-	
-	
-	sbSizer2->Add( fgSizer2, 1, wxEXPAND, 5 );
+	sbSizer2->Add( bSizer326, 1, wxEXPAND, 5 );
 	
 	
 	bSizer21->Add( sbSizer2, 1, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer4;
 	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Readout Information") ), wxVERTICAL );
-	
-	wxGridBagSizer* gbSizer2;
-	gbSizer2 = new wxGridBagSizer( 0, 0 );
-	gbSizer2->SetFlexibleDirection( wxBOTH );
-	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
@@ -199,34 +134,28 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_textCtrl12 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_textCtrl12, 0, wxALL, 5 );
 	
+	m_staticText49 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Number of RO Lines"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText49->Wrap( -1 );
+	bSizer1->Add( m_staticText49, 0, wxALL, 5 );
 	
-	gbSizer2->Add( bSizer1, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer321;
-	bSizer321 = new wxBoxSizer( wxHORIZONTAL );
+	m_textCtrl47 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer1->Add( m_textCtrl47, 0, wxALL, 5 );
 	
 	m_staticText1421 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("RO Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1421->Wrap( -1 );
-	bSizer321->Add( m_staticText1421, 0, wxALL, 5 );
+	bSizer1->Add( m_staticText1421, 0, wxALL, 5 );
 	
 	m_textCtrl1321 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer321->Add( m_textCtrl1321, 0, wxALL, 5 );
+	bSizer1->Add( m_textCtrl1321, 0, wxALL, 5 );
 	
 	
-	gbSizer2->Add( bSizer321, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
+	sbSizer4->Add( bSizer1, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer322;
 	bSizer322 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText1422 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Ro Trigger"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1422->Wrap( -1 );
-	bSizer322->Add( m_staticText1422, 0, wxALL, 5 );
 	
-	m_textCtrl1322 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer322->Add( m_textCtrl1322, 0, wxALL, 5 );
-	
-	
-	gbSizer2->Add( bSizer322, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
+	sbSizer4->Add( bSizer322, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
@@ -238,11 +167,22 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_textCtrl24 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_textCtrl24, 0, wxALL, 5 );
 	
+	m_staticText1422 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Ro Trigger"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1422->Wrap( -1 );
+	bSizer20->Add( m_staticText1422, 0, wxALL, 5 );
 	
-	gbSizer2->Add( bSizer20, wxGBPosition( 0, 3 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
+	m_textCtrl1322 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer20->Add( m_textCtrl1322, 0, wxALL, 5 );
+	
+	discThr = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Discriminator Threshold"), wxDefaultPosition, wxDefaultSize, 0 );
+	discThr->Wrap( -1 );
+	bSizer20->Add( discThr, 0, wxALL, 5 );
+	
+	m_textCtrl48 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer20->Add( m_textCtrl48, 0, wxALL, 5 );
 	
 	
-	sbSizer4->Add( gbSizer2, 1, wxEXPAND, 5 );
+	sbSizer4->Add( bSizer20, 1, wxEXPAND, 5 );
 	
 	
 	bSizer21->Add( sbSizer4, 1, wxEXPAND, 5 );
@@ -268,6 +208,10 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_menuItem1 = new wxMenuItem( m_menu1, wxID_ANY, wxString( wxT("Open Header File") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menu1->Append( m_menuItem1 );
 	
+	wxMenuItem* m_menuItem6;
+	m_menuItem6 = new wxMenuItem( m_menu1, wxID_ANY, wxString( wxT("Save Header File") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu1->Append( m_menuItem6 );
+	
 	wxMenuItem* m_menuItem2;
 	m_menuItem2 = new wxMenuItem( m_menu1, wxID_ANY, wxString( wxT("Preview Header") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menu1->Append( m_menuItem2 );
@@ -280,69 +224,45 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	this->Centre( wxBOTH );
 	
 	// Connect Events
-	m_textCtrl1->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::panelNameChange ), NULL, this );
 	m_staticText11->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPanelName ), NULL, this );
 	m_textCtrl11->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setSource ), NULL, this );
-	m_textCtrl11->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::setSourceName ), NULL, this );
-	m_radioBox1->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( header::setSourceType ), NULL, this );
 	m_textCtrl13->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
-	m_textCtrl13->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::gasEntered ), NULL, this );
 	m_textCtrl131->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPressure ), NULL, this );
-	m_textCtrl131->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::pressureEntered ), NULL, this );
-	m_textCtrl1324->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setNumHVLines ), NULL, this );
-	m_textCtrl1324->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::numberOfHVLinesEntered ), NULL, this );
-	m_textCtrl1325->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVLines ), NULL, this );
-	m_textCtrl1325->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::HVLinesEntered ), NULL, this );
-	m_textCtrl1323->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVVoltage ), NULL, this );
-	m_textCtrl1323->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::HVTriggerVoltageEntered ), NULL, this );
-	m_textCtrl132->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setQuench ), NULL, this );
-	m_textCtrl132->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::quenceResistanceEntered ), NULL, this );
 	m_textCtrl1326->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVAtten ), NULL, this );
-	m_textCtrl1326->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::attenuationEntered ), NULL, this );
+	m_textCtrl1323->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVVoltage ), NULL, this );
+	m_textCtrl132->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setQuench ), NULL, this );
+	m_textCtrl1324->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setNumHVLines ), NULL, this );
+	m_textCtrl1325->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVLines ), NULL, this );
 	m_textCtrl12->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setTriggerVoltage ), NULL, this );
-	m_textCtrl12->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::triggerVoltageEntered ), NULL, this );
 	m_textCtrl1321->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROLines ), NULL, this );
-	m_textCtrl1321->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::readoutLinesEntered ), NULL, this );
-	m_textCtrl1322->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROTrigerVoltage ), NULL, this );
-	m_textCtrl1322->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::readoutTriggerEntered ), NULL, this );
 	m_textCtrl24->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROAtten ), NULL, this );
-	m_textCtrl24->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::readoutAttenuationTriggered ), NULL, this );
+	m_textCtrl1322->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROTrigerVoltage ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( header::headerOkClicked ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( header::headerCancelClicked ), NULL, this );
+	this->Connect( m_menuItem1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( header::openHeader ) );
+	this->Connect( m_menuItem6->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( header::saveHeader ) );
 }
 
 header::~header()
 {
 	// Disconnect Events
-	m_textCtrl1->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::panelNameChange ), NULL, this );
 	m_staticText11->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPanelName ), NULL, this );
 	m_textCtrl11->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setSource ), NULL, this );
-	m_textCtrl11->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::setSourceName ), NULL, this );
-	m_radioBox1->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( header::setSourceType ), NULL, this );
 	m_textCtrl13->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
-	m_textCtrl13->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::gasEntered ), NULL, this );
 	m_textCtrl131->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPressure ), NULL, this );
-	m_textCtrl131->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::pressureEntered ), NULL, this );
-	m_textCtrl1324->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setNumHVLines ), NULL, this );
-	m_textCtrl1324->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::numberOfHVLinesEntered ), NULL, this );
-	m_textCtrl1325->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVLines ), NULL, this );
-	m_textCtrl1325->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::HVLinesEntered ), NULL, this );
-	m_textCtrl1323->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVVoltage ), NULL, this );
-	m_textCtrl1323->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::HVTriggerVoltageEntered ), NULL, this );
-	m_textCtrl132->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setQuench ), NULL, this );
-	m_textCtrl132->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::quenceResistanceEntered ), NULL, this );
 	m_textCtrl1326->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVAtten ), NULL, this );
-	m_textCtrl1326->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::attenuationEntered ), NULL, this );
+	m_textCtrl1323->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVVoltage ), NULL, this );
+	m_textCtrl132->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setQuench ), NULL, this );
+	m_textCtrl1324->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setNumHVLines ), NULL, this );
+	m_textCtrl1325->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVLines ), NULL, this );
 	m_textCtrl12->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setTriggerVoltage ), NULL, this );
-	m_textCtrl12->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::triggerVoltageEntered ), NULL, this );
 	m_textCtrl1321->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROLines ), NULL, this );
-	m_textCtrl1321->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::readoutLinesEntered ), NULL, this );
-	m_textCtrl1322->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROTrigerVoltage ), NULL, this );
-	m_textCtrl1322->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::readoutTriggerEntered ), NULL, this );
 	m_textCtrl24->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROAtten ), NULL, this );
-	m_textCtrl24->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::readoutAttenuationTriggered ), NULL, this );
+	m_textCtrl1322->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROTrigerVoltage ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( header::headerOkClicked ), NULL, this );
 	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( header::headerCancelClicked ), NULL, this );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( header::openHeader ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( header::saveHeader ) );
 	
 }
 
@@ -436,7 +356,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	up = new wxButton( this, wxID_ANY, wxT("Y+"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( up, 0, wxALL, 5 );
 	
-	m_button5 = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_button5 = new wxButton( this, wxID_ANY, wxT("Mark"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_button5, 0, wxALL, 5 );
 	
 	left = new wxButton( this, wxID_ANY, wxT("X-"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -478,7 +398,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	sbSizer5->Add( bSizer40, 1, wxEXPAND, 5 );
 	
-	wxString m_choice1Choices[] = { wxT("Free"), wxT("Pixel Scan"), wxT("Pixel Map"), wxT("Voltage Scan") };
+	wxString m_choice1Choices[] = { wxT("Free"), wxT("Pixel Scan"), wxT("Pixel Map"), wxT("Line Scan") };
 	int m_choice1NChoices = sizeof( m_choice1Choices ) / sizeof( wxString );
 	m_choice1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1NChoices, m_choice1Choices, 0 );
 	m_choice1->SetSelection( 0 );
@@ -495,76 +415,82 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText18->Wrap( -1 );
 	fgSizer2->Add( m_staticText18, 0, wxALL, 5 );
 	
-	m_textCtrl18 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl18 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl18, 0, wxALL, 5 );
 	
 	m_staticText19 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y Offset"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText19->Wrap( -1 );
 	fgSizer2->Add( m_staticText19, 0, wxALL, 5 );
 	
-	m_textCtrl19 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl19 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl19, 0, wxALL, 5 );
 	
 	m_staticText20 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("X Step Size"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText20->Wrap( -1 );
 	fgSizer2->Add( m_staticText20, 0, wxALL, 5 );
 	
-	m_textCtrl20 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl20 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl20, 0, wxALL, 5 );
 	
 	m_staticText21 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y Step Size"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText21->Wrap( -1 );
 	fgSizer2->Add( m_staticText21, 0, wxALL, 5 );
 	
-	m_textCtrl21 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl21 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl21, 0, wxALL, 5 );
 	
 	m_staticText22 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Start Voltage"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText22->Wrap( -1 );
 	fgSizer2->Add( m_staticText22, 0, wxALL, 5 );
 	
-	m_textCtrl22 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl22 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl22->SetToolTip( wxT("The test will start at this voltage") );
+	
 	fgSizer2->Add( m_textCtrl22, 0, wxALL, 5 );
 	
 	m_staticText23 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("End Voltage"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText23->Wrap( -1 );
 	fgSizer2->Add( m_staticText23, 0, wxALL, 5 );
 	
-	m_textCtrl23 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl23 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl23->SetToolTip( wxT("The last voltage that will be tested") );
+	
 	fgSizer2->Add( m_textCtrl23, 0, wxALL, 5 );
 	
 	m_staticText45 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Voltage Step Size"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText45->Wrap( -1 );
 	fgSizer2->Add( m_staticText45, 0, wxALL, 5 );
 	
-	m_textCtrl40 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl40 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl40, 0, wxALL, 5 );
 	
 	m_staticText46 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Number of Pixels"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText46->Wrap( -1 );
 	fgSizer2->Add( m_staticText46, 0, wxALL, 5 );
 	
-	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl41, 0, wxALL, 5 );
 	
 	m_staticText47 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Measurement Time"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText47->Wrap( -1 );
 	fgSizer2->Add( m_staticText47, 0, wxALL, 5 );
 	
-	m_textCtrl42 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl42 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl42->SetToolTip( wxT("Dwell time in seconds") );
+	
 	fgSizer2->Add( m_textCtrl42, 0, wxALL, 5 );
 	
 	m_staticText48 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("MyLabel"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText48->Wrap( -1 );
 	fgSizer2->Add( m_staticText48, 0, wxALL, 5 );
 	
-	m_textCtrl43 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl43 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl43, 0, wxALL, 5 );
 	
 	wxString m_radioBox3Choices[] = { wxT("On"), wxT("Off") };
 	int m_radioBox3NChoices = sizeof( m_radioBox3Choices ) / sizeof( wxString );
 	m_radioBox3 = new wxRadioBox( sbSizer5->GetStaticBox(), wxID_ANY, wxT("High Voltage"), wxDefaultPosition, wxDefaultSize, m_radioBox3NChoices, m_radioBox3Choices, 2, wxRA_SPECIFY_COLS );
-	m_radioBox3->SetSelection( 0 );
+	m_radioBox3->SetSelection( 1 );
 	fgSizer2->Add( m_radioBox3, 0, wxALL, 5 );
 	
 	m_staticText49 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Output File Name"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -573,6 +499,23 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_textCtrl44 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl44, 0, wxALL, 5 );
+	
+	m_button20 = new wxButton( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Update"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_button20, 0, wxALL, 5 );
+	
+	m_staticText471 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Number of voltage steps"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText471->Wrap( -1 );
+	fgSizer2->Add( m_staticText471, 0, wxALL, 5 );
+	
+	m_textCtrl45 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	fgSizer2->Add( m_textCtrl45, 0, wxALL, 5 );
+	
+	m_staticText481 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Total test time (hr)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText481->Wrap( -1 );
+	fgSizer2->Add( m_staticText481, 0, wxALL, 5 );
+	
+	m_textCtrl46 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	fgSizer2->Add( m_textCtrl46, 0, wxALL, 5 );
 	
 	
 	sbSizer5->Add( fgSizer2, 1, wxEXPAND, 5 );
@@ -619,6 +562,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_button18->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::HVDisconnectClicked ), NULL, this );
 	homeAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::setHome ), NULL, this );
 	up->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::yUpButtonClicked ), NULL, this );
+	m_button5->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::markButtonClicked ), NULL, this );
 	left->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::xLeftButtonClicked ), NULL, this );
 	home->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::goToHome ), NULL, this );
 	right->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::xRightButtonClicked ), NULL, this );
@@ -632,12 +576,13 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_textCtrl20->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setXStepSize ), NULL, this );
 	m_textCtrl21->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setYStepSize ), NULL, this );
 	m_textCtrl22->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setStartVoltage ), NULL, this );
-	m_textCtrl23->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setEndVoltage ), NULL, this );
+	m_textCtrl23->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( MainFrame::setEndVoltage ), NULL, this );
 	m_textCtrl40->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setVoltageStepSize ), NULL, this );
 	m_textCtrl41->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setNumPixels ), NULL, this );
 	m_textCtrl42->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setDwellTime ), NULL, this );
 	m_radioBox3->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( MainFrame::toggleHV ), NULL, this );
 	m_textCtrl44->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setOutFilename ), NULL, this );
+	m_button20->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::updateButtonClicked ), NULL, this );
 	start->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::startSelected ), NULL, this );
 	stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
 	preview->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::previewSelected ), NULL, this );
@@ -657,6 +602,7 @@ MainFrame::~MainFrame()
 	m_button18->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::HVDisconnectClicked ), NULL, this );
 	homeAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::setHome ), NULL, this );
 	up->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::yUpButtonClicked ), NULL, this );
+	m_button5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::markButtonClicked ), NULL, this );
 	left->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::xLeftButtonClicked ), NULL, this );
 	home->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::goToHome ), NULL, this );
 	right->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::xRightButtonClicked ), NULL, this );
@@ -670,12 +616,13 @@ MainFrame::~MainFrame()
 	m_textCtrl20->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setXStepSize ), NULL, this );
 	m_textCtrl21->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setYStepSize ), NULL, this );
 	m_textCtrl22->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setStartVoltage ), NULL, this );
-	m_textCtrl23->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setEndVoltage ), NULL, this );
+	m_textCtrl23->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( MainFrame::setEndVoltage ), NULL, this );
 	m_textCtrl40->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setVoltageStepSize ), NULL, this );
 	m_textCtrl41->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setNumPixels ), NULL, this );
 	m_textCtrl42->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setDwellTime ), NULL, this );
 	m_radioBox3->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( MainFrame::toggleHV ), NULL, this );
 	m_textCtrl44->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setOutFilename ), NULL, this );
+	m_button20->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::updateButtonClicked ), NULL, this );
 	start->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::startSelected ), NULL, this );
 	stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
 	preview->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::previewSelected ), NULL, this );

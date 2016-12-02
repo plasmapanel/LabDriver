@@ -1,6 +1,8 @@
 #include "LabUtilities.h"
 #include <iomanip>
 #include <functional>
+//#include "LabView.h"
+#include "headers.h"
 
 using Spsc = boost::lockfree::spsc_queue < int, boost::lockfree::capacity<10000> > ;
 //Dunction used for converting weiner counter bin value to a count value
@@ -1673,62 +1675,62 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
   char tempc;
   string temp;
   vector<string> pix;
-  cout << "------------------------------------------" << endl;
-  cout << "------------Voltage Scan------------------" << endl;
-  cout << "------------------------------------------" << endl;
+  //cout << "------------------------------------------" << endl;
+  //cout << "------------Voltage Scan------------------" << endl;
+  //cout << "------------------------------------------" << endl;
   HeaderInfoGen hg;
-  while (1){
-    cout << "generate header manually or read from a file?(file/manual): ";
-    cin >> temp;
-    cin.clear();
-    cin.ignore(10000, '\n');
-    if (temp == "manual"){
-      makeGenHead(hg);
-      break;
-    }
-    else if (temp == "file"){
-      cout << "What is the name of the file? ";
-      getline(cin, temp);
-      makeGenHeadFile(hg, temp);
-      break;
-    }
-    else{
-      cout << "Invalid option" << endl;
-    }
-  }
-  cout << "Start Voltage (V): ";
-  cin >> starting;
-  cin.clear();
-  cin.ignore(10000, '\n');
-  cout << "End Voltage (V): ";
-  cin >> stop;
-  cin.clear();
-  cin.ignore(10000, '\n');
-  if (stop < starting){
-    cerr << "Invalid Voltages" << endl;
-    exit(0);
-  }
-  cout << "Step Size (V): ";
-  cin >> step;
-  cout << "Interval duration (s): ";
-  cin >> duration;
-  cout << "Sampling frequency (s): ";
-  cin >> freq;
-  cout << "Number of Pixels being tested: ";
-  cin >> num;
-  cin.clear();
-  cin.ignore(10000, '\n');
-  x.resize(num);
-  y.resize(num);
-  for (int i = 0; i < num; ++i){
-    cout << "RO # of pixel " << i + 1 << ": ";
-    cin >> x[i];
-    cin.clear();
-    cin.ignore(10000, '\n');
-    cout << "HV # of pixel " << i + 1 << ": ";
-    cin >> y[i];
-    pix.push_back(to_string(x[i]) + "-" + to_string(x[i]));
-  }
+  //while (1){
+  //  cout << "generate header manually or read from a file?(file/manual): ";
+  //  cin >> temp;
+  //  cin.clear();
+  //  cin.ignore(10000, '\n');
+  //  if (temp == "manual"){
+  //    makeGenHead(hg);
+  //    break;
+  //  }
+  //  else if (temp == "file"){
+  //    cout << "What is the name of the file? ";
+  //    getline(cin, temp);
+  //    makeGenHeadFile(hg, temp);
+  //    break;
+  //  }
+  //  else{
+  //    cout << "Invalid option" << endl;
+  //  }
+  //}
+  //cout << "Start Voltage (V): ";
+  //cin >> starting;
+  //cin.clear();
+  //cin.ignore(10000, '\n');
+  //cout << "End Voltage (V): ";
+  //cin >> stop;
+  //cin.clear();
+  //cin.ignore(10000, '\n');
+  //if (stop < starting){
+  //  cerr << "Invalid Voltages" << endl;
+  //  exit(0);
+  //}
+  //cout << "Step Size (V): ";
+  //cin >> step;
+  //cout << "Interval duration (s): ";
+  //cin >> duration;
+  //cout << "Sampling frequency (s): ";
+  //cin >> freq;
+  //cout << "Number of Pixels being tested: ";
+  //cin >> num;
+  //cin.clear();
+  //cin.ignore(10000, '\n');
+  //x.resize(num);
+  //y.resize(num);
+  //for (int i = 0; i < num; ++i){
+  //  cout << "RO # of pixel " << i + 1 << ": ";
+  //  cin >> x[i];
+  //  cin.clear();
+  //  cin.ignore(10000, '\n');
+  //  cout << "HV # of pixel " << i + 1 << ": ";
+  //  cin >> y[i];
+  //  pix.push_back(to_string(x[i]) + "-" + to_string(x[i]));
+  //}
 
 
   time_t t = time(nullptr);
@@ -3332,4 +3334,75 @@ double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLen
   }
   elapsed = t - start;
   return count[lineNum-1] / elapsed.count();
+}
+
+void doLineScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message, HeaderInfoGen* header)
+{
+	string path = ".\\CollectedData\\";
+	string runName;
+	ofstream log;
+	vector<string> pix;
+	pix.push_back("1");
+	int motbegin = 0, motend = message->maxOffsetX, motstep = message->maxStepX;
+	int starting = message->voltageStart;
+	int stop = message->voltageEnd;
+	int duration = message->time;
+	//int num;
+	//vector<int> x;
+	//vector<int> y;
+	double freq;
+	int step = message->voltageStep;
+	char tempc = 25;
+	string temp;
+	//vector<string> pix;
+
+	time_t t = time(nullptr);
+	// TODO: add identifier to first directory, possibly panel name?
+	CreateDirectory(path.c_str(), NULL);
+	runName = path + header->gas + "\\";
+	CreateDirectory(runName.c_str(), NULL);
+	runName += to_string((int)header->pressure);
+	runName += +"torr\\";
+	CreateDirectory(runName.c_str(), NULL);
+	runName += header->panelName + "_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
+	CreateDirectory(runName.c_str(), NULL);
+	log.open(runName + "log.txt", ofstream::ate);
+	runName += "LineScan\\";
+	CreateDirectory(runName.c_str(), NULL);
+	log << "Intitalized Line Scan Run" << endl;
+	log << "Starting: " << starting << endl;
+	log << "Stop: " << stop << endl;
+	log << "Step Size: " << step << endl;
+	log << "Interval Duration: " << duration << endl;
+	log << "Sampling Frequency: " << freq << endl;
+	
+	log << "Turning On High Voltage" << endl;
+	volt->setVoltage(0);
+	volt->turnOn();
+
+	if (header->sourceConfig == "Dynamic")
+	{
+		log << "Going to home" << endl;
+		mot->goZero();
+		mot->stepMotor(1, -motstep);
+		for (int i = motbegin; i <= motend; i += motstep)
+		{
+			mot->stepMotor(1, motstep);
+
+			for (int j = starting; j <= stop; j += step)
+			{
+				log << "Setting Voltage to: " << i << endl;
+				volt->setVoltage(i);
+				log << "Begin Counting" << endl;
+				temp = runName + "_" + to_string(i) + "_sor_ls.txt";
+				doWeinerCount(nim, duration, freq, i, *header, pix, temp);
+				log << "Finished Counting" << endl;
+			}
+		}
+	}
+
+	log << "Turning off High Voltage" << endl;
+	volt->turnOff();
+	log << "Voltage Scan Completed" << endl;
+	log.close();
 }
