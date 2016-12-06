@@ -415,35 +415,35 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText18->Wrap( -1 );
 	fgSizer2->Add( m_staticText18, 0, wxALL, 5 );
 	
-	m_textCtrl18 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl18 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1000"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl18, 0, wxALL, 5 );
 	
 	m_staticText19 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y Offset"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText19->Wrap( -1 );
 	fgSizer2->Add( m_staticText19, 0, wxALL, 5 );
 	
-	m_textCtrl19 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl19 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1000"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl19, 0, wxALL, 5 );
 	
 	m_staticText20 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("X Step Size"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText20->Wrap( -1 );
 	fgSizer2->Add( m_staticText20, 0, wxALL, 5 );
 	
-	m_textCtrl20 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl20 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("100"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl20, 0, wxALL, 5 );
 	
 	m_staticText21 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y Step Size"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText21->Wrap( -1 );
 	fgSizer2->Add( m_staticText21, 0, wxALL, 5 );
 	
-	m_textCtrl21 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl21 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("100"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl21, 0, wxALL, 5 );
 	
 	m_staticText22 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Start Voltage"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText22->Wrap( -1 );
 	fgSizer2->Add( m_staticText22, 0, wxALL, 5 );
 	
-	m_textCtrl22 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl22 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("800"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_textCtrl22->SetToolTip( wxT("The test will start at this voltage") );
 	
 	fgSizer2->Add( m_textCtrl22, 0, wxALL, 5 );
@@ -452,7 +452,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText23->Wrap( -1 );
 	fgSizer2->Add( m_staticText23, 0, wxALL, 5 );
 	
-	m_textCtrl23 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl23 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1200"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_textCtrl23->SetToolTip( wxT("The last voltage that will be tested") );
 	
 	fgSizer2->Add( m_textCtrl23, 0, wxALL, 5 );
@@ -461,21 +461,21 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText45->Wrap( -1 );
 	fgSizer2->Add( m_staticText45, 0, wxALL, 5 );
 	
-	m_textCtrl40 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl40 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("50"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl40, 0, wxALL, 5 );
 	
 	m_staticText46 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Number of Pixels"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText46->Wrap( -1 );
 	fgSizer2->Add( m_staticText46, 0, wxALL, 5 );
 	
-	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl41, 0, wxALL, 5 );
 	
 	m_staticText47 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Measurement Time"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText47->Wrap( -1 );
 	fgSizer2->Add( m_staticText47, 0, wxALL, 5 );
 	
-	m_textCtrl42 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl42 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("120"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_textCtrl42->SetToolTip( wxT("Dwell time in seconds") );
 	
 	fgSizer2->Add( m_textCtrl42, 0, wxALL, 5 );
@@ -484,7 +484,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText48->Wrap( -1 );
 	fgSizer2->Add( m_staticText48, 0, wxALL, 5 );
 	
-	m_textCtrl43 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl43 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl43, 0, wxALL, 5 );
 	
 	wxString m_radioBox3Choices[] = { wxT("On"), wxT("Off") };

@@ -159,6 +159,6 @@ void measureLines(WeinerCounter* nim, double time, double &actualTime, vector<in
 const int OVER = 65536;
 
 //for GUI
-void doLineScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message);
+void doLineScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message, HeaderInfoGen* header);
 
 #endif

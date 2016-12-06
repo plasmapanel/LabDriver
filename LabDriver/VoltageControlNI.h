@@ -10,9 +10,9 @@ class VoltageNI
 public:
 	VoltageNI();
 	~VoltageNI();
-	void voltageOn();
+	void turnOn();
 	void setVoltage(int voltage);
-	void voltageOff();
+	void turnOff();
 
 private:
 	const static int BUF_SIZE = 1024;

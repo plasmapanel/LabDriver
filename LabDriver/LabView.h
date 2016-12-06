@@ -57,7 +57,8 @@ public:
 	void setHome(wxCommandEvent& event);
 	void goToHome(wxCommandEvent& event);
 	void openHeaderFrame(wxCommandEvent& event);
-	
+	void connectNIMClicked(wxCommandEvent& event);
+	void startSelected(wxCommandEvent& event);
 
 
 private:
@@ -77,8 +78,11 @@ public:
 	void saveHeader(wxCommandEvent& event);
 	void openHeader(wxCommandEvent& event);
 	void copyData();
+	void putData(HeaderInfoGen &);
+	
 
 private:
 	string getSourceConfig();
+	void setSourceConfig(string type);
 };
 #endif // ..PY_H

@@ -3373,8 +3373,8 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, 
 	log << "Starting: " << starting << endl;
 	log << "Stop: " << stop << endl;
 	log << "Step Size: " << step << endl;
-	log << "Interval Duration: " << duration << endl;
-	log << "Sampling Frequency: " << freq << endl;
+	log << "Interval Duration: " << message->time << endl;
+	log << "Sampling Frequency: " << message->frequency << endl;
 	
 	log << "Turning On High Voltage" << endl;
 	volt->setVoltage(0);
@@ -3395,10 +3395,31 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, 
 				volt->setVoltage(i);
 				log << "Begin Counting" << endl;
 				temp = runName + "_" + to_string(i) + "_sor_ls.txt";
-				doWeinerCount(nim, duration, freq, i, *header, pix, temp);
+				doWeinerCount(nim, message->time, message->frequency, i, *header, pix, message->temp);
 				log << "Finished Counting" << endl;
 			}
 		}
+	}
+
+	if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
+		mot->goToBackGround();
+		//------------------------------
+		//--------WARNING--------------
+		//----------------------------
+		//when a the motor is moved to the background location it always needs to be moved out in order to be used again
+		//aka always call leaveBackGround() when done with taking a background measure ment
+	}
+	header->sourceName = "bkg";
+	for (int i = starting; i <= stop; i += step){
+		log << "Setting Voltage to: " << i << endl;
+		volt->setVoltage(i);
+		log << "Begin Counting" << endl;
+		temp = runName + to_string(i) + "_bkg_vs.txt";
+		doWeinerCount(nim, message->time, message->frequency, i, *header, pix, message->temp);
+		log << "Finished Counting" << endl;
+	}
+	if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
+		mot->leaveBackGround();
 	}
 
 	log << "Turning off High Voltage" << endl;

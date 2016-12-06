@@ -15,6 +15,7 @@
 #include "VoltageControlNI.h"
 #include "Panel.h"
 #include "messages.h"
+#include "LabUtilities.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -25,18 +26,21 @@
 
 
 MotorController* mot;
-VoltageNI* volt;
-VoltageControl* volt2;
+//VoltageNI* volt;
+VoltageControl* volt;
 Panel* panelConfig;
 HeaderEdit* HeaderWindow;
 Messages* message;
+WeinerCounter* nim;
+HeaderInfoGen* globalHeader;
 
 
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
 	//mot = new MotorController(3, 9600);
-	volt = new VoltageNI();
+	//volt = new VoltageNI();
+	//volt = new VoltageControl(5);
 	message = new Messages();
 }
 
@@ -157,11 +161,11 @@ void BigFrame::toggleHV(wxCommandEvent& event)
 		string voltage = m_textCtrl22->GetLineText(0);
 
 			volt->setVoltage(stoi(voltage));
-			volt->voltageOn();
+			volt->turnOn();
 
 	}
 	if (voltageStatus == 1)
-		volt->voltageOff();
+		volt->turnOff();
 }
 
 void BigFrame::setStartVoltage(wxCommandEvent& event)
@@ -188,7 +192,10 @@ void BigFrame::motorControllerDisconnectClicked(wxCommandEvent & event)
 
 void BigFrame::HVConnectClicked(wxCommandEvent & event)
 {
+	volt = new VoltageControl(5);
 	//volt = new VoltageNI();
+
+	volt->turnOff();
 }
 
 void BigFrame::openPanelFrame(wxCommandEvent& event) 
@@ -227,19 +234,19 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	ystepsize = wxAtoi(m_textCtrl21->GetLineText(0));
 
 	dwelltime = wxAtoi(m_textCtrl42->GetLineText(0));
-	totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize* dwelltime;
+	totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize*dwelltime;
 
 	frequency = wxAtoi(m_textCtrl43->GetLineText(0));
 
 	m_textCtrl46->SelectAll();
 	m_textCtrl46->WriteText(wxString::Format(wxT("%f"), totaltime / 3600));
 
-	message->frequency = frequency;
+	/*message->frequency = frequency;
 	message->maxOffsetX = xoffset;
 	message->maxStepX = xstepsize;
 	message->time = dwelltime;
 	message->voltageStart = startvoltage;
-	message->voltageEnd = endvoltage;
+	message->voltageEnd = endvoltage;*/
 
 }
 
@@ -289,6 +296,25 @@ string HeaderEdit::getSourceConfig()
 	}
 }
 
+void HeaderEdit::setSourceConfig(string type)
+{
+	if (type.compare("Dynamic"))
+	{
+		m_radioBox1->SetSelection(0);
+	}
+
+	else if (type.compare("Static"))
+	{
+		m_radioBox1->SetSelection(1);
+	}
+	else if (type.compare("User"))
+	{
+		m_radioBox1->SetSelection(2);
+	}
+	else
+		wxMessageBox(wxT("No Source Type Found!"));
+}
+
 void HeaderEdit::headerOkClicked(wxCommandEvent& event)
 {
 	copyData();
@@ -301,36 +327,52 @@ void HeaderEdit::headerCancelClicked(wxCommandEvent& event)
 
 void HeaderEdit::saveHeader(wxCommandEvent& event)
 {
-	int once = 0;
 	copyData();
 	string fullpath;
 	wxFileDialog* SaveDialog = new wxFileDialog(
-		this, _("Choose a location to save to"), wxEmptyString, wxString(headerInfo.panelName),
-		wxEmptyString, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition);
+		this, _("Choose a location to save to"), wxEmptyString, wxString(headerInfo.panelName), wxT("Text File (*.txt) | *.txt"),
+		wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
-	if (SaveDialog->ShowModal() == wxID_CANCEL)
-		SaveDialog->Destroy();     // the user changed idea...
+	//if (SaveDialog->ShowModal() == wxID_CANCEL)
+	//	SaveDialog->Destroy();     // the user changed idea...
 
 
-	if (SaveDialog->ShowModal() == wxID_OK && once == 0) // if the user click "Save" instead of "Cancel"
+	if (SaveDialog->ShowModal() == wxID_OK) // if the user click "Save" instead of "Cancel"
 	{
 
-		fullpath = SaveDialog->GetPath() + SaveDialog->GetFilename();
-		wxMessageBox(fullpath);
+		fullpath = SaveDialog->GetFilename();
+		//wxMessageBox(fullpath);
+
 		ofstream file;
 		file.open(fullpath);
 
 		file << headerInfo;
 		file.close();
 		//makeGenHeadFile(headerInfo, fullpath);
-		once++;
 	}
-	SaveDialog->Destroy();
+	else
+		SaveDialog->Destroy();
 }
 
 void HeaderEdit::openHeader(wxCommandEvent& event)
 {
+	string fullpath;
+	wxFileDialog* OpenDialog = new wxFileDialog(
+		this, _("Choose header file to open"), wxT("Text File (*.txt) | *.txt"));
 
+	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Save" instead of "Cancel"
+	{
+
+		fullpath = OpenDialog->GetFilename();
+		//wxMessageBox(fullpath);
+
+		makeGenHeadFile(headerInfo, fullpath);
+		putData(headerInfo);
+		*globalHeader = headerInfo;
+		//makeGenHeadFile(headerInfo, fullpath);
+	}
+	else
+		OpenDialog->Destroy();
 }
 
 void HeaderEdit::copyData()
@@ -345,10 +387,43 @@ void HeaderEdit::copyData()
 	headerInfo.quench = wxAtof(m_textCtrl132->GetLineText(0));
 	headerInfo.numRO = wxAtoi(m_textCtrl47->GetLineText(0));
 	headerInfo.roLines = m_textCtrl1321->GetLineText(0);
-	headerInfo.triggerRO = m_textCtrl1322->GetLineText(0);
+	headerInfo.triggerRO = m_textCtrl12->GetLineText(0);
 	headerInfo.attenRO = wxAtof(m_textCtrl24->GetLineText(0));
 	headerInfo.numHV = wxAtoi(m_textCtrl1324->GetLineText(0));
 	headerInfo.linesHV = m_textCtrl1325->GetLineText(0);
 	headerInfo.triggerHV = m_textCtrl1323->GetLineText(0);
 	headerInfo.attenHV = wxAtof(m_textCtrl1326->GetLineText(0));
+}
+
+void HeaderEdit::putData(HeaderInfoGen &headerInfo)
+{
+	m_textCtrl1->WriteText(headerInfo.panelName);
+	m_textCtrl11->WriteText(headerInfo.sourceName);
+	m_textCtrl1322->WriteText(headerInfo.triggerSetup);
+	m_textCtrl13->WriteText(headerInfo.gas);
+	m_textCtrl131->WriteText(wxString::Format(wxT("%f"), headerInfo.pressure));
+	m_textCtrl48->WriteText(wxString::Format(wxT("%f"), headerInfo.discThresh));
+	m_textCtrl132->WriteText(wxString::Format(wxT("%f"), headerInfo.quench));
+	m_textCtrl47->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
+	m_textCtrl1321->WriteText(headerInfo.roLines);
+	m_textCtrl12->WriteText(headerInfo.triggerRO);
+	m_textCtrl24->WriteText(wxString::Format(wxT("%f"), headerInfo.attenRO));
+	m_textCtrl1324->WriteText(wxString::Format(wxT("%i"), headerInfo.numHV));
+	m_textCtrl1325->WriteText(headerInfo.linesHV);
+	m_textCtrl1323->WriteText(headerInfo.triggerHV);
+	m_textCtrl1326->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
+	setSourceConfig(headerInfo.sourceConfig);
+}
+
+void BigFrame::connectNIMClicked(wxCommandEvent& event)
+{
+	nim = new WeinerCounter(0);
+}
+
+void BigFrame::startSelected(wxCommandEvent& event)
+{
+	if (scanType.compare("LineScan"))
+	{
+		doLineScan(mot, nim, volt, message, globalHeader);
+	}
 }

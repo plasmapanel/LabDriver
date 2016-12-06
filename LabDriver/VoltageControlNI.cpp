@@ -63,13 +63,13 @@ void VoltageNI::setVoltage(int v)
 	this_thread::sleep_for(chrono::seconds(5));
 }
 
-void VoltageNI::voltageOff()
+void VoltageNI::turnOff()
 {
 	char * off = "Z\r";
 	Send(0, 0, off, strlen(off), NLend);
 }
 
-void VoltageNI::voltageOn()
+void VoltageNI::turnOn()
 {
 	char * on = "R\r";
 	Send(0, 0, on, strlen(on), NLend);
