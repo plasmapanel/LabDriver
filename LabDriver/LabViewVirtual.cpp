@@ -23,14 +23,14 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText1->Wrap( -1 );
 	sbSizer1->Add( m_staticText1, 0, wxALL, 5 );
 	
-	m_textCtrl1 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Name"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_textCtrl1, 0, wxALL, 5 );
 	
 	m_staticText11 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Source"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
 	sbSizer1->Add( m_staticText11, 0, wxALL, 5 );
 	
-	m_textCtrl11 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl11 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Sn"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_textCtrl11, 0, wxALL, 5 );
 	
 	wxString m_radioBox1Choices[] = { wxT("Static"), wxT("Dynamic"), wxT("User") };
@@ -45,22 +45,112 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Gas Information") ), wxHORIZONTAL );
 	
+	wxStaticBoxSizer* sbSizer8;
+	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( sbSizer3->GetStaticBox(), wxID_ANY, wxT("Mix") ), wxHORIZONTAL );
+	
+	wxBoxSizer* bSizer33;
+	bSizer33 = new wxBoxSizer( wxVERTICAL );
+	
+	m_comboBox1 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("CF4"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_comboBox1->Append( wxT("Ar") );
+	m_comboBox1->Append( wxT("He") );
+	m_comboBox1->Append( wxT("CO2") );
+	m_comboBox1->Append( wxT("CF4") );
+	m_comboBox1->Append( wxT("Xe") );
+	m_comboBox1->Append( wxT("N2") );
+	m_comboBox1->Append( wxT("SF6") );
+	m_comboBox1->Append( wxT("Ne") );
+	m_comboBox1->Append( wxT("C2F6") );
+	m_comboBox1->Append( wxT("C3F8") );
+	m_comboBox1->Append( wxT("C4F8") );
+	m_comboBox1->SetSelection( 3 );
+	bSizer33->Add( m_comboBox1, 0, wxALL, 5 );
+	
+	m_textCtrl49 = new wxTextCtrl( sbSizer8->GetStaticBox(), wxID_ANY, wxT("50"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer33->Add( m_textCtrl49, 0, wxALL, 5 );
+	
+	
+	sbSizer8->Add( bSizer33, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer34;
+	bSizer34 = new wxBoxSizer( wxVERTICAL );
+	
+	m_comboBox2 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("Ne"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_comboBox2->Append( wxT("Ar") );
+	m_comboBox2->Append( wxT("He") );
+	m_comboBox2->Append( wxT("CO2") );
+	m_comboBox2->Append( wxT("CF4") );
+	m_comboBox2->Append( wxT("Xe") );
+	m_comboBox2->Append( wxT("N2") );
+	m_comboBox2->Append( wxT("SF6") );
+	m_comboBox2->Append( wxT("Ne") );
+	m_comboBox2->Append( wxT("C2F6") );
+	m_comboBox2->Append( wxT("C3F8") );
+	m_comboBox2->Append( wxT("C4F8") );
+	m_comboBox2->SetSelection( 7 );
+	bSizer34->Add( m_comboBox2, 0, wxALL, 5 );
+	
+	m_textCtrl50 = new wxTextCtrl( sbSizer8->GetStaticBox(), wxID_ANY, wxT("49"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer34->Add( m_textCtrl50, 0, wxALL, 5 );
+	
+	
+	sbSizer8->Add( bSizer34, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer35;
+	bSizer35 = new wxBoxSizer( wxVERTICAL );
+	
+	m_comboBox3 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("Ar"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_comboBox3->Append( wxT("Ar") );
+	m_comboBox3->Append( wxT("He") );
+	m_comboBox3->Append( wxT("CO2") );
+	m_comboBox3->Append( wxT("CF4") );
+	m_comboBox3->Append( wxT("Xe") );
+	m_comboBox3->Append( wxT("N2") );
+	m_comboBox3->Append( wxT("SF6") );
+	m_comboBox3->Append( wxT("Ne") );
+	m_comboBox3->Append( wxT("C2F6") );
+	m_comboBox3->Append( wxT("C3F8") );
+	m_comboBox3->Append( wxT("C4F8") );
+	m_comboBox3->SetSelection( 0 );
+	bSizer35->Add( m_comboBox3, 0, wxALL, 5 );
+	
+	m_textCtrl51 = new wxTextCtrl( sbSizer8->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer35->Add( m_textCtrl51, 0, wxALL, 5 );
+	
+	
+	sbSizer8->Add( bSizer35, 1, wxEXPAND, 5 );
+	
+	
+	sbSizer3->Add( sbSizer8, 1, wxEXPAND, 5 );
+	
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 	
+	wxBoxSizer* bSizer36;
+	bSizer36 = new wxBoxSizer( wxVERTICAL );
+	
 	m_staticText14 = new wxStaticText( sbSizer3->GetStaticBox(), wxID_ANY, wxT("Gas"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText14->Wrap( -1 );
-	bSizer3->Add( m_staticText14, 0, wxALL, 5 );
+	bSizer36->Add( m_staticText14, 0, wxALL, 5 );
 	
-	m_textCtrl13 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer3->Add( m_textCtrl13, 0, wxALL, 5 );
+	m_textCtrl13 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxT("1%Ar49%Ne50%CF4"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer36->Add( m_textCtrl13, 0, wxALL, 5 );
+	
+	
+	bSizer3->Add( bSizer36, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer37;
+	bSizer37 = new wxBoxSizer( wxVERTICAL );
 	
 	m_staticText141 = new wxStaticText( sbSizer3->GetStaticBox(), wxID_ANY, wxT("Pressure (Torr)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText141->Wrap( -1 );
-	bSizer3->Add( m_staticText141, 0, wxALL, 5 );
+	bSizer37->Add( m_staticText141, 0, wxALL, 5 );
 	
-	m_textCtrl131 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer3->Add( m_textCtrl131, 0, wxALL, 5 );
+	m_textCtrl131 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxT("740"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer37->Add( m_textCtrl131, 0, wxALL, 5 );
+	
+	
+	bSizer3->Add( bSizer37, 1, wxEXPAND, 5 );
 	
 	
 	sbSizer3->Add( bSizer3, 1, wxEXPAND, 5 );
@@ -78,14 +168,14 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText1426->Wrap( -1 );
 	bSizer324->Add( m_staticText1426, 0, wxALL, 5 );
 	
-	m_textCtrl1326 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1326 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("20"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer324->Add( m_textCtrl1326, 0, wxALL, 5 );
 	
 	m_staticText1423 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Trigger Voltage"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1423->Wrap( -1 );
 	bSizer324->Add( m_staticText1423, 0, wxALL, 5 );
 	
-	m_textCtrl1323 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1323 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer324->Add( m_textCtrl1323, 0, wxALL, 5 );
 	
 	
@@ -98,21 +188,21 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText142->Wrap( -1 );
 	bSizer326->Add( m_staticText142, 0, wxALL, 5 );
 	
-	m_textCtrl132 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl132 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("100000000"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer326->Add( m_textCtrl132, 0, wxALL, 5 );
 	
 	m_staticText1424 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Number of HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1424->Wrap( -1 );
 	bSizer326->Add( m_staticText1424, 0, wxALL, 5 );
 	
-	m_textCtrl1324 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1324 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("3"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer326->Add( m_textCtrl1324, 0, wxALL, 5 );
 	
 	m_staticText1425 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1425->Wrap( -1 );
 	bSizer326->Add( m_staticText1425, 0, wxALL, 5 );
 	
-	m_textCtrl1325 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1325 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("1-3"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer326->Add( m_textCtrl1325, 0, wxALL, 5 );
 	
 	
@@ -131,21 +221,21 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText13->Wrap( -1 );
 	bSizer1->Add( m_staticText13, 0, wxALL, 5 );
 	
-	m_textCtrl12 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl12 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_textCtrl12, 0, wxALL, 5 );
 	
 	m_staticText49 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Number of RO Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText49->Wrap( -1 );
 	bSizer1->Add( m_staticText49, 0, wxALL, 5 );
 	
-	m_textCtrl47 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl47 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("3"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_textCtrl47, 0, wxALL, 5 );
 	
 	m_staticText1421 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("RO Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1421->Wrap( -1 );
 	bSizer1->Add( m_staticText1421, 0, wxALL, 5 );
 	
-	m_textCtrl1321 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1321 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1-3"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_textCtrl1321, 0, wxALL, 5 );
 	
 	
@@ -164,21 +254,21 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText25->Wrap( -1 );
 	bSizer20->Add( m_staticText25, 0, wxALL, 5 );
 	
-	m_textCtrl24 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl24 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("20"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_textCtrl24, 0, wxALL, 5 );
 	
 	m_staticText1422 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Ro Trigger"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1422->Wrap( -1 );
 	bSizer20->Add( m_staticText1422, 0, wxALL, 5 );
 	
-	m_textCtrl1322 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1322 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_textCtrl1322, 0, wxALL, 5 );
 	
 	discThr = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Discriminator Threshold"), wxDefaultPosition, wxDefaultSize, 0 );
 	discThr->Wrap( -1 );
 	bSizer20->Add( discThr, 0, wxALL, 5 );
 	
-	m_textCtrl48 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl48 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_textCtrl48, 0, wxALL, 5 );
 	
 	
@@ -226,6 +316,9 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	// Connect Events
 	m_staticText11->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPanelName ), NULL, this );
 	m_textCtrl11->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setSource ), NULL, this );
+	m_comboBox1->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
+	m_comboBox2->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
+	m_comboBox3->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_textCtrl13->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
 	m_textCtrl131->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPressure ), NULL, this );
 	m_textCtrl1326->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVAtten ), NULL, this );
@@ -248,6 +341,9 @@ header::~header()
 	// Disconnect Events
 	m_staticText11->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPanelName ), NULL, this );
 	m_textCtrl11->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setSource ), NULL, this );
+	m_comboBox1->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
+	m_comboBox2->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
+	m_comboBox3->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_textCtrl13->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
 	m_textCtrl131->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPressure ), NULL, this );
 	m_textCtrl1326->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVAtten ), NULL, this );

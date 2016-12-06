@@ -368,11 +368,38 @@ void HeaderEdit::openHeader(wxCommandEvent& event)
 
 		makeGenHeadFile(headerInfo, fullpath);
 		putData(headerInfo);
-		*globalHeader = headerInfo;
-		//makeGenHeadFile(headerInfo, fullpath);
+		globalHeader = &headerInfo;
 	}
 	else
 		OpenDialog->Destroy();
+}
+
+void HeaderEdit::updateGas()
+{
+	wxString gasMix;
+
+	vector<wxString> gasTypes;
+	vector<wxString> gasPercent;
+
+	gasTypes.push_back(m_comboBox3->GetStringSelection());
+	gasTypes.push_back(m_comboBox2->GetStringSelection());
+	gasTypes.push_back(m_comboBox1->GetStringSelection());
+
+	gasPercent.push_back(m_textCtrl51->GetLineText(0));
+	gasPercent.push_back(m_textCtrl50->GetLineText(0));
+	gasPercent.push_back(m_textCtrl49->GetLineText(0));
+
+	while (!gasTypes.empty())
+	{
+		gasMix += gasPercent.back() + "% ";
+		gasMix += gasTypes.back() + " ";
+		gasPercent.pop_back();
+		gasTypes.pop_back();
+	}
+
+	wxMessageBox(gasMix);
+
+	m_textCtrl13->WriteText(gasMix);
 }
 
 void HeaderEdit::copyData()

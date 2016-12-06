@@ -20,6 +20,7 @@
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/combobox.h>
 #include <wx/button.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -46,6 +47,12 @@ class header : public wxFrame
 		wxStaticText* m_staticText11;
 		wxTextCtrl* m_textCtrl11;
 		wxRadioBox* m_radioBox1;
+		wxComboBox* m_comboBox1;
+		wxTextCtrl* m_textCtrl49;
+		wxComboBox* m_comboBox2;
+		wxTextCtrl* m_textCtrl50;
+		wxComboBox* m_comboBox3;
+		wxTextCtrl* m_textCtrl51;
 		wxStaticText* m_staticText14;
 		wxTextCtrl* m_textCtrl13;
 		wxStaticText* m_staticText141;
@@ -80,6 +87,7 @@ class header : public wxFrame
 		// Virtual event handlers, overide them in your derived class
 		virtual void setPanelName( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setSource( wxFocusEvent& event ) { event.Skip(); }
+		virtual void updateGas( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setGas( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setPressure( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setHVAtten( wxFocusEvent& event ) { event.Skip(); }
