@@ -15,6 +15,7 @@ This file contains all of the utilities that will be used with our lab setup
 #include "TTree.h"
 #include "TFile.h"
 #include "Messages.h"
+#include "VoltageFactory.h"
 using namespace std;
 
 //USER FUNCIONS
@@ -159,6 +160,6 @@ void measureLines(WeinerCounter* nim, double time, double &actualTime, vector<in
 const int OVER = 65536;
 
 //for GUI
-void doLineScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message, HeaderInfoGen* header);
+void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header);
 
 #endif

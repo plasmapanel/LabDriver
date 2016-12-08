@@ -1,27 +1,32 @@
 #include "VoltageControlNI.h"
 
-VoltageNI::VoltageNI()
+//VoltageNI::VoltageNI()
+//{
+//	SendIFC(0);
+//	//if (ibsta & ERR)
+//		//gpib_error(1, "Could not send IFC");
+//
+//	//for (int i = 0; i < NUM_DEVICES - 1; i++)
+//	//	instruments[i] = i + 1;
+//	//instruments[NUM_DEVICES - 1] = NOADDR;
+//
+//	//FindLstn(0, instruments, result, NUM_DEVICES);
+//
+//	//num_listeners = ibcnt;
+//	//result[num_listeners] = NOADDR;
+//
+//
+//};
+
+//VoltageNI::~VoltageNI()
+//{
+//	ibonl(0, 0);
+//};
+
+void VoltageNI::init(int n)
 {
 	SendIFC(0);
-	//if (ibsta & ERR)
-		//gpib_error(1, "Could not send IFC");
-
-	//for (int i = 0; i < NUM_DEVICES - 1; i++)
-	//	instruments[i] = i + 1;
-	//instruments[NUM_DEVICES - 1] = NOADDR;
-
-	//FindLstn(0, instruments, result, NUM_DEVICES);
-
-	//num_listeners = ibcnt;
-	//result[num_listeners] = NOADDR;
-
-
-};
-
-VoltageNI::~VoltageNI()
-{
-	ibonl(0, 0);
-};
+}
 
 void VoltageNI::setVoltage(int v)
 {

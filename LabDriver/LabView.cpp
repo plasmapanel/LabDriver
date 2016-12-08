@@ -11,8 +11,8 @@
 
 #include "LabView.h"
 #include "MotorController.h"
-#include "VoltageControl.h"
-#include "VoltageControlNI.h"
+//#include "VoltageControl.h"
+//#include "VoltageControlNI.h"
 #include "Panel.h"
 #include "messages.h"
 #include "LabUtilities.h"
@@ -26,16 +26,16 @@
 
 
 MotorController* mot;
-//VoltageNI* volt;
-VoltageControl* volt;
+//VoltageNI* voltNI;
+//VoltageControl* volt;
+Voltage* volt;
 Panel* panelConfig;
 HeaderEdit* HeaderWindow;
 Messages* message;
 WeinerCounter* nim;
 HeaderInfoGen globalHeader;
 HeaderInfoGen* pglobalheader;
-
-
+VoltageFactory* vf;
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
@@ -44,6 +44,7 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 	//volt = new VoltageControl(5);
 	message = new Messages();
 	pglobalheader = &globalHeader;
+	vf = new VoltageFactory();
 }
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
@@ -194,10 +195,13 @@ void BigFrame::motorControllerDisconnectClicked(wxCommandEvent & event)
 
 void BigFrame::HVConnectClicked(wxCommandEvent & event)
 {
-	volt = new VoltageControl(5);
-	//volt = new VoltageNI();
+	string hv = hvChoice->GetStringSelection();
 
-	volt->turnOff();
+		volt = vf->newVolt(hv);
+		volt->init(5);
+		volt->turnOff();
+		hvChoice->Disable();
+		m_button17->Disable();
 }
 
 void BigFrame::openPanelFrame(wxCommandEvent& event) 

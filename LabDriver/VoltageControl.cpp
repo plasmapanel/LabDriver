@@ -1,27 +1,29 @@
 #include "VoltageControl.h"
-VoltageControl::VoltageControl(int num){
-  //set up port name
-  comNum = num;
-  string temp;
-  stringstream ss;
-  ss << "COM" << num;
-  ss >> temp;
-  port = temp.c_str();
-  //open port
-  DWORD error = 0;
-  error = PxSerialOpen(port);
-  if (error != 0){
-    throw;
+  void VoltageControl::init(int num)
+  {
+	  //set up port name
+	  comNum = num;
+	  string temp;
+	  stringstream ss;
+	  ss << "COM" << num;
+	  ss >> temp;
+	  port = temp.c_str();
+	  //open port
+	  DWORD error = 0;
+	  error = PxSerialOpen(port);
+	  if (error != 0){
+		  throw;
   }
 
 }
-VoltageControl::~VoltageControl(){
-  DWORD error = 0;
-  error = PxSerialClose();
-  if (error != 0){
-    throw;
-  }
-}
+//VoltageControl::~VoltageControl(){
+//  DWORD error = 0;
+//  error = PxSerialClose();
+//  if (error != 0){
+//    throw;
+//  }
+//}
+
 void VoltageControl::setVoltage(int v){
   if (v >= 10000){
     throw;

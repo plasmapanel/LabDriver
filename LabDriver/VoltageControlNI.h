@@ -1,15 +1,20 @@
+#pragma once
 #include "ni4882.h"
 #include "string"
 #include "sstream"
 //#include <Windows.h>
 #include "stdafx.h"
+
+#include "VoltageFactory.h"
+
 using namespace std;
 
-class VoltageNI
+class VoltageNI: public Voltage
 {
 public:
-	VoltageNI();
-	~VoltageNI();
+	//VoltageNI();
+	//~VoltageNI();
+	void init(int);
 	void turnOn();
 	void setVoltage(int voltage);
 	void turnOff();
