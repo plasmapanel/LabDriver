@@ -32,7 +32,8 @@ Panel* panelConfig;
 HeaderEdit* HeaderWindow;
 Messages* message;
 WeinerCounter* nim;
-HeaderInfoGen* globalHeader;
+HeaderInfoGen globalHeader;
+HeaderInfoGen* pglobalheader;
 
 
 
@@ -42,6 +43,7 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 	//volt = new VoltageNI();
 	//volt = new VoltageControl(5);
 	message = new Messages();
+	pglobalheader = &globalHeader;
 }
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
@@ -319,7 +321,7 @@ void HeaderEdit::setSourceConfig(string type)
 
 void HeaderEdit::headerOkClicked(wxCommandEvent& event)
 {
-	copyData();
+	copyData(globalHeader);
 	Show(false);
 }
 void HeaderEdit::headerCancelClicked(wxCommandEvent& event)
@@ -329,10 +331,10 @@ void HeaderEdit::headerCancelClicked(wxCommandEvent& event)
 
 void HeaderEdit::saveHeader(wxCommandEvent& event)
 {
-	copyData();
+	copyData(globalHeader);
 	string fullpath;
 	wxFileDialog* SaveDialog = new wxFileDialog(
-		this, _("Choose a location to save to"), wxEmptyString, wxString(headerInfo.panelName), wxT("Text File (*.txt) | *.txt"),
+		this, _("Choose a location to save to"), wxEmptyString, wxString(pglobalheader->panelName), wxT("Text File (*.txt) | *.txt"),
 		wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 	//if (SaveDialog->ShowModal() == wxID_CANCEL)
@@ -348,7 +350,7 @@ void HeaderEdit::saveHeader(wxCommandEvent& event)
 		ofstream file;
 		file.open(fullpath);
 
-		file << headerInfo;
+		file << globalHeader;
 		file.close();
 		//makeGenHeadFile(headerInfo, fullpath);
 	}
@@ -368,9 +370,8 @@ void HeaderEdit::openHeader(wxCommandEvent& event)
 		fullpath = OpenDialog->GetFilename();
 		//wxMessageBox(fullpath);
 
-		makeGenHeadFile(headerInfo, fullpath);
-		putData(headerInfo);
-		globalHeader = &headerInfo;
+		makeGenHeadFile(globalHeader, fullpath);
+		putData(globalHeader);
 	}
 	else
 		OpenDialog->Destroy();
@@ -408,7 +409,7 @@ void HeaderEdit::updateGas(wxCommandEvent& event)
 	m_textCtrl52->WriteText(wxString::Format(wxT("%i",gasTotal)));
 }
 
-void HeaderEdit::copyData()
+void HeaderEdit::copyData(HeaderInfoGen &headerInfo)
 {
 	headerInfo.panelName = m_textCtrl1->GetLineText(0);
 	headerInfo.sourceName = m_textCtrl11->GetLineText(0);
@@ -457,6 +458,6 @@ void BigFrame::startSelected(wxCommandEvent& event)
 {
 	if (scanType.compare("LineScan"))
 	{
-		doLineScan(mot, nim, volt, message, globalHeader);
+		doLineScan(mot, nim, volt, message, pglobalheader);
 	}
 }

@@ -72,12 +72,12 @@ class HeaderEdit : public header
 {
 public:
 	HeaderEdit(wxWindow* parent);
-	HeaderInfoGen headerInfo;
+	//HeaderInfoGen headerInfo;
 	void headerOkClicked(wxCommandEvent& event);
 	void headerCancelClicked(wxCommandEvent& event);
 	void saveHeader(wxCommandEvent& event);
 	void openHeader(wxCommandEvent& event);
-	void copyData();
+	void copyData(HeaderInfoGen &);
 	void putData(HeaderInfoGen &);
 	void updateGas(wxCommandEvent& event);
 	
