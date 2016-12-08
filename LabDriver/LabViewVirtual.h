@@ -55,6 +55,8 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl51;
 		wxStaticText* m_staticText14;
 		wxTextCtrl* m_textCtrl13;
+		wxStaticText* m_staticText51;
+		wxTextCtrl* m_textCtrl52;
 		wxStaticText* m_staticText141;
 		wxTextCtrl* m_textCtrl131;
 		wxStaticText* m_staticText1426;

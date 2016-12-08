@@ -241,13 +241,15 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	m_textCtrl46->SelectAll();
 	m_textCtrl46->WriteText(wxString::Format(wxT("%f"), totaltime / 3600));
 
-	/*message->frequency = frequency;
+	message->frequency = frequency;
 	message->maxOffsetX = xoffset;
 	message->maxStepX = xstepsize;
+	message->maxStepY = ystepsize;
+	message->numPix = 1;
 	message->time = dwelltime;
 	message->voltageStart = startvoltage;
-	message->voltageEnd = endvoltage;*/
-
+	message->voltageEnd = endvoltage;
+	message->voltageStep = voltagestepsize;
 }
 
 void markButtonClicked(wxCommandEvent& event)
@@ -374,9 +376,10 @@ void HeaderEdit::openHeader(wxCommandEvent& event)
 		OpenDialog->Destroy();
 }
 
-void HeaderEdit::updateGas()
+void HeaderEdit::updateGas(wxCommandEvent& event)
 {
 	wxString gasMix;
+	int gasTotal = 0;
 
 	vector<wxString> gasTypes;
 	vector<wxString> gasPercent;
@@ -392,14 +395,17 @@ void HeaderEdit::updateGas()
 	while (!gasTypes.empty())
 	{
 		gasMix += gasPercent.back() + "% ";
+		gasTotal += wxAtoi(gasPercent.back());
 		gasMix += gasTypes.back() + " ";
 		gasPercent.pop_back();
 		gasTypes.pop_back();
 	}
 
-	wxMessageBox(gasMix);
-
+	m_textCtrl13->SelectAll();
 	m_textCtrl13->WriteText(gasMix);
+
+	m_textCtrl52->SelectAll();
+	m_textCtrl52->WriteText(wxString::Format(wxT("%i",gasTotal)));
 }
 
 void HeaderEdit::copyData()

@@ -79,7 +79,7 @@ public:
 	void openHeader(wxCommandEvent& event);
 	void copyData();
 	void putData(HeaderInfoGen &);
-	void updateGas();
+	void updateGas(wxCommandEvent& event);
 	
 
 private:

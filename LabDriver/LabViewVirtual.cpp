@@ -51,7 +51,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxBoxSizer* bSizer33;
 	bSizer33 = new wxBoxSizer( wxVERTICAL );
 	
-	m_comboBox1 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("CF4"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_comboBox1 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("CF4"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	m_comboBox1->Append( wxT("Ar") );
 	m_comboBox1->Append( wxT("He") );
 	m_comboBox1->Append( wxT("CO2") );
@@ -66,7 +66,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_comboBox1->SetSelection( 3 );
 	bSizer33->Add( m_comboBox1, 0, wxALL, 5 );
 	
-	m_textCtrl49 = new wxTextCtrl( sbSizer8->GetStaticBox(), wxID_ANY, wxT("50"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl49 = new wxTextCtrl( sbSizer8->GetStaticBox(), wxID_ANY, wxT("50"), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
 	bSizer33->Add( m_textCtrl49, 0, wxALL, 5 );
 	
 	
@@ -75,7 +75,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxBoxSizer* bSizer34;
 	bSizer34 = new wxBoxSizer( wxVERTICAL );
 	
-	m_comboBox2 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("Ne"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_comboBox2 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("Ne"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	m_comboBox2->Append( wxT("Ar") );
 	m_comboBox2->Append( wxT("He") );
 	m_comboBox2->Append( wxT("CO2") );
@@ -99,7 +99,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxBoxSizer* bSizer35;
 	bSizer35 = new wxBoxSizer( wxVERTICAL );
 	
-	m_comboBox3 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("Ar"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_comboBox3 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("He"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	m_comboBox3->Append( wxT("Ar") );
 	m_comboBox3->Append( wxT("He") );
 	m_comboBox3->Append( wxT("CO2") );
@@ -111,7 +111,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_comboBox3->Append( wxT("C2F6") );
 	m_comboBox3->Append( wxT("C3F8") );
 	m_comboBox3->Append( wxT("C4F8") );
-	m_comboBox3->SetSelection( 0 );
+	m_comboBox3->SetSelection( 1 );
 	bSizer35->Add( m_comboBox3, 0, wxALL, 5 );
 	
 	m_textCtrl51 = new wxTextCtrl( sbSizer8->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -135,6 +135,13 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_textCtrl13 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxT("1%Ar49%Ne50%CF4"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer36->Add( m_textCtrl13, 0, wxALL, 5 );
+	
+	m_staticText51 = new wxStaticText( sbSizer3->GetStaticBox(), wxID_ANY, wxT("Total Percentage"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText51->Wrap( -1 );
+	bSizer36->Add( m_staticText51, 0, wxALL, 5 );
+	
+	m_textCtrl52 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer36->Add( m_textCtrl52, 0, wxALL, 5 );
 	
 	
 	bSizer3->Add( bSizer36, 1, wxEXPAND, 5 );
@@ -317,6 +324,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText11->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPanelName ), NULL, this );
 	m_textCtrl11->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setSource ), NULL, this );
 	m_comboBox1->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
+	m_textCtrl49->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_comboBox2->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_comboBox3->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_textCtrl13->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
@@ -342,6 +350,7 @@ header::~header()
 	m_staticText11->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPanelName ), NULL, this );
 	m_textCtrl11->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setSource ), NULL, this );
 	m_comboBox1->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
+	m_textCtrl49->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_comboBox2->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_comboBox3->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_textCtrl13->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
