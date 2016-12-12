@@ -99,7 +99,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxBoxSizer* bSizer35;
 	bSizer35 = new wxBoxSizer( wxVERTICAL );
 	
-	m_comboBox3 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("He"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
+	m_comboBox3 = new wxComboBox( sbSizer8->GetStaticBox(), wxID_ANY, wxT("Ar"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	m_comboBox3->Append( wxT("Ar") );
 	m_comboBox3->Append( wxT("He") );
 	m_comboBox3->Append( wxT("CO2") );
@@ -111,7 +111,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_comboBox3->Append( wxT("C2F6") );
 	m_comboBox3->Append( wxT("C3F8") );
 	m_comboBox3->Append( wxT("C4F8") );
-	m_comboBox3->SetSelection( 1 );
+	m_comboBox3->SetSelection( 0 );
 	bSizer35->Add( m_comboBox3, 0, wxALL, 5 );
 	
 	m_textCtrl51 = new wxTextCtrl( sbSizer8->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -140,7 +140,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText51->Wrap( -1 );
 	bSizer36->Add( m_staticText51, 0, wxALL, 5 );
 	
-	m_textCtrl52 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl52 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxT("100"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer36->Add( m_textCtrl52, 0, wxALL, 5 );
 	
 	
@@ -327,6 +327,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_textCtrl49->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_comboBox2->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_comboBox3->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
+	m_textCtrl51->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_textCtrl13->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
 	m_textCtrl131->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPressure ), NULL, this );
 	m_textCtrl1326->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVAtten ), NULL, this );
@@ -353,6 +354,7 @@ header::~header()
 	m_textCtrl49->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_comboBox2->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_comboBox3->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( header::updateGas ), NULL, this );
+	m_textCtrl51->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_textCtrl13->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
 	m_textCtrl131->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPressure ), NULL, this );
 	m_textCtrl1326->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVAtten ), NULL, this );
@@ -413,15 +415,18 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText201->Wrap( -1 );
 	sbSizer6->Add( m_staticText201, 0, wxALL, 5 );
 	
-	wxArrayString m_choice2Choices;
-	m_choice2 = new wxChoice( sbSizer6->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice2Choices, 0 );
-	m_choice2->SetSelection( 0 );
+	wxString m_choice2Choices[] = { wxT("1"), wxT("3"), wxT("6") };
+	int m_choice2NChoices = sizeof( m_choice2Choices ) / sizeof( wxString );
+	m_choice2 = new wxChoice( sbSizer6->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice2NChoices, m_choice2Choices, 0 );
+	m_choice2->SetSelection( 1 );
 	sbSizer6->Add( m_choice2, 0, wxALL, 5 );
 	
 	m_button15 = new wxButton( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Connect"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer6->Add( m_button15, 0, wxALL, 5 );
 	
 	m_button16 = new wxButton( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Disconnect"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button16->Enable( false );
+	
 	sbSizer6->Add( m_button16, 0, wxALL, 5 );
 	
 	
@@ -444,6 +449,8 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	sbSizer10->Add( m_button17, 0, wxALL, 5 );
 	
 	m_button18 = new wxButton( sbSizer10->GetStaticBox(), wxID_ANY, wxT("Disconnect"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button18->Enable( false );
+	
 	sbSizer10->Add( m_button18, 0, wxALL, 5 );
 	
 	

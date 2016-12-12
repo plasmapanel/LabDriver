@@ -37,7 +37,7 @@ public:
 	int maxStepY;
 	int voltageStart, voltageStep, voltageEnd;
 	int frequency;
-	std::string temp = "20";
+	std::string temp = "";
 
 	std::vector<int> pixX, pixY;
 

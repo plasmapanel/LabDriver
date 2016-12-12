@@ -371,7 +371,7 @@ void MotorController::setUpGrid(string filename){
 
 void MotorController::leaveBackGround(){
   //goTo(centerX, centerY);
-  stepMotor(2, -100000);
+  //stepMotor(2, -100000);
   goTo(centerX, centerY);
 }
 

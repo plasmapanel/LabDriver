@@ -180,17 +180,23 @@ void BigFrame::setStartVoltage(wxCommandEvent& event)
 void BigFrame::motorControllerConnectClicked(wxCommandEvent & event)
 {
 	static bool connected = false;
+	static int portnum;
 
 	if (!connected)
 	{
-		mot = new MotorController(3, 9600);
+		portnum = wxAtoi(m_choice2->GetStringSelection());
+		mot = new MotorController(portnum, 9600);
 		connected = true;
+		m_button15->Disable();
 	}
 }
 
 void BigFrame::motorControllerDisconnectClicked(wxCommandEvent & event)
 {
-	//mot->portClose();
+	mot->portClose();
+	mot = nullptr;
+	m_button15->Enable();
+	m_button16->Disable();
 }
 
 void BigFrame::HVConnectClicked(wxCommandEvent & event)
@@ -204,9 +210,15 @@ void BigFrame::HVConnectClicked(wxCommandEvent & event)
 		m_button17->Disable();
 }
 
+//void BigFrame::HVDisconnectClicked(wxCommandEvent& event)
+//{
+//	volt = nullptr;
+//}
+
 void BigFrame::openPanelFrame(wxCommandEvent& event) 
 { 
-	panelConfig = new Panel(this);
+	if (panelConfig == nullptr)
+		panelConfig = new Panel(this);
 	panelConfig->Show(true);
 }
 

@@ -3343,7 +3343,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	ofstream log;
 	vector<string> pix;
 	pix.push_back("1");
-	int motbegin = 0, motend = message->maxOffsetX, motstep = message->maxStepX;
+	int motbegin = 0, motend = message->maxOffsetY, motstep = message->maxStepY;
 	int starting = message->voltageStart;
 	int stop = message->voltageEnd;
 	int duration = message->time;
@@ -3384,18 +3384,18 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	{
 		log << "Going to home" << endl;
 		mot->goZero();
-		mot->stepMotor(1, -motstep);
+		mot->stepMotor(2, -motstep*2);
 		for (int i = motbegin; i <= motend; i += motstep)
 		{
-			mot->stepMotor(1, motstep);
+			mot->stepMotor(2, motstep);
 
 			for (int j = starting; j <= stop; j += step)
 			{
-				log << "Setting Voltage to: " << i << endl;
-				volt->setVoltage(i);
+				log << "Setting Voltage to: " << j << endl;
+				volt->setVoltage(j);
 				log << "Begin Counting" << endl;
-				temp = runName + "_" + to_string(i) + "_sor_ls.txt";
-				doWeinerCount(nim, message->time, message->frequency, i, *header, pix, message->temp);
+				temp = runName + "_" + to_string(j) + "_sor_ls.txt";
+				doWeinerCount(nim, message->time, message->frequency, j, *header, pix, message->temp);
 				log << "Finished Counting" << endl;
 			}
 		}
