@@ -15,4 +15,5 @@ public:
   void turnOn();
   void turnOff();
   void init(int);
+  void end();
 };

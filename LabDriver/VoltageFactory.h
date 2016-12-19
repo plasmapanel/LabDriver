@@ -10,6 +10,7 @@ public:
 	virtual void turnOn() {};
 	virtual void turnOff() {};
 	virtual void init(int) {};
+	virtual void end() {};
 	//~Voltage();
 };
 

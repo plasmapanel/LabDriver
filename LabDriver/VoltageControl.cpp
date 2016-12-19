@@ -95,3 +95,12 @@ void VoltageControl::turnOff(){
   }
 }
 
+void VoltageControl::end()
+{
+	  DWORD error = 0;
+	  error = PxSerialClose();
+	  if (error != 0){
+	    throw;
+	  }
+}
+

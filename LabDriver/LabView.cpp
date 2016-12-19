@@ -49,7 +49,12 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 {
+	volt->end();
 	Close(true);
+	delete volt;
+	delete nim;
+	delete mot;
+	delete vf;
 }
 //
 void BigFrame::yUpButtonClicked(wxCommandEvent & event)
@@ -263,11 +268,13 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	message->maxOffsetX = xoffset;
 	message->maxStepX = xstepsize;
 	message->maxStepY = ystepsize;
+	message ->maxOffsetY = yoffset;
 	message->numPix = 1;
 	message->time = dwelltime;
 	message->voltageStart = startvoltage;
 	message->voltageEnd = endvoltage;
 	message->voltageStep = voltagestepsize;
+	message->temp = m_textCtrl44->GetLineText(0);
 }
 
 void markButtonClicked(wxCommandEvent& event)
@@ -472,8 +479,16 @@ void BigFrame::connectNIMClicked(wxCommandEvent& event)
 
 void BigFrame::startSelected(wxCommandEvent& event)
 {
-	if (scanType.compare("LineScan"))
+	static bool run = false;
+	if (scanType.compare("LineScan") && run == false)
 	{
-		doLineScan(mot, nim, volt, message, pglobalheader);
+		thread t1(doLineScan, mot, nim, volt, message, pglobalheader);
+		//doLineScan(mot, nim, volt, message, pglobalheader);
+		run = true;
+		t1.detach();
+	}
+	else
+	{
+		run = false;
 	}
 }

@@ -26,6 +26,17 @@
 void VoltageNI::init(int n)
 {
 	SendIFC(0);
+		//if (ibsta & ERR)
+		//	//gpib_error(1, "Could not send IFC");
+	
+		//for (int i = 0; i < NUM_DEVICES - 1; i++)
+		//	instruments[i] = i + 1;
+		//instruments[NUM_DEVICES - 1] = NOADDR;
+	
+		//FindLstn(0, instruments, result, NUM_DEVICES);
+	
+		//num_listeners = ibcnt;
+		//result[num_listeners] = NOADDR;
 }
 
 void VoltageNI::setVoltage(int v)

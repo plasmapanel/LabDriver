@@ -614,3 +614,15 @@ void MotorController::portClose()
 {
 	PortClose();
 }
+
+string MotorController::stepsToMM(int numsteps, double stepsper)
+{
+	double mm = numsteps * stepsper;
+	return std::to_string(mm);
+}
+
+int MotorController::mmToSteps(double mm, double stepsper)
+{
+	double steps = mm / stepsper;
+	return (int)floor(steps);
+}

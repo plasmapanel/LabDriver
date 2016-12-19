@@ -15,6 +15,7 @@ baud rate is 9600 typically
 #define MAX_STEP_Y 50
 #include "VxmDriver.h"
 #include "WeinerCounter.h"
+
 using namespace std;
 class MotorController{
 public:
@@ -58,6 +59,9 @@ public:
   vector<tuple<int, int, double> > computePixelMap(WeinerCounter *nim, int pixX, int pixY, double timeToMeasure = TIME_TO_MEASURE,
     int maxOffsetX = MAX_OFFSET_X, int maxOffsetY = MAX_OFFSET_Y,
     int maxStepX = MAX_STEP_X, int maxStepY = MAX_STEP_Y);
+
+  string stepsToMM(int, double);
+  int mmToSteps(double, double);
   
 
 

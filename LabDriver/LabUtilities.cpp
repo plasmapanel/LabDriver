@@ -3359,12 +3359,12 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	time_t t = time(nullptr);
 	// TODO: add identifier to first directory, possibly panel name?
 	CreateDirectory(path.c_str(), NULL);
-	runName = path + header->gas + "\\";
-	CreateDirectory(runName.c_str(), NULL);
+	//runName = path + header->gas + "\\";
+	//CreateDirectory(runName.c_str(), NULL);
 	runName += to_string((int)header->pressure);
 	runName += +"torr\\";
 	CreateDirectory(runName.c_str(), NULL);
-	runName += header->panelName + "_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
+	runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
 	CreateDirectory(runName.c_str(), NULL);
 	log.open(runName + "log.txt", ofstream::ate);
 	runName += "LineScan\\";
@@ -3379,48 +3379,54 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	log << "Turning On High Voltage" << endl;
 	volt->setVoltage(0);
 	volt->turnOn();
-
+	string fullFile = "test.txt";
 	if (header->sourceConfig == "Dynamic")
 	{
+		volt->setVoltage(starting);
+		volt ->turnOn();
 		log << "Going to home" << endl;
 		mot->goZero();
-		mot->stepMotor(2, -motstep*2);
+		mot->stepMotor(2, -motstep);
+		//mot->stepMotor(2, motstep);
+		//mot->mapPixel(fullFile, nim, 1, 1, duration, 0, motend, 0, motstep);
+
 		for (int i = motbegin; i <= motend; i += motstep)
 		{
 			mot->stepMotor(2, motstep);
+			log << "At " << i << ", stepping " << motstep << endl;
 
 			for (int j = starting; j <= stop; j += step)
 			{
-				log << "Setting Voltage to: " << j << endl;
+				log << "Setting Voltage to: " << j << endl; 
 				volt->setVoltage(j);
 				log << "Begin Counting" << endl;
-				temp = runName + "_" + to_string(j) + "_sor_ls.txt";
+				temp = runName + "_" + to_string(j) + "_" + (long)i + "steps";
 				doWeinerCount(nim, message->time, message->frequency, j, *header, pix, message->temp);
 				log << "Finished Counting" << endl;
 			}
 		}
 	}
 
-	if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
-		mot->goToBackGround();
-		//------------------------------
-		//--------WARNING--------------
-		//----------------------------
-		//when a the motor is moved to the background location it always needs to be moved out in order to be used again
-		//aka always call leaveBackGround() when done with taking a background measure ment
-	}
-	header->sourceName = "bkg";
-	for (int i = starting; i <= stop; i += step){
-		log << "Setting Voltage to: " << i << endl;
-		volt->setVoltage(i);
-		log << "Begin Counting" << endl;
-		temp = runName + to_string(i) + "_bkg_vs.txt";
-		doWeinerCount(nim, message->time, message->frequency, i, *header, pix, message->temp);
-		log << "Finished Counting" << endl;
-	}
-	if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
-		mot->leaveBackGround();
-	}
+	//if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
+	//	mot->goToBackGround();
+	//	//------------------------------
+	//	//--------WARNING--------------
+	//	//----------------------------
+	//	//when a the motor is moved to the background location it always needs to be moved out in order to be used again
+	//	//aka always call leaveBackGround() when done with taking a background measure ment
+	//}
+	//header->sourceName = "bkg";
+	//for (int i = starting; i <= stop; i += step){
+	//	log << "Setting Voltage to: " << i << endl;
+	//	volt->setVoltage(i);
+	//	log << "Begin Counting" << endl;
+	//	temp = runName + to_string(i) + "_bkg_vs.txt";
+	//	doWeinerCount(nim, message->time, message->frequency, i, *header, pix, message->temp);
+	//	log << "Finished Counting" << endl;
+	//}
+	//if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
+	//	mot->leaveBackGround();
+	//}
 
 	log << "Turning off High Voltage" << endl;
 	volt->turnOff();
