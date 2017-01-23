@@ -59,10 +59,6 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl52;
 		wxStaticText* m_staticText141;
 		wxTextCtrl* m_textCtrl131;
-		wxStaticText* m_staticText1426;
-		wxTextCtrl* m_textCtrl1326;
-		wxStaticText* m_staticText1423;
-		wxTextCtrl* m_textCtrl1323;
 		wxStaticText* m_staticText142;
 		wxTextCtrl* m_textCtrl132;
 		wxStaticText* m_staticText1424;
@@ -92,8 +88,6 @@ class header : public wxFrame
 		virtual void updateGas( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setGas( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setPressure( wxFocusEvent& event ) { event.Skip(); }
-		virtual void setHVAtten( wxFocusEvent& event ) { event.Skip(); }
-		virtual void setHVVoltage( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setQuench( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setNumHVLines( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setHVLines( wxFocusEvent& event ) { event.Skip(); }
@@ -226,59 +220,25 @@ class MainFrame : public wxFrame
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class Counts
+/// Class UserEnd
 ///////////////////////////////////////////////////////////////////////////////
-class Counts : public wxFrame 
+class UserEnd : public wxFrame 
 {
 	private:
 	
 	protected:
-		wxStaticText* m_staticText22;
-		wxTextCtrl* m_textCtrl20;
-		wxStaticText* m_staticText221;
-		wxTextCtrl* m_textCtrl201;
-		wxStaticText* m_staticText222;
-		wxTextCtrl* m_textCtrl202;
-		wxStaticText* m_staticText223;
-		wxTextCtrl* m_textCtrl203;
-		wxStaticText* m_staticText224;
-		wxTextCtrl* m_textCtrl204;
-		wxStaticText* m_staticText225;
-		wxTextCtrl* m_textCtrl205;
-		wxStaticText* m_staticText226;
-		wxTextCtrl* m_textCtrl206;
-		wxStaticText* m_staticText227;
-		wxTextCtrl* m_textCtrl207;
-		wxStaticText* m_staticText228;
-		wxTextCtrl* m_textCtrl208;
-		wxStaticText* m_staticText229;
-		wxTextCtrl* m_textCtrl209;
-		wxStaticText* m_staticText2210;
-		wxTextCtrl* m_textCtrl2010;
-		wxStaticText* m_staticText2211;
-		wxTextCtrl* m_textCtrl2011;
-		wxStaticText* m_staticText2212;
-		wxTextCtrl* m_textCtrl2012;
-		wxStaticText* m_staticText2213;
-		wxTextCtrl* m_textCtrl2013;
-		wxStaticText* m_staticText2214;
-		wxTextCtrl* m_textCtrl2014;
-		wxStaticText* m_staticText2215;
-		wxTextCtrl* m_textCtrl2015;
-		wxStaticText* m_staticText2216;
-		wxTextCtrl* m_textCtrl2016;
-		wxStaticText* m_staticText2217;
-		wxTextCtrl* m_textCtrl2017;
-		wxStaticText* m_staticText2218;
-		wxTextCtrl* m_textCtrl2018;
-		wxStaticText* m_staticText2219;
-		wxTextCtrl* m_textCtrl2019;
+		wxStaticText* m_staticText50;
+		wxButton* m_button21;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void StopClicked( wxCommandEvent& event ) { event.Skip(); }
+		
 	
 	public:
 		
-		Counts( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Counts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 453,771 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		UserEnd( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Stop Button"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 223,188 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
-		~Counts();
+		~UserEnd();
 	
 };
 

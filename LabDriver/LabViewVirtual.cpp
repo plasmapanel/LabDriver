@@ -21,7 +21,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_staticText1 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Panel Name"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	sbSizer1->Add( m_staticText1, 0, wxALL, 5 );
+	sbSizer1->Add( m_staticText1, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	m_textCtrl1 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Name"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_textCtrl1, 0, wxALL, 5 );
@@ -30,7 +30,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText11->Wrap( -1 );
 	sbSizer1->Add( m_staticText11, 0, wxALL, 5 );
 	
-	m_textCtrl11 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Sn"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl11 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Sr90"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_textCtrl11, 0, wxALL, 5 );
 	
 	wxString m_radioBox1Choices[] = { wxT("Static"), wxT("Dynamic"), wxT("User") };
@@ -171,45 +171,31 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxBoxSizer* bSizer324;
 	bSizer324 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText1426 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Attenuation:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1426->Wrap( -1 );
-	bSizer324->Add( m_staticText1426, 0, wxALL, 5 );
-	
-	m_textCtrl1326 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("20"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer324->Add( m_textCtrl1326, 0, wxALL, 5 );
-	
-	m_staticText1423 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Trigger Voltage"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1423->Wrap( -1 );
-	bSizer324->Add( m_staticText1423, 0, wxALL, 5 );
-	
-	m_textCtrl1323 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer324->Add( m_textCtrl1323, 0, wxALL, 5 );
-	
 	
 	sbSizer2->Add( bSizer324, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer326;
 	bSizer326 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText142 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Quench Resistance:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText142 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Quench Resistance (GOhm):"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText142->Wrap( -1 );
 	bSizer326->Add( m_staticText142, 0, wxALL, 5 );
 	
-	m_textCtrl132 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("100000000"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl132 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("0.1"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer326->Add( m_textCtrl132, 0, wxALL, 5 );
 	
 	m_staticText1424 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Number of HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1424->Wrap( -1 );
 	bSizer326->Add( m_staticText1424, 0, wxALL, 5 );
 	
-	m_textCtrl1324 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("3"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1324 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("20"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer326->Add( m_textCtrl1324, 0, wxALL, 5 );
 	
 	m_staticText1425 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1425->Wrap( -1 );
 	bSizer326->Add( m_staticText1425, 0, wxALL, 5 );
 	
-	m_textCtrl1325 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("1-3"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1325 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("1-20"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer326->Add( m_textCtrl1325, 0, wxALL, 5 );
 	
 	
@@ -235,14 +221,14 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText49->Wrap( -1 );
 	bSizer1->Add( m_staticText49, 0, wxALL, 5 );
 	
-	m_textCtrl47 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("3"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl47 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("20"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_textCtrl47, 0, wxALL, 5 );
 	
 	m_staticText1421 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("RO Lines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1421->Wrap( -1 );
 	bSizer1->Add( m_staticText1421, 0, wxALL, 5 );
 	
-	m_textCtrl1321 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1-3"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1321 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1-20"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_textCtrl1321, 0, wxALL, 5 );
 	
 	
@@ -330,8 +316,6 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_textCtrl51->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_textCtrl13->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
 	m_textCtrl131->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPressure ), NULL, this );
-	m_textCtrl1326->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVAtten ), NULL, this );
-	m_textCtrl1323->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVVoltage ), NULL, this );
 	m_textCtrl132->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setQuench ), NULL, this );
 	m_textCtrl1324->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setNumHVLines ), NULL, this );
 	m_textCtrl1325->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVLines ), NULL, this );
@@ -357,8 +341,6 @@ header::~header()
 	m_textCtrl51->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( header::updateGas ), NULL, this );
 	m_textCtrl13->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setGas ), NULL, this );
 	m_textCtrl131->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setPressure ), NULL, this );
-	m_textCtrl1326->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVAtten ), NULL, this );
-	m_textCtrl1323->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVVoltage ), NULL, this );
 	m_textCtrl132->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setQuench ), NULL, this );
 	m_textCtrl1324->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setNumHVLines ), NULL, this );
 	m_textCtrl1325->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVLines ), NULL, this );
@@ -609,7 +591,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText49->Wrap( -1 );
 	fgSizer2->Add( m_staticText49, 0, wxALL, 5 );
 	
-	m_textCtrl44 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl44 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Panel"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl44, 0, wxALL, 5 );
 	
 	m_button20 = new wxButton( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Update"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -742,280 +724,33 @@ MainFrame::~MainFrame()
 	
 }
 
-Counts::Counts( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+UserEnd::UserEnd( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
-	wxBoxSizer* bSizer18;
-	bSizer18 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* bSizer38;
+	bSizer38 = new wxBoxSizer( wxVERTICAL );
 	
-	wxBoxSizer* bSizer19;
-	bSizer19 = new wxBoxSizer( wxHORIZONTAL );
+	m_staticText50 = new wxStaticText( this, wxID_ANY, wxT("Click button to end run"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText50->Wrap( -1 );
+	bSizer38->Add( m_staticText50, 0, wxALL, 5 );
 	
-	m_staticText22 = new wxStaticText( this, wxID_ANY, wxT("CH1"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText22->Wrap( -1 );
-	bSizer19->Add( m_staticText22, 0, wxALL, 5 );
+	m_button21 = new wxButton( this, wxID_ANY, wxT("Stop"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer38->Add( m_button21, 0, wxALL, 5 );
 	
-	m_textCtrl20 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer19->Add( m_textCtrl20, 0, wxALL, 5 );
 	
-	
-	bSizer18->Add( bSizer19, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer191;
-	bSizer191 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText221 = new wxStaticText( this, wxID_ANY, wxT("CH2"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText221->Wrap( -1 );
-	bSizer191->Add( m_staticText221, 0, wxALL, 5 );
-	
-	m_textCtrl201 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer191->Add( m_textCtrl201, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer191, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer192;
-	bSizer192 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText222 = new wxStaticText( this, wxID_ANY, wxT("CH3"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText222->Wrap( -1 );
-	bSizer192->Add( m_staticText222, 0, wxALL, 5 );
-	
-	m_textCtrl202 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer192->Add( m_textCtrl202, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer192, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer193;
-	bSizer193 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText223 = new wxStaticText( this, wxID_ANY, wxT("CH4"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText223->Wrap( -1 );
-	bSizer193->Add( m_staticText223, 0, wxALL, 5 );
-	
-	m_textCtrl203 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer193->Add( m_textCtrl203, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer193, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer194;
-	bSizer194 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText224 = new wxStaticText( this, wxID_ANY, wxT("CH5"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText224->Wrap( -1 );
-	bSizer194->Add( m_staticText224, 0, wxALL, 5 );
-	
-	m_textCtrl204 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer194->Add( m_textCtrl204, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer194, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer195;
-	bSizer195 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText225 = new wxStaticText( this, wxID_ANY, wxT("CH6"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText225->Wrap( -1 );
-	bSizer195->Add( m_staticText225, 0, wxALL, 5 );
-	
-	m_textCtrl205 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer195->Add( m_textCtrl205, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer195, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer196;
-	bSizer196 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText226 = new wxStaticText( this, wxID_ANY, wxT("CH7"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText226->Wrap( -1 );
-	bSizer196->Add( m_staticText226, 0, wxALL, 5 );
-	
-	m_textCtrl206 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer196->Add( m_textCtrl206, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer196, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer197;
-	bSizer197 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText227 = new wxStaticText( this, wxID_ANY, wxT("CH8"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText227->Wrap( -1 );
-	bSizer197->Add( m_staticText227, 0, wxALL, 5 );
-	
-	m_textCtrl207 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer197->Add( m_textCtrl207, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer197, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer198;
-	bSizer198 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText228 = new wxStaticText( this, wxID_ANY, wxT("CH9"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText228->Wrap( -1 );
-	bSizer198->Add( m_staticText228, 0, wxALL, 5 );
-	
-	m_textCtrl208 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer198->Add( m_textCtrl208, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer198, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer199;
-	bSizer199 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText229 = new wxStaticText( this, wxID_ANY, wxT("CH10"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText229->Wrap( -1 );
-	bSizer199->Add( m_staticText229, 0, wxALL, 5 );
-	
-	m_textCtrl209 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer199->Add( m_textCtrl209, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer199, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1910;
-	bSizer1910 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2210 = new wxStaticText( this, wxID_ANY, wxT("CH11"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2210->Wrap( -1 );
-	bSizer1910->Add( m_staticText2210, 0, wxALL, 5 );
-	
-	m_textCtrl2010 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1910->Add( m_textCtrl2010, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1910, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1911;
-	bSizer1911 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2211 = new wxStaticText( this, wxID_ANY, wxT("CH12"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2211->Wrap( -1 );
-	bSizer1911->Add( m_staticText2211, 0, wxALL, 5 );
-	
-	m_textCtrl2011 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1911->Add( m_textCtrl2011, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1911, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1912;
-	bSizer1912 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2212 = new wxStaticText( this, wxID_ANY, wxT("CH13"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2212->Wrap( -1 );
-	bSizer1912->Add( m_staticText2212, 0, wxALL, 5 );
-	
-	m_textCtrl2012 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1912->Add( m_textCtrl2012, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1912, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1913;
-	bSizer1913 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2213 = new wxStaticText( this, wxID_ANY, wxT("CH14"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2213->Wrap( -1 );
-	bSizer1913->Add( m_staticText2213, 0, wxALL, 5 );
-	
-	m_textCtrl2013 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1913->Add( m_textCtrl2013, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1913, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1914;
-	bSizer1914 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2214 = new wxStaticText( this, wxID_ANY, wxT("CH15"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2214->Wrap( -1 );
-	bSizer1914->Add( m_staticText2214, 0, wxALL, 5 );
-	
-	m_textCtrl2014 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1914->Add( m_textCtrl2014, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1914, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1915;
-	bSizer1915 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2215 = new wxStaticText( this, wxID_ANY, wxT("CH16"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2215->Wrap( -1 );
-	bSizer1915->Add( m_staticText2215, 0, wxALL, 5 );
-	
-	m_textCtrl2015 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1915->Add( m_textCtrl2015, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1915, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1916;
-	bSizer1916 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2216 = new wxStaticText( this, wxID_ANY, wxT("CH17"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2216->Wrap( -1 );
-	bSizer1916->Add( m_staticText2216, 0, wxALL, 5 );
-	
-	m_textCtrl2016 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1916->Add( m_textCtrl2016, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1916, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1917;
-	bSizer1917 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2217 = new wxStaticText( this, wxID_ANY, wxT("CH18"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2217->Wrap( -1 );
-	bSizer1917->Add( m_staticText2217, 0, wxALL, 5 );
-	
-	m_textCtrl2017 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1917->Add( m_textCtrl2017, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1917, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1918;
-	bSizer1918 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2218 = new wxStaticText( this, wxID_ANY, wxT("CH19"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2218->Wrap( -1 );
-	bSizer1918->Add( m_staticText2218, 0, wxALL, 5 );
-	
-	m_textCtrl2018 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1918->Add( m_textCtrl2018, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1918, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1919;
-	bSizer1919 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText2219 = new wxStaticText( this, wxID_ANY, wxT("CH20"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2219->Wrap( -1 );
-	bSizer1919->Add( m_staticText2219, 0, wxALL, 5 );
-	
-	m_textCtrl2019 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1919->Add( m_textCtrl2019, 0, wxALL, 5 );
-	
-	
-	bSizer18->Add( bSizer1919, 1, wxEXPAND, 5 );
-	
-	
-	this->SetSizer( bSizer18 );
+	this->SetSizer( bSizer38 );
 	this->Layout();
 	
 	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_button21->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( UserEnd::StopClicked ), NULL, this );
 }
 
-Counts::~Counts()
+UserEnd::~UserEnd()
 {
+	// Disconnect Events
+	m_button21->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( UserEnd::StopClicked ), NULL, this );
+	
 }

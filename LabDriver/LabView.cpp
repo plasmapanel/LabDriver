@@ -453,8 +453,8 @@ void HeaderEdit::copyData(HeaderInfoGen &headerInfo)
 	headerInfo.attenRO = wxAtof(m_textCtrl24->GetLineText(0));
 	headerInfo.numHV = wxAtoi(m_textCtrl1324->GetLineText(0));
 	headerInfo.linesHV = m_textCtrl1325->GetLineText(0);
-	headerInfo.triggerHV = m_textCtrl1323->GetLineText(0);
-	headerInfo.attenHV = wxAtof(m_textCtrl1326->GetLineText(0));
+	//headerInfo.triggerHV = m_textCtrl1323->GetLineText(0);
+	//headerInfo.attenHV = wxAtof(m_textCtrl1326->GetLineText(0));
 }
 
 void HeaderEdit::putData(HeaderInfoGen &headerInfo)
@@ -472,8 +472,8 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo)
 	m_textCtrl24->WriteText(wxString::Format(wxT("%f"), headerInfo.attenRO));
 	m_textCtrl1324->WriteText(wxString::Format(wxT("%i"), headerInfo.numHV));
 	m_textCtrl1325->WriteText(headerInfo.linesHV);
-	m_textCtrl1323->WriteText(headerInfo.triggerHV);
-	m_textCtrl1326->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
+	//m_textCtrl1323->WriteText(headerInfo.triggerHV);
+	//m_textCtrl1326->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
 	setSourceConfig(headerInfo.sourceConfig);
 }
 
