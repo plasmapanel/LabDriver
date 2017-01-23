@@ -1623,7 +1623,7 @@ static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost
     count[i] = 0;
   }
   atomic<bool> control = true;
-  thread t1(userInterrupt, &control);
+  //thread t1(userInterrupt, &control);
   chrono::duration<int, milli> dur((int)(intervalLength * 1000) - 29);
   nim->resetAll();
   t->push(HighResClock::now());
@@ -1656,7 +1656,7 @@ static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost
   }
   control = false;
   *done = true;
-  t1.join();
+  //t1.join();
 }
 void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message){
  // WeinerCounter *nim = nullptr;
@@ -3350,7 +3350,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	//int num;
 	//vector<int> x;
 	//vector<int> y;
-	double freq;
+	//double freq;
 	int step = message->voltageStep;
 	char tempc = 25;
 	string temp;
@@ -3380,32 +3380,36 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	volt->setVoltage(0);
 	volt->turnOn();
 	string fullFile = "test.txt";
-	if (header->sourceConfig == "Dynamic")
-	{
-		volt->setVoltage(starting);
-		volt ->turnOn();
-		log << "Going to home" << endl;
-		mot->goZero();
-		mot->stepMotor(2, -motstep);
-		//mot->stepMotor(2, motstep);
-		//mot->mapPixel(fullFile, nim, 1, 1, duration, 0, motend, 0, motstep);
-
-		for (int i = motbegin; i <= motend; i += motstep)
+		if (header->sourceConfig == "Dynamic")
 		{
-			mot->stepMotor(2, motstep);
-			log << "At " << i << ", stepping " << motstep << endl;
+			volt->setVoltage(starting);
+			volt->turnOn();
+			log << "Going to home" << endl;
+			mot->goZero();
+			mot->stepMotor(2, -motstep);
+			//mot->stepMotor(2, motstep);
+			//mot->mapPixel(fullFile, nim, 1, 1, duration, 0, motend, 0, motstep);
 
-			for (int j = starting; j <= stop; j += step)
+			for (int i = motbegin; i <= motend; i += motstep)
 			{
-				log << "Setting Voltage to: " << j << endl; 
-				volt->setVoltage(j);
-				log << "Begin Counting" << endl;
-				temp = runName + "_" + to_string(j) + "_" + (long)i + "steps";
-				doWeinerCount(nim, message->time, message->frequency, j, *header, pix, message->temp);
-				log << "Finished Counting" << endl;
+				mot->stepMotor(2, motstep);
+				log << "At " << i << endl;
+
+				for (int j = starting; j <= stop; j += step)
+				{
+					//if (end == true)
+						//break;
+					log << "Setting Voltage to: " << j << endl;
+					volt->setVoltage(j);
+					log << "Begin Counting" << endl;
+					temp = runName + "_" + to_string(j) + "_" + "volts" + "_" + to_string((long)i) + "_steps";
+					doWeinerCount(nim, message->time, message->frequency, j, *header, pix, temp);
+					log << "Finished Counting" << endl;
+
+				}
 			}
 		}
-	}
+	
 
 	//if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
 	//	mot->goToBackGround();

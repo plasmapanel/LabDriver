@@ -59,6 +59,7 @@ public:
 	void openHeaderFrame(wxCommandEvent& event);
 	void connectNIMClicked(wxCommandEvent& event);
 	void startSelected(wxCommandEvent& event);
+	void HVDisconnectClicked(wxCommandEvent& event);
 
 
 private:

@@ -50,11 +50,12 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 {
 	volt->end();
-	Close(true);
 	delete volt;
 	delete nim;
 	delete mot;
 	delete vf;
+	Close(true);
+
 }
 //
 void BigFrame::yUpButtonClicked(wxCommandEvent & event)
@@ -138,7 +139,7 @@ int BigFrame::convertDistance(int radioButton)
 
 void BigFrame::scanTypeSelected(wxCommandEvent & event)
 {
-	static int scanChosen = m_choice1->GetSelection();
+	int scanChosen = m_choice1->GetSelection();
 	switch (scanChosen)
 	{
 	case 0:
@@ -213,12 +214,16 @@ void BigFrame::HVConnectClicked(wxCommandEvent & event)
 		volt->turnOff();
 		hvChoice->Disable();
 		m_button17->Disable();
+		m_button18->Enable();
 }
 
-//void BigFrame::HVDisconnectClicked(wxCommandEvent& event)
-//{
-//	volt = nullptr;
-//}
+void BigFrame::HVDisconnectClicked(wxCommandEvent& event)
+{
+	volt = nullptr;
+	hvChoice->Enable();
+	m_button17->Enable();
+	m_button18->Enable();
+}
 
 void BigFrame::openPanelFrame(wxCommandEvent& event) 
 { 
@@ -480,7 +485,7 @@ void BigFrame::connectNIMClicked(wxCommandEvent& event)
 void BigFrame::startSelected(wxCommandEvent& event)
 {
 	static bool run = false;
-	if (scanType.compare("LineScan") && run == false)
+	if (scanType == "LineScan" && run == false)
 	{
 		thread t1(doLineScan, mot, nim, volt, message, pglobalheader);
 		//doLineScan(mot, nim, volt, message, pglobalheader);

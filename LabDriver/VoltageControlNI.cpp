@@ -90,3 +90,8 @@ void VoltageNI::turnOn()
 	char * on = "R\r";
 	Send(0, 0, on, strlen(on), NLend);
 }
+
+void VoltageNI::end()
+{
+	ibonl(0, 0);
+}

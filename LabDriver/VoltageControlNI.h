@@ -18,6 +18,7 @@ public:
 	void turnOn();
 	void setVoltage(int voltage);
 	void turnOff();
+	void end();
 
 private:
 	const static int BUF_SIZE = 1024;
