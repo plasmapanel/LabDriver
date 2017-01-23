@@ -17,6 +17,8 @@
 #include "messages.h"
 #include "LabUtilities.h"
 
+std::atomic<bool> control = true;
+
 // begin wxGlade: ::extracode
 // end wxGlade
 
@@ -54,6 +56,7 @@ void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 	delete nim;
 	delete mot;
 	delete vf;
+	delete message;
 	Close(true);
 
 }
@@ -482,8 +485,16 @@ void BigFrame::connectNIMClicked(wxCommandEvent& event)
 	nim = new WeinerCounter(0);
 }
 
+//void UserEnd::StopClicked(wxCommandEvent& event)
+//{
+//	control = false;
+//}
+
 void BigFrame::startSelected(wxCommandEvent& event)
 {
+	UserEnd messagebox = new UserEnd(this);
+	messagebox.Show(true);
+
 	static bool run = false;
 	if (scanType == "LineScan" && run == false)
 	{
@@ -492,8 +503,19 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		run = true;
 		t1.detach();
 	}
+	else if (scanType == "Free" && run == false)
+	{
+		thread t1(doWeinerCountInf, nim, 1, 0, pglobalheader, "FreeMode.txt");
+		run = true;
+		//t1.detach();
+	}
 	else
 	{
 		run = false;
+		messagebox.Show(false);
+		messagebox.Destroy();
 	}
+
+	messagebox.Show(false);
+	messagebox.Destroy();
 }

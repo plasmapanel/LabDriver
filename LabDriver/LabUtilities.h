@@ -54,7 +54,7 @@ void doWeinerCountInter(WeinerCounter *nim, double time, double sampleLength,
                         double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
 //time independent verison
 void doWeinerCountInf(WeinerCounter *nim, double sampleLength,
-                      double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
+                      double volt, const HeaderInfoGen *hg, string fileName);
 //peforms a voltage scan
 void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message);
 void doVoltageScanFile(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);

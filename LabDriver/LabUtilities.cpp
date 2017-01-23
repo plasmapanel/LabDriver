@@ -4,6 +4,8 @@
 //#include "LabView.h"
 #include "headers.h"
 
+extern atomic<bool> control;
+
 using Spsc = boost::lockfree::spsc_queue < int, boost::lockfree::capacity<10000> > ;
 //Dunction used for converting weiner counter bin value to a count value
 //used in afterpulse tests
@@ -1604,16 +1606,15 @@ static void userInterrupt(atomic<bool> *t){
   }
   *t = false;
 }
-void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName){
+void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, const HeaderInfoGen *hg, string fileName){
   HeaderInfoCounter hc;
-  hc.pixels = activePix;
   hc.samplingLength = sampleLength;
   hc.timeLength = 0;
   hc.voltage = volt;
   boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> q;
   boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
   atomic<bool> done = false;
-  thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, hg);
+  thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, *hg);
   readWeinerCountInf(&q, &t, &done, nim, sampleLength);
   t2.join();
 }
@@ -1622,7 +1623,7 @@ static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost
   for (int i = 0; i < 20; ++i){
     count[i] = 0;
   }
-  atomic<bool> control = true;
+  //atomic<bool> control = true;
   //thread t1(userInterrupt, &control);
   chrono::duration<int, milli> dur((int)(intervalLength * 1000) - 29);
   nim->resetAll();
