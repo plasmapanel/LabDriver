@@ -162,4 +162,5 @@ const int OVER = 65536;
 //for GUI
 void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header);
 
+string createFileName(HeaderInfoGen *header);
 #endif

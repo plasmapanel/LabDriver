@@ -283,6 +283,7 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	message->voltageEnd = endvoltage;
 	message->voltageStep = voltagestepsize;
 	message->temp = m_textCtrl44->GetLineText(0);
+	message->runtype = scanType;
 }
 
 void markButtonClicked(wxCommandEvent& event)

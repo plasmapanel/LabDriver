@@ -38,6 +38,7 @@ public:
 	int voltageStart, voltageStep, voltageEnd;
 	int frequency;
 	std::string temp = "";
+	std::string runtype = "";
 
 	std::vector<int> pixX, pixY;
 

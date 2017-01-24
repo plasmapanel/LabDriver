@@ -3438,3 +3438,22 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	log << "Voltage Scan Completed" << endl;
 	log.close();
 }
+
+string createFileName(HeaderInfoGen *header, Messages* message)
+{
+	string runName;
+	time_t t = time(nullptr);
+	string path = ".\\CollectedData\\";
+	// TODO: add identifier to first directory, possibly panel name?
+	CreateDirectory(path.c_str(), NULL);
+	//runName = path + header->gas + "\\";
+	//CreateDirectory(runName.c_str(), NULL);
+	runName += to_string((int)header->pressure);
+	runName += +"torr\\";
+	CreateDirectory(runName.c_str(), NULL);
+	runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
+	CreateDirectory(runName.c_str(), NULL);
+	runName += message->runtype;
+	CreateDirectory(runName.c_str(), NULL);
+	return runName;
+}
