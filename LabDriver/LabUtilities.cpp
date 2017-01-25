@@ -3341,7 +3341,7 @@ double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLen
   return count[lineNum-1] / elapsed.count();
 }
 
-void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header)
+void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, bool* run)
 {
 	string path = ".\\CollectedData\\";
 	string runName;
@@ -3441,6 +3441,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	volt->turnOff();
 	log << "Voltage Scan Completed" << endl;
 	log.close();
+	*run = false;
 }
 
 string createFileName(HeaderInfoGen *header, Messages* message)

@@ -160,7 +160,7 @@ void measureLines(WeinerCounter* nim, double time, double &actualTime, vector<in
 const int OVER = 65536;
 
 //for GUI
-void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header);
+void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, bool* run);
 
 string createFileName(HeaderInfoGen *header);
 #endif

@@ -496,12 +496,15 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	UserEnd messagebox = new UserEnd(this);
 	messagebox.Show(true);
 
-	static bool run = false;
+	bool run = false;
 	if (scanType == "LineScan" && run == false)
 	{
-		thread t1(doLineScan, mot, nim, volt, message, pglobalheader);
-		//doLineScan(mot, nim, volt, message, pglobalheader);
 		run = true;
+		thread t1(doLineScan, mot, nim, volt, message, pglobalheader, &run);
+		//doLineScan(mot, nim, volt, message, pglobalheader);
+		while (run)
+		{
+		};
 		t1.detach();
 	}
 	else if (scanType == "Free" && run == false)
@@ -510,13 +513,8 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		run = true;
 		//t1.detach();
 	}
-	else
-	{
-		run = false;
-		messagebox.Show(false);
-		messagebox.Destroy();
-	}
 
+	run = false;
 	messagebox.Show(false);
 	messagebox.Destroy();
 }
