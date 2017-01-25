@@ -1368,6 +1368,7 @@ void doWeinerCount(WeinerCounter *nim, double time, double sampleLength, double 
 static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoCounter &ha, const HeaderInfoGen &hg){
   cimg_library::CImg<unsigned char> *img;
   cimg_library::CImgDisplay disp;
+  int imgnum = 0;
   HGraph gr;
   this_thread::sleep_for(chrono::microseconds(1000));
   std::chrono::duration<double> elapsed;
@@ -1448,7 +1449,7 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   }
   out << endl;
   gr.makeGraphBmp(count);
-  img = new cimg_library::CImg<unsigned char>("c1.bmp");
+   img = new cimg_library::CImg<unsigned char>("c1.bmp");
   disp.display(*img);
   q->pop();
   t->pop();
@@ -1499,6 +1500,9 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
     t->pop();
   }
   out.close();
+  char buffer[50];
+  sprintf(buffer, "hist%d.bmp", (int)elapsed.count());
+  CopyFileA("c1.bmp", buffer, false);
   delete img;
   tr.Write();
   f.Save();
