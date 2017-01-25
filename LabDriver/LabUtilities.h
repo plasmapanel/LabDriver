@@ -54,7 +54,7 @@ void doWeinerCountInter(WeinerCounter *nim, double time, double sampleLength,
                         double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
 //time independent verison
 void doWeinerCountInf(WeinerCounter *nim, double sampleLength,
-                      double volt, const HeaderInfoGen *hg, string fileName);
+                      double volt, const HeaderInfoGen *hg, string fileName, atomic<bool> *run);
 //peforms a voltage scan
 void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message);
 void doVoltageScanFile(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
@@ -149,7 +149,7 @@ static void readWeinerCountInter(boost::lockfree::spsc_queue<array<int, 20>, boo
 
 static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q,
                                boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t,
-                               atomic<bool> *done, WeinerCounter *nim,double intervalLength);
+                               atomic<bool> *done, WeinerCounter *nim,double intervalLength, atomic<bool> *run);
 //opens prompt for user interrupt
 static void userInterrupt(atomic<bool> *t);
 int findLineWithLowestRate(WeinerCounter *nim, const vector<int> &lines);
@@ -160,7 +160,7 @@ void measureLines(WeinerCounter* nim, double time, double &actualTime, vector<in
 const int OVER = 65536;
 
 //for GUI
-void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, bool* run);
+void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
 
 string createFileName(HeaderInfoGen *header);
 #endif

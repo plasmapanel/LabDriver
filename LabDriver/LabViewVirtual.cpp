@@ -21,7 +21,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_staticText1 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Panel Name"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	sbSizer1->Add( m_staticText1, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	sbSizer1->Add( m_staticText1, 0, wxALL, 5 );
 	
 	m_textCtrl1 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Name"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_textCtrl1, 0, wxALL, 5 );

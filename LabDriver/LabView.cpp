@@ -163,6 +163,29 @@ void BigFrame::scanTypeSelected(wxCommandEvent & event)
 	}
 }
 
+void BigFrame::setScanType()
+{
+	int scanChosen = m_choice1->GetSelection();
+	switch (scanChosen)
+	{
+	case 0:
+		scanType = "Free";
+		break;
+	case 1:
+		scanType = "PixelScan";
+		break;
+	case 2:
+		scanType = "PixelMap";
+		break;
+	case 3:
+		scanType = "LineScan";
+		break;
+	default:
+		scanType = "None";
+		break;
+}
+}
+
 //wxStaticBoxSizer* test;
 
 void BigFrame::toggleHV(wxCommandEvent& event)
@@ -265,12 +288,17 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	ystepsize = wxAtoi(m_textCtrl21->GetLineText(0));
 
 	dwelltime = wxAtoi(m_textCtrl42->GetLineText(0));
-	totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize*dwelltime;
+	if (xstepsize || ystepsize != 0)
+		totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize*dwelltime;
+	else
+		totaltime = (endvoltage - startvoltage) / voltagestepsize*dwelltime;
 
 	frequency = wxAtoi(m_textCtrl43->GetLineText(0));
 
 	m_textCtrl46->SelectAll();
 	m_textCtrl46->WriteText(wxString::Format(wxT("%f"), totaltime / 3600));
+
+	setScanType();
 
 	message->frequency = frequency;
 	message->maxOffsetX = xoffset;
@@ -493,28 +521,26 @@ void BigFrame::connectNIMClicked(wxCommandEvent& event)
 
 void BigFrame::startSelected(wxCommandEvent& event)
 {
-	UserEnd messagebox = new UserEnd(this);
-	messagebox.Show(true);
+	//UserEnd messagebox = new UserEnd(this);
+	//messagebox.Show(true);
 
-	bool run = false;
+	atomic<bool> run = false;
 	if (scanType == "LineScan" && run == false)
 	{
 		run = true;
 		thread t1(doLineScan, mot, nim, volt, message, pglobalheader, &run);
 		//doLineScan(mot, nim, volt, message, pglobalheader);
-		while (run)
-		{
-		};
 		t1.detach();
 	}
 	else if (scanType == "Free" && run == false)
 	{
-		thread t1(doWeinerCountInf, nim, 1, 0, pglobalheader, "FreeMode.txt");
 		run = true;
-		//t1.detach();
+		thread t1(doWeinerCountInf, nim, 1, 0, pglobalheader, "FreeMode.txt", &run);
+		//run = true;
+		t1.detach();
 	}
 
 	run = false;
-	messagebox.Show(false);
-	messagebox.Destroy();
+	//messagebox.Show(false);
+	//messagebox.Destroy();
 }

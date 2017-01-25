@@ -60,11 +60,13 @@ public:
 	void connectNIMClicked(wxCommandEvent& event);
 	void startSelected(wxCommandEvent& event);
 	void HVDisconnectClicked(wxCommandEvent& event);
-
+	void setScanType();
+	std::string scanType;
 
 private:
 	int distanceToMove = 400;
-	std::string scanType;
+
+
 
 
 };

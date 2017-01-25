@@ -1610,7 +1610,7 @@ static void userInterrupt(atomic<bool> *t){
   }
   *t = false;
 }
-void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, const HeaderInfoGen *hg, string fileName){
+void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, const HeaderInfoGen *hg, string fileName, atomic<bool> *run){
   HeaderInfoCounter hc;
   hc.samplingLength = sampleLength;
   hc.timeLength = 0;
@@ -1619,10 +1619,10 @@ void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, cons
   boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
   atomic<bool> done = false;
   thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, *hg);
-  readWeinerCountInf(&q, &t, &done, nim, sampleLength);
+  readWeinerCountInf(&q, &t, &done, nim, sampleLength, run);
   t2.join();
 }
-static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, WeinerCounter *nim, double intervalLength){
+static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, WeinerCounter *nim, double intervalLength, atomic<bool> *run){
   array<int, 20> count;
   for (int i = 0; i < 20; ++i){
     count[i] = 0;
@@ -1634,7 +1634,7 @@ static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost
   t->push(HighResClock::now());
   q->push(count);
   this_thread::sleep_for(dur);
-  for (int i = 0; control; ++i){
+  for (int i = 0; &run; ++i){
     t->push(HighResClock::now());
     count[0] = nim->readCounter(1);
     count[1] = nim->readCounter(2);
@@ -3341,7 +3341,7 @@ double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLen
   return count[lineNum-1] / elapsed.count();
 }
 
-void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, bool* run)
+void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run)
 {
 	string path = ".\\CollectedData\\";
 	string runName;
@@ -3364,13 +3364,16 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	time_t t = time(nullptr);
 	// TODO: add identifier to first directory, possibly panel name?
 	CreateDirectory(path.c_str(), NULL);
+	runName = path + "\\";
+	runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
+	CreateDirectory(runName.c_str(), NULL);
 	//runName = path + header->gas + "\\";
 	//CreateDirectory(runName.c_str(), NULL);
 	runName += to_string((int)header->pressure);
 	runName += +"torr\\";
 	CreateDirectory(runName.c_str(), NULL);
-	runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
-	CreateDirectory(runName.c_str(), NULL);
+	//runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
+	//CreateDirectory(runName.c_str(), NULL);
 	log.open(runName + "log.txt", ofstream::ate);
 	runName += "LineScan\\";
 	CreateDirectory(runName.c_str(), NULL);
@@ -3394,25 +3397,30 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 			mot->stepMotor(2, -motstep);
 			//mot->stepMotor(2, motstep);
 			//mot->mapPixel(fullFile, nim, 1, 1, duration, 0, motend, 0, motstep);
-
-			for (int i = motbegin; i <= motend; i += motstep)
+			if (motstep == 0)
 			{
-				mot->stepMotor(2, motstep);
-				log << "At " << i << endl;
+				motbegin = motend;
+				step = 10000;
 
-				for (int j = starting; j <= stop; j += step)
-				{
-					//if (end == true)
-						//break;
-					log << "Setting Voltage to: " << j << endl;
-					volt->setVoltage(j);
-					log << "Begin Counting" << endl;
-					temp = runName + "_" + to_string(j) + "_" + "volts" + "_" + to_string((long)i) + "_steps";
-					doWeinerCount(nim, message->time, message->frequency, j, *header, pix, temp);
-					log << "Finished Counting" << endl;
-
-				}
 			}
+				for (int i = motbegin; i <= motend && *run == true; i += motstep)
+				{
+					mot->stepMotor(2, motstep);
+					log << "At " << i << endl;
+
+					for (int j = starting; j <= stop && *run == true; j += step)
+					{
+						//if (end == true)
+						//break;
+						log << "Setting Voltage to: " << j << endl;
+						volt->setVoltage(j);
+						log << "Begin Counting" << endl;
+						temp = runName + "_" + to_string(j) + "_" + "volts" + "_" + to_string((long)i) + "_steps";
+						doWeinerCount(nim, message->time, message->frequency, j, *header, pix, temp);
+						log << "Finished Counting" << endl;
+
+					}
+				}
 		}
 	
 
@@ -3461,4 +3469,64 @@ string createFileName(HeaderInfoGen *header, Messages* message)
 	runName += message->runtype;
 	CreateDirectory(runName.c_str(), NULL);
 	return runName;
+}
+
+void doAfterPulse10(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, int x5, int y5, int x6, int y6, int x7, int y7, int x8, int y8, int x9, int y9, int x10, int y10, int voltage, int numReadings){
+	HeaderInfoAfter ha;
+	ha.numPixels = 10;
+	ha.numReadings = numReadings;
+	ha.voltage = voltage;
+	stringstream ss;
+	string temp;
+	ss.str(std::string());
+	ss.clear();
+	ss << x1 << "-" << y1;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.str(std::string());
+	ss.clear();
+	ss << x2 << "-" << y2;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.str(std::string());
+	ss.clear();
+	ss << x3 << "-" << y3;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.str(std::string());
+	ss.clear();
+	ss << x4 << "-" << y4;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.str(std::string());
+	ss.clear();
+	ss << x5 << "-" << y5;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.clear();
+	ss << x6 << "-" << y6;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.clear();
+	ss << x7 << "-" << y7;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.clear();
+	ss << x8 << "-" << y8;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.clear();
+	ss << x9 << "-" << y9;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	ss.clear();
+	ss << x10 << "-" << y10;
+	ss >> temp;
+	ha.pixels.push_back(temp);
+	boost::lockfree::spsc_queue<array<int, 10>, boost::lockfree::capacity<10000>> q;
+	boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
+	atomic<bool> done = false;
+	thread t2(writeInfoAfter10, &q, &t, &done, fileName, ha, hg);
+	readFromPixAfter10(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, &done, &q, &t, nim, numReadings);
+	t2.join();
 }
