@@ -40,6 +40,7 @@ HeaderInfoGen globalHeader;
 HeaderInfoGen* pglobalheader;
 VoltageFactory* vf;
 Readout* readout;
+MyFrame4* readoutedit;
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
@@ -550,4 +551,11 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	//run = false;
 	//messagebox.Show(false);
 	//messagebox.Destroy();
+}
+
+void BigFrame::openReadoutPane(wxCommandEvent& event)
+{
+	if (!readoutedit)
+		readoutedit = new MyFrame4(this);
+	readoutedit->Show(true);
 }

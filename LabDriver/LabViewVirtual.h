@@ -274,6 +274,13 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBox841;
 		wxCheckBox* m_checkBox851;
 		wxCheckBox* m_checkBox861;
+		wxStdDialogButtonSizer* m_sdbSizer1;
+		wxButton* m_sdbSizer1OK;
+		wxButton* m_sdbSizer1Cancel;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void saveReadoutLines( wxCommandEvent& event ) { event.Skip(); }
+		
 	
 	public:
 		

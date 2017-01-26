@@ -867,13 +867,28 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer40->Add( bSizer411, 1, wxEXPAND, 5 );
 	
+	m_sdbSizer1 = new wxStdDialogButtonSizer();
+	m_sdbSizer1OK = new wxButton( this, wxID_OK );
+	m_sdbSizer1->AddButton( m_sdbSizer1OK );
+	m_sdbSizer1Cancel = new wxButton( this, wxID_CANCEL );
+	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
+	m_sdbSizer1->Realize();
+	
+	bSizer40->Add( m_sdbSizer1, 1, wxEXPAND, 5 );
+	
 	
 	this->SetSizer( bSizer40 );
 	this->Layout();
 	
 	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_sdbSizer1OK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::saveReadoutLines ), NULL, this );
 }
 
 MyFrame4::~MyFrame4()
 {
+	// Disconnect Events
+	m_sdbSizer1OK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::saveReadoutLines ), NULL, this );
+	
 }

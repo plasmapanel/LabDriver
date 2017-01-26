@@ -62,6 +62,7 @@ public:
 	void HVDisconnectClicked(wxCommandEvent& event);
 	void setScanType();
 	std::string scanType;
+	void openReadoutPane(wxCommandEvent& event);
 
 private:
 	int distanceToMove = 400;
