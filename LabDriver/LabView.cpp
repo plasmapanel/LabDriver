@@ -559,3 +559,94 @@ void BigFrame::openReadoutPane(wxCommandEvent& event)
 		readoutedit = new MyFrame4(this);
 	readoutedit->Show(true);
 }
+
+void MyFrame4::saveReadoutLines(wxCommandEvent &event)
+{
+	if (m_checkBox77->IsChecked())
+		readout->active[0] = true;
+	else
+		readout->active[0] = false;
+	if (m_checkBox78->IsChecked())
+		readout->active[1] = true;
+	else
+		readout->active[1] = false;
+	if (m_checkBox79->IsChecked())
+		readout->active[2] = true;
+	else
+		readout->active[2] = false;
+	if (m_checkBox80->IsChecked())
+		readout->active[3] = true;
+	else
+		readout->active[3] = false;
+	if (m_checkBox81->IsChecked())
+		readout->active[4] = true;
+	else
+		readout->active[4] = false;
+	if (m_checkBox82->IsChecked())
+		readout->active[5] = true;
+	else
+		readout->active[5] = false;
+	if (m_checkBox83->IsChecked())
+		readout->active[6] = true;
+	else
+		readout->active[6] = false;
+	if (m_checkBox84->IsChecked())
+		readout->active[7] = true;
+	else
+		readout->active[7] = false;
+	if (m_checkBox85->IsChecked())
+		readout->active[8] = true;
+	else
+		readout->active[8] = false;
+	if (m_checkBox86->IsChecked())
+		readout->active[9] = true;
+	else
+		readout->active[9] = false;
+	if (m_checkBox771->IsChecked())
+		readout->active[10] = true;
+	else
+		readout->active[10] = false;
+	if (m_checkBox781->IsChecked())
+		readout->active[11] = true;
+	else
+		readout->active[11] = false;
+	if (m_checkBox791->IsChecked())
+		readout->active[12] = true;
+	else
+		readout->active[12] = false;
+	if (m_checkBox801->IsChecked())
+		readout->active[13] = true;
+	else
+		readout->active[13] = false;
+	if (m_checkBox811->IsChecked())
+		readout->active[14] = true;
+	else
+		readout->active[14] = false;
+	if (m_checkBox821->IsChecked())
+		readout->active[15] = true;
+	else
+		readout->active[15] = false;
+	if (m_checkBox831->IsChecked())
+		readout->active[16] = true;
+	else
+		readout->active[16] = false;
+	if (m_checkBox841->IsChecked())
+		readout->active[17] = true;
+	else
+		readout->active[17] = false;
+	if (m_checkBox851->IsChecked())
+		readout->active[18] = true;
+	else
+		readout->active[18] = false;
+	if (m_checkBox861->IsChecked())
+		readout->active[19] = true;
+	else
+		readout->active[19] = false;
+
+	for (vector<bool>::iterator i = readout->active.begin(); 
+			i != readout->active.end(); i++)
+	{
+		if (readout->active[*i] == true)
+			readout->numActive++;
+	}
+}
