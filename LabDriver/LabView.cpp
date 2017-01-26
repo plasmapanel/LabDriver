@@ -512,6 +512,7 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo)
 void BigFrame::connectNIMClicked(wxCommandEvent& event)
 {
 	nim = new WeinerCounter(0);
+	m_button19->Disable();
 }
 
 //void UserEnd::StopClicked(wxCommandEvent& event)
@@ -539,8 +540,12 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		//run = true;
 		t1.detach();
 	}
+	else if (scanType == "LineScanAP" && run == false)
+	{
 
-	run = false;
+	}
+
+	//run = false;
 	//messagebox.Show(false);
 	//messagebox.Destroy();
 }
