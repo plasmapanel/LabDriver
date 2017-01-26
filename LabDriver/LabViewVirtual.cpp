@@ -39,6 +39,13 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_radioBox1->SetSelection( 0 );
 	sbSizer1->Add( m_radioBox1, 0, wxALL, 5 );
 	
+	m_staticText31 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Steps Per mm"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText31->Wrap( -1 );
+	sbSizer1->Add( m_staticText31, 0, wxALL, 5 );
+	
+	m_textCtrl31 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("400"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer1->Add( m_textCtrl31, 0, wxALL, 5 );
+	
 	
 	bSizer21->Add( sbSizer1, 1, wxEXPAND, 5 );
 	
@@ -210,7 +217,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText13 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Trigger Voltge:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText13 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Trigger Voltage (mV):"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText13->Wrap( -1 );
 	bSizer1->Add( m_staticText13, 0, wxALL, 5 );
 	
@@ -257,7 +264,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_textCtrl1322 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_textCtrl1322, 0, wxALL, 5 );
 	
-	discThr = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Discriminator Threshold"), wxDefaultPosition, wxDefaultSize, 0 );
+	discThr = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Discriminator Threshold (mV)"), wxDefaultPosition, wxDefaultSize, 0 );
 	discThr->Wrap( -1 );
 	bSizer20->Add( discThr, 0, wxALL, 5 );
 	
@@ -375,6 +382,10 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxMenuItem* m_menuItem5;
 	m_menuItem5 = new wxMenuItem( edit, wxID_ANY, wxString( wxT("Panel") ) , wxEmptyString, wxITEM_NORMAL );
 	edit->Append( m_menuItem5 );
+	
+	wxMenuItem* m_menuItem7;
+	m_menuItem7 = new wxMenuItem( edit, wxID_ANY, wxString( wxT("Readout") ) , wxEmptyString, wxITEM_NORMAL );
+	edit->Append( m_menuItem7 );
 	
 	m_menubar2->Append( edit, wxT("Edit") ); 
 	
@@ -649,6 +660,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->Connect( menu_quit->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onQuit ) );
 	this->Connect( menuHeader->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openHeaderFrame ) );
 	this->Connect( m_menuItem5->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openPanelFrame ) );
+	this->Connect( m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openReadoutPane ) );
 	m_choice2->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MainFrame::portSelected ), NULL, this );
 	m_button15->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::motorControllerConnectClicked ), NULL, this );
 	m_button16->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::motorControllerDisconnectClicked ), NULL, this );
@@ -689,6 +701,7 @@ MainFrame::~MainFrame()
 	this->Disconnect( wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onQuit ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openHeaderFrame ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openPanelFrame ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::openReadoutPane ) );
 	m_choice2->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MainFrame::portSelected ), NULL, this );
 	m_button15->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::motorControllerConnectClicked ), NULL, this );
 	m_button16->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::motorControllerDisconnectClicked ), NULL, this );
@@ -753,4 +766,114 @@ UserEnd::~UserEnd()
 	// Disconnect Events
 	m_button21->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( UserEnd::StopClicked ), NULL, this );
 	
+}
+
+MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer40;
+	bSizer40 = new wxBoxSizer( wxVERTICAL );
+	
+	wxBoxSizer* bSizer41;
+	bSizer41 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_checkBox77 = new wxCheckBox( this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox77->SetValue(true); 
+	bSizer41->Add( m_checkBox77, 0, wxALL, 5 );
+	
+	m_checkBox78 = new wxCheckBox( this, wxID_ANY, wxT("2"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox78->SetValue(true); 
+	bSizer41->Add( m_checkBox78, 0, wxALL, 5 );
+	
+	m_checkBox79 = new wxCheckBox( this, wxID_ANY, wxT("3"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox79->SetValue(true); 
+	bSizer41->Add( m_checkBox79, 0, wxALL, 5 );
+	
+	m_checkBox80 = new wxCheckBox( this, wxID_ANY, wxT("4"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox80->SetValue(true); 
+	bSizer41->Add( m_checkBox80, 0, wxALL, 5 );
+	
+	m_checkBox81 = new wxCheckBox( this, wxID_ANY, wxT("5"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox81->SetValue(true); 
+	bSizer41->Add( m_checkBox81, 0, wxALL, 5 );
+	
+	m_checkBox82 = new wxCheckBox( this, wxID_ANY, wxT("6"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox82->SetValue(true); 
+	bSizer41->Add( m_checkBox82, 0, wxALL, 5 );
+	
+	m_checkBox83 = new wxCheckBox( this, wxID_ANY, wxT("7"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox83->SetValue(true); 
+	bSizer41->Add( m_checkBox83, 0, wxALL, 5 );
+	
+	m_checkBox84 = new wxCheckBox( this, wxID_ANY, wxT("8"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox84->SetValue(true); 
+	bSizer41->Add( m_checkBox84, 0, wxALL, 5 );
+	
+	m_checkBox85 = new wxCheckBox( this, wxID_ANY, wxT("9"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox85->SetValue(true); 
+	bSizer41->Add( m_checkBox85, 0, wxALL, 5 );
+	
+	m_checkBox86 = new wxCheckBox( this, wxID_ANY, wxT("10"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox86->SetValue(true); 
+	bSizer41->Add( m_checkBox86, 0, wxALL, 5 );
+	
+	
+	bSizer40->Add( bSizer41, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer411;
+	bSizer411 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_checkBox771 = new wxCheckBox( this, wxID_ANY, wxT("11"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox771->SetValue(true); 
+	bSizer411->Add( m_checkBox771, 0, wxALL, 5 );
+	
+	m_checkBox781 = new wxCheckBox( this, wxID_ANY, wxT("12"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox781->SetValue(true); 
+	bSizer411->Add( m_checkBox781, 0, wxALL, 5 );
+	
+	m_checkBox791 = new wxCheckBox( this, wxID_ANY, wxT("13"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox791->SetValue(true); 
+	bSizer411->Add( m_checkBox791, 0, wxALL, 5 );
+	
+	m_checkBox801 = new wxCheckBox( this, wxID_ANY, wxT("14"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox801->SetValue(true); 
+	bSizer411->Add( m_checkBox801, 0, wxALL, 5 );
+	
+	m_checkBox811 = new wxCheckBox( this, wxID_ANY, wxT("15"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox811->SetValue(true); 
+	bSizer411->Add( m_checkBox811, 0, wxALL, 5 );
+	
+	m_checkBox821 = new wxCheckBox( this, wxID_ANY, wxT("16"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox821->SetValue(true); 
+	bSizer411->Add( m_checkBox821, 0, wxALL, 5 );
+	
+	m_checkBox831 = new wxCheckBox( this, wxID_ANY, wxT("17"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox831->SetValue(true); 
+	bSizer411->Add( m_checkBox831, 0, wxALL, 5 );
+	
+	m_checkBox841 = new wxCheckBox( this, wxID_ANY, wxT("18"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox841->SetValue(true); 
+	bSizer411->Add( m_checkBox841, 0, wxALL, 5 );
+	
+	m_checkBox851 = new wxCheckBox( this, wxID_ANY, wxT("19"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox851->SetValue(true); 
+	bSizer411->Add( m_checkBox851, 0, wxALL, 5 );
+	
+	m_checkBox861 = new wxCheckBox( this, wxID_ANY, wxT("20"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox861->SetValue(true); 
+	bSizer411->Add( m_checkBox861, 0, wxALL, 5 );
+	
+	
+	bSizer40->Add( bSizer411, 1, wxEXPAND, 5 );
+	
+	
+	this->SetSizer( bSizer40 );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+}
+
+MyFrame4::~MyFrame4()
+{
 }

@@ -30,6 +30,7 @@
 #include <wx/choice.h>
 #include <wx/gbsizer.h>
 #include <wx/statusbr.h>
+#include <wx/checkbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +48,8 @@ class header : public wxFrame
 		wxStaticText* m_staticText11;
 		wxTextCtrl* m_textCtrl11;
 		wxRadioBox* m_radioBox1;
+		wxStaticText* m_staticText31;
+		wxTextCtrl* m_textCtrl31;
 		wxComboBox* m_comboBox1;
 		wxTextCtrl* m_textCtrl49;
 		wxComboBox* m_comboBox2;
@@ -177,6 +180,7 @@ class MainFrame : public wxFrame
 		virtual void onQuit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void openHeaderFrame( wxCommandEvent& event ) { event.Skip(); }
 		virtual void openPanelFrame( wxCommandEvent& event ) { event.Skip(); }
+		virtual void openReadoutPane( wxCommandEvent& event ) { event.Skip(); }
 		virtual void portSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void motorControllerConnectClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void motorControllerDisconnectClicked( wxCommandEvent& event ) { event.Skip(); }
@@ -239,6 +243,43 @@ class UserEnd : public wxFrame
 		UserEnd( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Stop Button"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 223,188 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~UserEnd();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class MyFrame4
+///////////////////////////////////////////////////////////////////////////////
+class MyFrame4 : public wxFrame 
+{
+	private:
+	
+	protected:
+		wxCheckBox* m_checkBox77;
+		wxCheckBox* m_checkBox78;
+		wxCheckBox* m_checkBox79;
+		wxCheckBox* m_checkBox80;
+		wxCheckBox* m_checkBox81;
+		wxCheckBox* m_checkBox82;
+		wxCheckBox* m_checkBox83;
+		wxCheckBox* m_checkBox84;
+		wxCheckBox* m_checkBox85;
+		wxCheckBox* m_checkBox86;
+		wxCheckBox* m_checkBox771;
+		wxCheckBox* m_checkBox781;
+		wxCheckBox* m_checkBox791;
+		wxCheckBox* m_checkBox801;
+		wxCheckBox* m_checkBox811;
+		wxCheckBox* m_checkBox821;
+		wxCheckBox* m_checkBox831;
+		wxCheckBox* m_checkBox841;
+		wxCheckBox* m_checkBox851;
+		wxCheckBox* m_checkBox861;
+	
+	public:
+		
+		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("RO Line Enable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 560,121 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		
+		~MyFrame4();
 	
 };
 

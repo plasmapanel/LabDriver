@@ -15,6 +15,7 @@
 //#include "VoltageControlNI.h"
 #include "Panel.h"
 #include "messages.h"
+#include "Readout.h"
 #include "LabUtilities.h"
 
 std::atomic<bool> control = true;
@@ -38,6 +39,7 @@ WeinerCounter* nim;
 HeaderInfoGen globalHeader;
 HeaderInfoGen* pglobalheader;
 VoltageFactory* vf;
+Readout* readout;
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {

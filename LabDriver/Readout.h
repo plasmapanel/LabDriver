@@ -9,7 +9,7 @@ public:
 	int numLines;
 	int numActive;
 
-	Readout();
+	Readout(int lines);
 	~Readout();
 
 
