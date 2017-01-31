@@ -643,10 +643,15 @@ void MyFrame4::saveReadoutLines(wxCommandEvent &event)
 	else
 		readout->active[19] = false;
 
-	for (vector<bool>::iterator i = readout->active.begin(); 
-			i != readout->active.end(); i++)
+	int j = 0;
+
+	for (int i = 0; i <= 19; i++)
 	{
-		if (readout->active[*i] == true)
+		if (readout->active[i] == true)
+		{
 			readout->numActive++;
+			readout->lines[j] = i;
+			j++;
+		}
 	}
 }

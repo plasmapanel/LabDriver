@@ -4,6 +4,7 @@
 //#include "LabView.h"
 #include "headers.h"
 
+
 //extern atomic<bool> control;
 
 using Spsc = boost::lockfree::spsc_queue < int, boost::lockfree::capacity<10000> > ;
@@ -3454,14 +3455,13 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 string createFileName(HeaderInfoGen *header, Messages* message)
 {
 	string runName;
-	time_t t = time(nullptr);
-	string path = ".\\CollectedData\\";
+	string runnName = ".\\CollectedData\\";
 	// TODO: add identifier to first directory, possibly panel name?
-	CreateDirectory(path.c_str(), NULL);
+	CreateDirectory(runName.c_str(), NULL);
 	//runName = path + header->gas + "\\";
 	//CreateDirectory(runName.c_str(), NULL);
 	runName += to_string((int)header->pressure);
-	runName += +"torr\\";
+	runName += +"Torr\\";
 	CreateDirectory(runName.c_str(), NULL);
 	runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
 	CreateDirectory(runName.c_str(), NULL);
@@ -3470,280 +3470,154 @@ string createFileName(HeaderInfoGen *header, Messages* message)
 	return runName;
 }
 
-void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, VoltageControl *volt){
+void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run){
 
 	string path = ".\\CollectedData\\";
 	string runName;
 	ofstream log;
-	int starting;
-	int stop;
-	int step;
+	int starting = message->voltageStart;
+	int stop = message->voltageEnd;
+	int step = message->voltageStep;
+	int motbegin = 0;
+	int motend = message->maxOffsetY;
+	int motstep = message->maxStepY;
 	int num;
 	int numMeas = 1;
 	int tempNum;
 	int numSamples;
 	int intLength;
-	vector<int> x;
-	vector<int> y;
+	//vector<int> x;
+	//vector<int> y;
 	string temp;
-	char tempc;
-	cout << "------------------------------------------" << endl;
-	cout << "----------After-Pulse Test----------------" << endl;
-	cout << "------------------------------------------" << endl;
-	HeaderInfoGen hg;
-	while (1){
-		cout << "generate header manually or read from a file?(file/manual): ";
-		cin >> temp;
-		cin.clear();
-		cin.ignore(10000, '\n');
-		if (temp == "manual"){
-			makeGenHead(hg);
-			break;
-		}
-		else if (temp == "file"){
-			cout << "What is the name of the file? ";
-			getline(cin, temp);
-			makeGenHeadFile(hg, temp);
-			break;
-		}
-		else{
-			cout << "Invalid option" << endl;
-		}
-	}
-	cout << "Start Voltage (V): ";
-	cin >> starting;
-	cin.clear();
-	cin.ignore(10000, '\n');
-	cout << "End Voltage (V): ";
-	cin >> stop;
-	cin.clear();
-	cin.ignore(10000, '\n');
-	if (stop < starting){
-		cerr << "Invalid Voltages" << endl;
-		exit(0);
-	}
-	cout << "Step Size (V): ";
-	cin >> step;
-	cout << "Number of Pixels being tested: ";
-	cin >> num;
-	cin.clear();
-	cin.ignore(10000, '\n');
-	x.resize(num);
-	y.resize(num);
-	for (int i = 0; i < num; ++i){
-		cout << "RO # of pixel " << i + 1 << ": ";
-		cin >> x[i];
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "HV # of pixel " << i + 1 << ": ";
-		cin >> y[i];
-	}
-	if (hg.sourceConfig == "Static"){
-		cout << "How many pixels should be measured at once? ";
-		cin >> numMeas;
-		if (numMeas > num){
-			cout << "# measured at once > # pixels" << endl;
-			cout << "measuring all pixels at once" << endl;
-			numMeas = num;
-		}
 
-		if (!((numMeas > 0 && numMeas < 6) || (numMeas == 10))){
-			cerr << "That number of measurement has not been implemented. Your measurements will be split" << endl;
-			cerr << "Please contact mausilio@umich.edu for help" << endl;
-		}
-		else if (num % numMeas != 0){
-			cout << "Warning Pixels will not be measured in the same number of sets" << endl;
-		}
-		mot->goToCenter();
-	}
-	else if (hg.sourceConfig == "Dynamic"){
-		numMeas = 1;
-	}
-	else if (hg.sourceConfig == "User"){
-		numMeas = 1;
-	}
-	cin.clear();
-	cin.ignore(10000, '\n');
-	cout << "how many samples should be take at each voltage?(default = 10000) ";
-	cin >> numSamples;
-	/*
-	cin.clear();
-	cin.ignore(10000, '\n');
-	cout << "What interval length should be used (ms)?";
-	cin >> intLength;
-	*/
 	time_t t = time(nullptr);
-	CreateDirectory(path.c_str(), NULL);
-	runName = path + hg.gas + "\\";
-	CreateDirectory(runName.c_str(), NULL);
-	runName += to_string((int)hg.pressure);
-	runName += "torr\\";
-	CreateDirectory(runName.c_str(), NULL);
-	runName += hg.panelName + "_" + hg.gas + "_" + to_string((int)hg.pressure) + "_" + to_string(t) + "\\";
-	CreateDirectory(runName.c_str(), NULL);
-	log.open(runName + "log.txt", ofstream::app);
-	runName += "AfterPulse\\";
-	CreateDirectory(runName.c_str(), NULL);
+
+	runName = createFileName(header, message);
+
+	log.open(runName + "log.txt", ofstream::ate);
 	log << "Intitalized After-Pulse Test" << endl;
 	log << "Starting: " << starting << endl;
 	log << "Stop: " << stop << endl;
 	log << "Step Size: " << step << endl;
 	log << "Number of Pixels: " << num << endl;
-	log << "Pixel List: " << endl;
+	log << "Interval Duration: " << message->time << endl;
+	log << "Readout List: " << endl;
 	for (int i = 0; i < num; ++i){
-		log << x[i] << "-" << y[i] << endl;
+		//log << x[i] << "-" << y[i] << endl;
 	}
 	log << "Turning On High Voltage" << endl;
 	volt->turnOn();
-	if (numMeas == 1){
-		for (int k = 0; k < num; ++k){
-			if (hg.sourceConfig == "User"){
-				Beep(900, 1000);
-				cout << "Please configure source for pixel " << x[k] << "-" << y[k] << endl;
-				while (1){
-					cout << "Is source placed correctly? (y/n): ";
-					cin.clear();
-					cin.ignore(10000, '\n');
-					tempc = cin.get();
-					if (tempc == 'y'){
-						break;
-					}
-					cin.clear();
-					cin.ignore(10000, '\n');
-				}
-			}
-			if (hg.sourceConfig == "Dynamic"){
-				mot->moveToPix(x[k], y[k]);
-			}
-			log << "Switching to pixel " << x[k] << "-" << y[k] << endl;
-			for (int i = starting; i <= stop; i += step){
-				log << "Setting Voltage to: " << i << endl;
-				volt->setVoltage(i);
-				log << "Begin Counting" << endl;
-				temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "AP.txt";
-				doAfterPulse1(temp, nim, hg, x[k], y[k], i, numSamples);
-				log << "Finished Counting" << endl;
-			}
+	volt->setVoltage(0);
+	volt->turnOn();
+	string fullFile = "test.txt";
+	if (header->sourceConfig == "Dynamic")
+	{
+		volt->setVoltage(starting);
+		volt->turnOn();
+		log << "Going to home" << endl;
+		mot->goZero();
+		mot->stepMotor(2, -motstep);
+		//mot->stepMotor(2, motstep);
+		//mot->mapPixel(fullFile, nim, 1, 1, duration, 0, motend, 0, motstep);
+		if (motstep == 0)
+		{
+			motbegin = motend;
+			step = 10000;
+
 		}
-	}
-	else{
-		for (int k = 0; k < num; k += numMeas){
-			for (int i = starting; i <= stop; i += step){
-				log << "Setting Voltage to: " << i << endl;
-				volt->setVoltage(i);
+		for (int i = motbegin; i <= motend && *run == true; i += motstep)
+		{
+			mot->stepMotor(2, motstep);
+			log << "At " << i << endl;
+
+			for (int j = starting; j <= stop && *run == true; j += step)
+			{
+				//if (end == true)
+				//break;
+				log << "Setting Voltage to: " << j << endl;
+				volt->setVoltage(j);
 				log << "Begin Counting" << endl;
-				if (k + numMeas > num){
-					tempNum = k - num;
-				}
-				else{
-					tempNum = numMeas;
-				}
-				temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(k - num) + "AP.txt";
-				switch (tempNum){
-				case 1:
-					doAfterPulse1(temp, nim, hg, x[k], y[k], i, numSamples);
-					break;
-				case 2:
-					doAfterPulse2(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], i, numSamples);
-					break;
-				case 3:
-					doAfterPulse3(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], i, numSamples);
-					break;
-				case 4:
-					doAfterPulse4(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], i, numSamples);
-					break;
-				case 5:
-					doAfterPulse5(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], x[k + 4], y[k + 4], i, numSamples);
-					break;
-				case 6:
-					temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(3) + "AP.txt";
-					doAfterPulse3(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], i, numSamples);
-					temp = runName + to_string(x[k + 3]) + "-" + to_string(y[k + 3]) + "_" + to_string(i) + "_" + to_string(3) + "AP.txt";
-					doAfterPulse3(temp, nim, hg, x[k + 3], y[k + 3], x[k + 4], y[k + 4], x[k + 5], y[k + 5], i, numSamples);
-					break;
-				case 7:
-					temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(4) + "AP.txt";
-					doAfterPulse4(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], i, numSamples);
-					temp = runName + to_string(x[k + 4]) + "-" + to_string(y[k + 4]) + "_" + to_string(i) + "_" + to_string(3) + "AP.txt";
-					doAfterPulse3(temp, nim, hg, x[k + 4], y[k + 4], x[k + 5], y[k + 5], x[k + 6], y[k + 6], i, numSamples);
-				case 8:
-					temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(4) + "AP.txt";
-					doAfterPulse4(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], i, numSamples);
-					temp = runName + to_string(x[k + 4]) + "-" + to_string(y[k + 4]) + "_" + to_string(i) + "_" + to_string(4) + "AP.txt";
-					doAfterPulse4(temp, nim, hg, x[k + 4], y[k + 4], x[k + 5], y[k + 5], x[k + 6], y[k + 6], x[k + 7], y[k + 7], i, numSamples);
-				case 9:
-					temp = runName + to_string(x[k]) + "-" + to_string(y[k]) + "_" + to_string(i) + "_" + to_string(5) + "AP.txt";
-					doAfterPulse5(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], x[k + 4], y[k + 4], i, numSamples);
-					temp = runName + to_string(x[k + 5]) + "-" + to_string(y[k + 5]) + "_" + to_string(i) + "_" + to_string(4) + "AP.txt";
-					doAfterPulse4(temp, nim, hg, x[k + 5], y[k + 5], x[k + 6], y[k + 6], x[k + 7], y[k + 7], x[k + 8], y[k + 8], i, numSamples);
-				case 10:
-					doAfterPulse10(temp, nim, hg, x[k], y[k], x[k + 1], y[k + 1], x[k + 2], y[k + 2], x[k + 3], y[k + 3], x[k + 4], y[k + 4], x[k + 5], x[k + 5], x[k + 6], y[k + 6], x[k + 7], y[k + 7], x[k + 8], y[k + 8], x[k + 9], y[k + 9], i, numSamples);
-					break;
-				default:
-					break;
-				}
+				temp = runName + "_" + to_string(j) + "_" + "volts" + "_" + to_string((long)i) + "_steps";
+				doAfterPulseAny(temp, nim, *header, j, numSamples, readout);
 				log << "Finished Counting" << endl;
+
 			}
+
 		}
 		log << "Creating Graphs" << endl;
 	}
 
-void doAfterPulse20(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, int numReadings){
+	void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run){
+
+		string path = ".\\CollectedData\\";
+		string runName;
+		ofstream log;
+		int starting = message->voltageStart;
+		//int stop = message->voltageEnd;
+		//int step = message->voltageStep;
+		//int num;
+		//int numMeas = 1;
+		int tempNum;
+		int numSamples;
+		int intLength;
+		//vector<int> x;
+		//vector<int> y;
+		string temp;
+
+		time_t t = time(nullptr);
+
+		runName = createFileName(header, message);
+		readout->timetoSamples(message->time);
+
+		log.open(runName + "log.txt", ofstream::ate);
+		log << "Intitalized After-Pulse Test" << endl;
+		log << "Starting: " << starting << endl;
+		log << "Stop: " << stop << endl;
+		log << "Step Size: " << step << endl;
+		log << "Number of Pixels: " << num << endl;
+		log << "Interval Duration: " << message->time << endl;
+		log << "Readout List: " << endl;
+		for (int i = 0; i < num; ++i){
+			//log << x[i] << "-" << y[i] << endl;
+		}
+
+		string fullFile = "test.txt";
+		if (header->sourceConfig == "Dynamic")
+		{
+			
+			while(*run == true)
+			{
+				log << "Begin Counting" << endl;
+				temp = runName + "_" + to_string(starting) + "_" + "volts";
+				doAfterPulseAny(temp, nim, *header, numSamples, starting, readout);
+				log << "Finished Counting" << endl;
+								}
+
+			}
+			log << "Creating Graphs" << endl;
+		}
+
+void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, Readout* readout){
 	HeaderInfoAfter ha;
-	ha.numPixels = 10;
-	ha.numReadings = numReadings;
+	//ha.numPixels = 10;
+	ha.numReadings = readout->samples;
 	ha.voltage = voltage;
 	stringstream ss;
 	string temp;
-	ss.str(std::string());
-	ss.clear();
-	ss << x1 << "-" << y1;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.str(std::string());
-	ss.clear();
-	ss << x2 << "-" << y2;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.str(std::string());
-	ss.clear();
-	ss << x3 << "-" << y3;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.str(std::string());
-	ss.clear();
-	ss << x4 << "-" << y4;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.str(std::string());
-	ss.clear();
-	ss << x5 << "-" << y5;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.clear();
-	ss << x6 << "-" << y6;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.clear();
-	ss << x7 << "-" << y7;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.clear();
-	ss << x8 << "-" << y8;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.clear();
-	ss << x9 << "-" << y9;
-	ss >> temp;
-	ha.pixels.push_back(temp);
-	ss.clear();
-	ss << x10 << "-" << y10;
-	ss >> temp;
-	ha.pixels.push_back(temp);
+
+	for (int i = 0; i <= readout->numActive; i++)
+	{
+		ss.str(std::string());
+		ss.clear();
+		ss << readout->lines[i];
+		ss >> temp;
+		ha.pixels.push_back(temp);
+	}
+	
 	boost::lockfree::spsc_queue<array<int, 10>, boost::lockfree::capacity<10000>> q;
 	boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
 	atomic<bool> done = false;
 	thread t2(writeInfoAfter10, &q, &t, &done, fileName, ha, hg);
-	readFromPixAfter10(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, &done, &q, &t, nim, numReadings);
+	//readFromPixAfter10(&done, &q, &t, nim);
 	t2.join();
 }

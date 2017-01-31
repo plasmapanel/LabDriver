@@ -16,6 +16,7 @@ This file contains all of the utilities that will be used with our lab setup
 #include "TFile.h"
 #include "Messages.h"
 #include "VoltageFactory.h"
+#include "Readout.h"
 using namespace std;
 
 //USER FUNCIONS
@@ -163,4 +164,7 @@ const int OVER = 65536;
 void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
 
 string createFileName(HeaderInfoGen *header);
+
+void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, int numReadings, Readout* readout);
+
 #endif
