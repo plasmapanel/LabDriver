@@ -50,6 +50,7 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 	message = new Messages();
 	pglobalheader = &globalHeader;
 	vf = new VoltageFactory();
+	readout = new Readout();
 }
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
@@ -60,6 +61,7 @@ void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 	delete mot;
 	delete vf;
 	delete message;
+	delete readout;
 	Close(true);
 
 }
@@ -560,7 +562,7 @@ void BigFrame::openReadoutPane(wxCommandEvent& event)
 	readoutedit->Show(true);
 }
 
-void MyFrame4::saveReadoutLines(wxCommandEvent &event)
+void readoutedit::saveReadoutLines(wxCommandEvent &event)
 {
 	if (m_checkBox77->IsChecked())
 		readout->active[0] = true;

@@ -163,8 +163,16 @@ const int OVER = 65536;
 //for GUI
 void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
 
-string createFileName(HeaderInfoGen *header);
+string createFileName(HeaderInfoGen *header, Messages* message, time_t t);
 
-void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, int numReadings, Readout* readout);
+void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run);
+void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, Readout* readout);
+void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run);
+
+static void readFromPixAfterAny(atomic<bool> *done, boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, WeinerCounter *nim, Readout* readout);
+static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoAfter &ha, const HeaderInfoGen &hg, Readout& readout);
+
+
+
 
 #endif
