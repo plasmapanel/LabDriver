@@ -90,13 +90,16 @@ private:
 	string getSourceConfig();
 	void setSourceConfig(string type);
 };
-#endif // ..PY_H
+
 
 class readoutedit : public MyFrame4
 {
 public:
 	readoutedit(wxWindow* parent);
 
-	void saveReadoutLines(wxCommandEvent& event);
+	void okbuttonclicked(wxCommandEvent& event);
 
 };
+
+
+#endif // ..PY_H

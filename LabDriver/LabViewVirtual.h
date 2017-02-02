@@ -274,17 +274,15 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBox841;
 		wxCheckBox* m_checkBox851;
 		wxCheckBox* m_checkBox861;
-		wxStdDialogButtonSizer* m_sdbSizer1;
-		wxButton* m_sdbSizer1OK;
-		wxButton* m_sdbSizer1Cancel;
+		wxButton* m_button22;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void saveReadoutLines( wxCommandEvent& event ) { event.Skip(); }
+		virtual void okbuttonclicked( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("RO Line Enable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 560,121 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("RO Line Enable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 560,161 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~MyFrame4();
 	

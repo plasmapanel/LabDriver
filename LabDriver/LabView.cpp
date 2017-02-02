@@ -40,7 +40,7 @@ HeaderInfoGen globalHeader;
 HeaderInfoGen* pglobalheader;
 VoltageFactory* vf;
 Readout* readout;
-MyFrame4* readoutedit;
+readoutedit* readoutframe;
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
@@ -557,12 +557,17 @@ void BigFrame::startSelected(wxCommandEvent& event)
 
 void BigFrame::openReadoutPane(wxCommandEvent& event)
 {
-	if (!readoutedit)
-		readoutedit = new MyFrame4(this);
-	readoutedit->Show(true);
+	if (!readoutframe)
+		readoutframe = new readoutedit(this);
+	readoutframe->Show(true);
 }
 
-void readoutedit::saveReadoutLines(wxCommandEvent &event)
+readoutedit::readoutedit(wxWindow* parent) : MyFrame4(parent)
+{
+
+}
+
+void readoutedit::okbuttonclicked(wxCommandEvent &event)
 {
 	if (m_checkBox77->IsChecked())
 		readout->active[0] = true;
@@ -645,15 +650,17 @@ void readoutedit::saveReadoutLines(wxCommandEvent &event)
 	else
 		readout->active[19] = false;
 
-	int j = 0;
+	int j = 1;
 
-	for (int i = 0; i <= 19; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		if (readout->active[i] == true)
 		{
 			readout->numActive++;
-			readout->lines[j] = i;
+			readout->lines.push_back(j);
 			j++;
 		}
 	}
+
+	readoutframe->Show(false);
 }
