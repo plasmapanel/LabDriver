@@ -520,17 +520,14 @@ void BigFrame::connectNIMClicked(wxCommandEvent& event)
 	m_button19->Disable();
 }
 
-//void UserEnd::StopClicked(wxCommandEvent& event)
-//{
-//	control = false;
-//}
+void BigFrame::stopSelected(wxCommandEvent& event)
+{
+	run = false;
+}
 
 void BigFrame::startSelected(wxCommandEvent& event)
 {
-	//UserEnd messagebox = new UserEnd(this);
-	//messagebox.Show(true);
 
-	atomic<bool> run = false;
 	if (scanType == "LineScan" && run == false)
 	{
 		run = true;
@@ -541,13 +538,16 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	else if (scanType == "Free" && run == false)
 	{
 		run = true;
-		thread t1(doWeinerCountInf, nim, 1, 0, pglobalheader, "FreeMode.txt", &run);
+		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, message, readout, &run);
 		//run = true;
 		t1.detach();
 	}
 	else if (scanType == "LineScanAP" && run == false)
 	{
-
+		run = true;
+		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, message, readout, &run);
+		//run = true;
+		t1.detach();
 	}
 
 	//run = false;
@@ -559,6 +559,7 @@ void BigFrame::openReadoutPane(wxCommandEvent& event)
 {
 	if (!readoutframe)
 		readoutframe = new readoutedit(this);
+	readoutframe->update();
 	readoutframe->Show(true);
 }
 
@@ -569,98 +570,212 @@ readoutedit::readoutedit(wxWindow* parent) : MyFrame4(parent)
 
 void readoutedit::okbuttonclicked(wxCommandEvent &event)
 {
+	while(!readout->active.empty())
+	{
+		readout->active.pop_back();
+	}
+	while (!readout->lines.empty())
+	{
+		readout->lines.pop_back();
+	}
+
 	if (m_checkBox77->IsChecked())
-		readout->active[0] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[0] = false;
+		readout->active.push_back(false);
 	if (m_checkBox78->IsChecked())
-		readout->active[1] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[1] = false;
+		readout->active.push_back(false);
 	if (m_checkBox79->IsChecked())
-		readout->active[2] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[2] = false;
+		readout->active.push_back(false);
 	if (m_checkBox80->IsChecked())
-		readout->active[3] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[3] = false;
+		readout->active.push_back(false);
 	if (m_checkBox81->IsChecked())
-		readout->active[4] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[4] = false;
+		readout->active.push_back(false);
 	if (m_checkBox82->IsChecked())
-		readout->active[5] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[5] = false;
+		readout->active.push_back(false);
 	if (m_checkBox83->IsChecked())
-		readout->active[6] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[6] = false;
+		readout->active.push_back(false);
 	if (m_checkBox84->IsChecked())
-		readout->active[7] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[7] = false;
+		readout->active.push_back(false);
 	if (m_checkBox85->IsChecked())
-		readout->active[8] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[8] = false;
+		readout->active.push_back(false);
 	if (m_checkBox86->IsChecked())
-		readout->active[9] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[9] = false;
+		readout->active.push_back(false);
 	if (m_checkBox771->IsChecked())
-		readout->active[10] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[10] = false;
+		readout->active.push_back(false);
 	if (m_checkBox781->IsChecked())
-		readout->active[11] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[11] = false;
+		readout->active.push_back(false);
 	if (m_checkBox791->IsChecked())
-		readout->active[12] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[12] = false;
+		readout->active.push_back(false);
 	if (m_checkBox801->IsChecked())
-		readout->active[13] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[13] = false;
+		readout->active.push_back(false);
 	if (m_checkBox811->IsChecked())
-		readout->active[14] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[14] = false;
+		readout->active.push_back(false);
 	if (m_checkBox821->IsChecked())
-		readout->active[15] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[15] = false;
+		readout->active.push_back(false);
 	if (m_checkBox831->IsChecked())
-		readout->active[16] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[16] = false;
+		readout->active.push_back(false);
 	if (m_checkBox841->IsChecked())
-		readout->active[17] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[17] = false;
+		readout->active.push_back(false);
 	if (m_checkBox851->IsChecked())
-		readout->active[18] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[18] = false;
+		readout->active.push_back(false);
 	if (m_checkBox861->IsChecked())
-		readout->active[19] = true;
+		readout->active.push_back(true);
 	else
-		readout->active[19] = false;
+		readout->active.push_back(false);
 
 	int j = 1;
 
+	readout->numActive = 0;
 	for (int i = 0; i < 20; i++)
 	{
 		if (readout->active[i] == true)
 		{
 			readout->numActive++;
-			readout->lines.push_back(j);
+			readout->lines.push_back(i+1);
+			//readout->lines[j] = i;
 			j++;
 		}
 	}
 
 	readoutframe->Show(false);
+}
+
+void readoutedit::update()
+{
+	if (readout->active[0] == true)
+		m_checkBox77->SetValue(true);
+	else
+		m_checkBox77->SetValue(false);
+
+	if (readout->active[1] == true)
+		m_checkBox78->SetValue(true);
+	else
+		m_checkBox78->SetValue(false);
+
+	if (readout->active[2] == true)
+		m_checkBox79->SetValue(true);
+	else
+		m_checkBox79->SetValue(false);
+
+	if (readout->active[3] == true)
+		m_checkBox80->SetValue(true);
+	else
+		m_checkBox80->SetValue(false);
+
+	if (readout->active[4] == true)
+		m_checkBox81->SetValue(true);
+	else
+		m_checkBox81->SetValue(false);
+
+	if (readout->active[5] == true)
+		m_checkBox82->SetValue(true);
+	else
+		m_checkBox82->SetValue(false);
+
+	if (readout->active[6] == true)
+		m_checkBox83->SetValue(true);
+	else
+		m_checkBox83->SetValue(false);
+
+	if (readout->active[7] == true)
+		m_checkBox84->SetValue(true);
+	else
+		m_checkBox84->SetValue(false);
+
+	if (readout->active[8] == true)
+		m_checkBox85->SetValue(true);
+	else
+		m_checkBox85->SetValue(false);
+
+	if (readout->active[9] == true)
+		m_checkBox86->SetValue(true);
+	else
+		m_checkBox86->SetValue(false);
+
+	if (readout->active[10] == true)
+		m_checkBox771->SetValue(true);
+	else
+		m_checkBox771->SetValue(false);
+
+	if (readout->active[11] == true)
+		m_checkBox781->SetValue(true);
+	else
+		m_checkBox781->SetValue(false);
+
+	if (readout->active[12] == true)
+		m_checkBox791->SetValue(true);
+	else
+		m_checkBox791->SetValue(false);
+
+	if (readout->active[13] == true)
+		m_checkBox801->SetValue(true);
+	else
+		m_checkBox801->SetValue(false);
+
+	if (readout->active[14] == true)
+		m_checkBox811->SetValue(true);
+	else
+		m_checkBox811->SetValue(false);
+
+	if (readout->active[15] == true)
+		m_checkBox821->SetValue(true);
+	else
+		m_checkBox821->SetValue(false);
+
+	if (readout->active[16] == true)
+		m_checkBox831->SetValue(true);
+	else
+		m_checkBox831->SetValue(false);
+
+	if (readout->active[17] == true)
+		m_checkBox841->SetValue(true);
+	else
+		m_checkBox841->SetValue(false);
+
+	if (readout->active[18] == true)
+		m_checkBox851->SetValue(true);
+	else
+		m_checkBox851->SetValue(false);
+
+	if (readout->active[19] == true)
+		m_checkBox861->SetValue(true);
+	else
+		m_checkBox861->SetValue(false);
 }

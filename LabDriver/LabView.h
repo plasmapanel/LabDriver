@@ -63,6 +63,9 @@ public:
 	void setScanType();
 	std::string scanType;
 	void openReadoutPane(wxCommandEvent& event);
+	void stopSelected(wxCommandEvent& event);
+
+	atomic<bool> run = false;
 
 private:
 	int distanceToMove = 400;
@@ -98,6 +101,7 @@ public:
 	readoutedit(wxWindow* parent);
 
 	void okbuttonclicked(wxCommandEvent& event);
+	void update();
 
 };
 
