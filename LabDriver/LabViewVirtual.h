@@ -68,16 +68,8 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl1324;
 		wxStaticText* m_staticText1425;
 		wxTextCtrl* m_textCtrl1325;
-		wxStaticText* m_staticText13;
-		wxTextCtrl* m_textCtrl12;
-		wxStaticText* m_staticText49;
-		wxTextCtrl* m_textCtrl47;
-		wxStaticText* m_staticText1421;
-		wxTextCtrl* m_textCtrl1321;
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_textCtrl24;
-		wxStaticText* m_staticText1422;
-		wxTextCtrl* m_textCtrl1322;
 		wxStaticText* discThr;
 		wxTextCtrl* m_textCtrl48;
 		wxButton* m_button1;
@@ -94,10 +86,7 @@ class header : public wxFrame
 		virtual void setQuench( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setNumHVLines( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setHVLines( wxFocusEvent& event ) { event.Skip(); }
-		virtual void setTriggerVoltage( wxFocusEvent& event ) { event.Skip(); }
-		virtual void setROLines( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setROAtten( wxFocusEvent& event ) { event.Skip(); }
-		virtual void setROTrigerVoltage( wxFocusEvent& event ) { event.Skip(); }
 		virtual void headerOkClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void headerCancelClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void openHeader( wxCommandEvent& event ) { event.Skip(); }
@@ -141,6 +130,8 @@ class MainFrame : public wxFrame
 		wxButton* down;
 		wxButton* homeY;
 		wxRadioBox* distanceBox;
+		wxStaticText* m_staticText28;
+		wxTextCtrl* m_textCtrl28;
 		wxChoice* m_choice1;
 		wxStaticText* m_staticText18;
 		wxTextCtrl* m_textCtrl18;

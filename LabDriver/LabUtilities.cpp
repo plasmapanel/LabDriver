@@ -3455,7 +3455,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 string createFileName(HeaderInfoGen *header, Messages* message, time_t t)
 {
 	string runName;
-	string runnName = ".\\CollectedData\\";
+	runName = ".\\CollectedData\\";
 	// TODO: add identifier to first directory, possibly panel name?
 	CreateDirectory(runName.c_str(), NULL);
 	//runName = path + header->gas + "\\";
@@ -3470,9 +3470,9 @@ string createFileName(HeaderInfoGen *header, Messages* message, time_t t)
 	return runName;
 }
 
-void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run){
+void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, Voltage *volt, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run){
 
-	string path = ".\\CollectedData\\";
+	//string path = ".\\CollectedData\\";
 	string runName;
 	ofstream log;
 	int starting = message->voltageStart;
@@ -3548,9 +3548,9 @@ void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, VoltageC
 	}
 }
 
-	void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run){
+void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltage *volt, Messages* message, Readout* readout, atomic<bool>* run){
 
-		string path = ".\\CollectedData\\";
+		//string path = ".\\CollectedData\\";
 		string runName;
 		ofstream log;
 		int starting = message->voltageStart;
@@ -3582,19 +3582,24 @@ void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, VoltageC
 
 		string fullFile = "test.txt";
 		if (header->sourceConfig == "Dynamic")
-		{
+		{	
+			log << "Turning On High Voltage" << endl;
+			volt->setVoltage(starting);
+			volt->turnOn();
 			
-			while(*run == true)
+			while (*run == true)
 			{
 				log << "Begin Counting" << endl;
 				temp = runName + "_" + to_string(starting) + "_" + "volts";
 				doAfterPulseAny(temp, nim, *header, starting, readout);
 				log << "Finished Counting" << endl;
-								}
-
 			}
-			log << "Creating Graphs" << endl;
+
 		}
+		log << "Turning off High Voltage" << endl;
+		volt->turnOff();
+		log << "Creating Graphs" << endl;
+	}
 
 void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, Readout* readout){
 	HeaderInfoAfter ha;
@@ -3604,7 +3609,7 @@ void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &h
 	stringstream ss;
 	string temp;
 
-	for (int i = 0; i <= readout->numActive; i++)
+	for (int i = 0; i < readout->numActive; i++)
 	{
 		ss.str(std::string());
 		ss.clear();
@@ -3619,7 +3624,7 @@ void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &h
 	boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
 	atomic<bool> done = false;
 	thread t2(writeInfoAfterAny, &q, &t, &done, fileName, ha, hg, *readout);
-	//readFromPixAfter10(&done, &q, &t, nim);
+	readFromPixAfterAny(&done, &q, &t, nim, readout);
 	t2.join();
 }
 

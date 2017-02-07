@@ -120,22 +120,23 @@ void BigFrame::distanceBoxClicked(wxCommandEvent & event)
 int BigFrame::convertDistance(int radioButton)
 {
 	int ret;
+	int stepsmm = 400;
 	switch (radioButton)
 	{
 	case 0:
-		ret = (int) (0.01 / MMPERSTEP);
+		ret = (int)(0.1 * stepsmm);
 		break;
 	case 1:
-		ret = (int)(0.1 / MMPERSTEP);
+		ret = (int)(1.0 * stepsmm);
 		break;
 	case 2:
-		ret = (int)(1.0 / MMPERSTEP);
+		ret = (int)(5.0 * stepsmm);
 		break;
 	case 3:
-		ret = (int)(5.0 / MMPERSTEP);
+		ret = (int)(10.0 * stepsmm);
 		break;
 	case 4:
-		ret = (int)(10.0 / MMPERSTEP);
+		ret = (int)(stepsmm * wxAtof(m_textCtrl28->GetLineText(0)));
 		break;
 	default:
 		ret = 0;
@@ -276,6 +277,9 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 {
 	int startvoltage, endvoltage, xoffset, yoffset, xstepsize, ystepsize, voltagestepsize, dwelltime;
 	int numsteps, frequency;
+	int motorstepx;
+
+	double xoffsetmm, yoffsetmm, xstepsizemm, ystepsizemm;
 	double totaltime;
 	//string filename;
 
@@ -287,14 +291,23 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	m_textCtrl45->SelectAll();
 	m_textCtrl45->WriteText(wxString::Format(wxT("%i"), numsteps));
 
-	xoffset = wxAtoi(m_textCtrl18->GetLineText(0));
-	yoffset = wxAtoi(m_textCtrl19->GetLineText(0));
-	xstepsize = wxAtoi(m_textCtrl20->GetLineText(0));
-	ystepsize = wxAtoi(m_textCtrl21->GetLineText(0));
+	xoffsetmm = wxAtof(m_textCtrl18->GetLineText(0));
+	yoffsetmm = wxAtof(m_textCtrl19->GetLineText(0));
+	xstepsizemm = wxAtof(m_textCtrl20->GetLineText(0));
+	ystepsizemm = wxAtof(m_textCtrl21->GetLineText(0));
+	motorstepx = wxAtoi(m_textCtrl41->GetLineText(0)); //add y setsize
 
 	dwelltime = wxAtoi(m_textCtrl42->GetLineText(0));
-	if (xstepsize || ystepsize != 0)
+	if (xstepsizemm || ystepsizemm != 0)
+	{
+		xoffset = motorstepx * xoffsetmm;
+		xstepsize = motorstepx * xstepsizemm;
+
+		yoffset = motorstepx * yoffsetmm;
+		ystepsize = motorstepx * ystepsizemm;
+
 		totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize*dwelltime;
+	}
 	else
 		totaltime = (endvoltage - startvoltage) / voltagestepsize*dwelltime;
 
@@ -479,14 +492,14 @@ void HeaderEdit::copyData(HeaderInfoGen &headerInfo)
 	headerInfo.panelName = m_textCtrl1->GetLineText(0);
 	headerInfo.sourceName = m_textCtrl11->GetLineText(0);
 	headerInfo.sourceConfig = getSourceConfig();
-	headerInfo.triggerSetup = m_textCtrl1322->GetLineText(0);
+	//headerInfo.triggerSetup = m_textCtrl1322->GetLineText(0);
 	headerInfo.gas = m_textCtrl13->GetLineText(0);
 	headerInfo.pressure = wxAtof(m_textCtrl131->GetLineText(0));
 	headerInfo.discThresh = wxAtof(m_textCtrl48->GetLineText(0));
 	headerInfo.quench = wxAtof(m_textCtrl132->GetLineText(0));
-	headerInfo.numRO = wxAtoi(m_textCtrl47->GetLineText(0));
-	headerInfo.roLines = m_textCtrl1321->GetLineText(0);
-	headerInfo.triggerRO = m_textCtrl12->GetLineText(0);
+	//headerInfo.numRO = wxAtoi(m_textCtrl47->GetLineText(0));
+	//headerInfo.roLines = m_textCtrl1321->GetLineText(0);
+	//headerInfo.triggerRO = m_textCtrl12->GetLineText(0);
 	headerInfo.attenRO = wxAtof(m_textCtrl24->GetLineText(0));
 	headerInfo.numHV = wxAtoi(m_textCtrl1324->GetLineText(0));
 	headerInfo.linesHV = m_textCtrl1325->GetLineText(0);
@@ -498,14 +511,14 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo)
 {
 	m_textCtrl1->WriteText(headerInfo.panelName);
 	m_textCtrl11->WriteText(headerInfo.sourceName);
-	m_textCtrl1322->WriteText(headerInfo.triggerSetup);
+	//m_textCtrl1322->WriteText(headerInfo.triggerSetup);
 	m_textCtrl13->WriteText(headerInfo.gas);
 	m_textCtrl131->WriteText(wxString::Format(wxT("%f"), headerInfo.pressure));
 	m_textCtrl48->WriteText(wxString::Format(wxT("%f"), headerInfo.discThresh));
 	m_textCtrl132->WriteText(wxString::Format(wxT("%f"), headerInfo.quench));
-	m_textCtrl47->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
-	m_textCtrl1321->WriteText(headerInfo.roLines);
-	m_textCtrl12->WriteText(headerInfo.triggerRO);
+	//m_textCtrl47->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
+	//m_textCtrl1321->WriteText(headerInfo.roLines);
+	//m_textCtrl12->WriteText(headerInfo.triggerRO);
 	m_textCtrl24->WriteText(wxString::Format(wxT("%f"), headerInfo.attenRO));
 	m_textCtrl1324->WriteText(wxString::Format(wxT("%i"), headerInfo.numHV));
 	m_textCtrl1325->WriteText(headerInfo.linesHV);
@@ -538,14 +551,14 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	else if (scanType == "Free" && run == false)
 	{
 		run = true;
-		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, message, readout, &run);
+		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
 		//run = true;
 		t1.detach();
 	}
 	else if (scanType == "LineScanAP" && run == false)
 	{
 		run = true;
-		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, message, readout, &run);
+		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
 		//run = true;
 		t1.detach();
 	}

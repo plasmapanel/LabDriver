@@ -28,5 +28,5 @@ Readout::~Readout()
 
 void Readout::timeToSamples(double time)
 {
-	samples = ceil(time / timeread / numActive);
+	samples = ceil(time / (timeread * numActive));
 }

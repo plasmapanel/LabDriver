@@ -12,20 +12,20 @@ using namespace std;
 struct HeaderInfoGen{
   string panelName = "MC";
   string sourceName = "RU";
-  string sourceConfig = "Static";
-  string triggerSetup = "0";
+  string sourceConfig = "Dynamic";
+  string triggerSetup = "0"; //remove
   string gas = "TEST";
-  double pressure = 600;
+  double pressure = 740.0;
   double discThresh = 90;
   double quench = 1000;
-  int numRO = 10;
-  string roLines = "1-10";
+  int numRO = 20;
+  string roLines = "1-20";
   string triggerRO = "0";
-  double attenRO = 0;
-  int numHV = 8;
-  string linesHV = "3,5,7,10,13,16,18,20";
-  string triggerHV = "0";
-  double attenHV = 0;
+  double attenRO = 20;
+  int numHV = 20;
+  string linesHV = "1-20";
+  string triggerHV = "0"; //remove
+  double attenHV = 0; //remove
 
 };
 //the header for after-pulse tests

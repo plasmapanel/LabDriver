@@ -217,27 +217,6 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText13 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Trigger Voltage (mV):"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText13->Wrap( -1 );
-	bSizer1->Add( m_staticText13, 0, wxALL, 5 );
-	
-	m_textCtrl12 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_textCtrl12, 0, wxALL, 5 );
-	
-	m_staticText49 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Number of RO Lines"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText49->Wrap( -1 );
-	bSizer1->Add( m_staticText49, 0, wxALL, 5 );
-	
-	m_textCtrl47 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("20"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_textCtrl47, 0, wxALL, 5 );
-	
-	m_staticText1421 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("RO Lines"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1421->Wrap( -1 );
-	bSizer1->Add( m_staticText1421, 0, wxALL, 5 );
-	
-	m_textCtrl1321 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1-20"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_textCtrl1321, 0, wxALL, 5 );
-	
 	
 	sbSizer4->Add( bSizer1, 1, wxEXPAND, 5 );
 	
@@ -256,13 +235,6 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_textCtrl24 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("20"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_textCtrl24, 0, wxALL, 5 );
-	
-	m_staticText1422 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Ro Trigger"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText1422->Wrap( -1 );
-	bSizer20->Add( m_staticText1422, 0, wxALL, 5 );
-	
-	m_textCtrl1322 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer20->Add( m_textCtrl1322, 0, wxALL, 5 );
 	
 	discThr = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Discriminator Threshold (mV)"), wxDefaultPosition, wxDefaultSize, 0 );
 	discThr->Wrap( -1 );
@@ -326,10 +298,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_textCtrl132->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setQuench ), NULL, this );
 	m_textCtrl1324->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setNumHVLines ), NULL, this );
 	m_textCtrl1325->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVLines ), NULL, this );
-	m_textCtrl12->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setTriggerVoltage ), NULL, this );
-	m_textCtrl1321->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROLines ), NULL, this );
 	m_textCtrl24->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROAtten ), NULL, this );
-	m_textCtrl1322->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROTrigerVoltage ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( header::headerOkClicked ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( header::headerCancelClicked ), NULL, this );
 	this->Connect( m_menuItem1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( header::openHeader ) );
@@ -351,10 +320,7 @@ header::~header()
 	m_textCtrl132->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setQuench ), NULL, this );
 	m_textCtrl1324->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setNumHVLines ), NULL, this );
 	m_textCtrl1325->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setHVLines ), NULL, this );
-	m_textCtrl12->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setTriggerVoltage ), NULL, this );
-	m_textCtrl1321->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROLines ), NULL, this );
 	m_textCtrl24->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROAtten ), NULL, this );
-	m_textCtrl1322->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( header::setROTrigerVoltage ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( header::headerOkClicked ), NULL, this );
 	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( header::headerCancelClicked ), NULL, this );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( header::openHeader ) );
@@ -485,11 +451,24 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	bSizer19->Add( gSizer1, 1, wxEXPAND, 5 );
 	
-	wxString distanceBoxChoices[] = { wxT("0.1"), wxT("1.0"), wxT("5.0"), wxT("10.0") };
+	wxBoxSizer* bSizer21;
+	bSizer21 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxString distanceBoxChoices[] = { wxT("0.1"), wxT("1.0"), wxT("5.0"), wxT("10.0"), wxT("User") };
 	int distanceBoxNChoices = sizeof( distanceBoxChoices ) / sizeof( wxString );
 	distanceBox = new wxRadioBox( this, wxID_ANY, wxT("Travel Distance"), wxDefaultPosition, wxDefaultSize, distanceBoxNChoices, distanceBoxChoices, 4, wxRA_SPECIFY_COLS );
-	distanceBox->SetSelection( 2 );
-	bSizer19->Add( distanceBox, 0, wxALL, 5 );
+	distanceBox->SetSelection( 3 );
+	bSizer21->Add( distanceBox, 0, wxALL, 5 );
+	
+	m_staticText28 = new wxStaticText( this, wxID_ANY, wxT("Distance (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText28->Wrap( -1 );
+	bSizer21->Add( m_staticText28, 0, wxALL, 5 );
+	
+	m_textCtrl28 = new wxTextCtrl( this, wxID_ANY, wxT("2.54"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer21->Add( m_textCtrl28, 0, wxALL, 5 );
+	
+	
+	bSizer19->Add( bSizer21, 1, wxEXPAND, 5 );
 	
 	
 	fgSizer3->Add( bSizer19, 1, wxEXPAND, 5 );
@@ -516,35 +495,35 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText18 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("X Offset"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText18 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("X Offset (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText18->Wrap( -1 );
 	fgSizer2->Add( m_staticText18, 0, wxALL, 5 );
 	
-	m_textCtrl18 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1000"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl18 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("8"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl18, 0, wxALL, 5 );
 	
-	m_staticText19 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y Offset"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText19 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y Offset (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText19->Wrap( -1 );
 	fgSizer2->Add( m_staticText19, 0, wxALL, 5 );
 	
-	m_textCtrl19 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1000"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl19 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("8"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl19, 0, wxALL, 5 );
 	
-	m_staticText20 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("X Step Size"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText20 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("X Step Size (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText20->Wrap( -1 );
 	fgSizer2->Add( m_staticText20, 0, wxALL, 5 );
 	
-	m_textCtrl20 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("100"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl20 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0.1"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl20, 0, wxALL, 5 );
 	
-	m_staticText21 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y Step Size"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText21 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y Step Size (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText21->Wrap( -1 );
 	fgSizer2->Add( m_staticText21, 0, wxALL, 5 );
 	
-	m_textCtrl21 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("100"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl21 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0.1"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl21, 0, wxALL, 5 );
 	
-	m_staticText22 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Start Voltage"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText22 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Start Voltage (V)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText22->Wrap( -1 );
 	fgSizer2->Add( m_staticText22, 0, wxALL, 5 );
 	
@@ -553,7 +532,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	fgSizer2->Add( m_textCtrl22, 0, wxALL, 5 );
 	
-	m_staticText23 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("End Voltage"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText23 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("End Voltage (V)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText23->Wrap( -1 );
 	fgSizer2->Add( m_staticText23, 0, wxALL, 5 );
 	
@@ -562,21 +541,21 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	fgSizer2->Add( m_textCtrl23, 0, wxALL, 5 );
 	
-	m_staticText45 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Voltage Step Size"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText45 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Voltage Step Size (V)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText45->Wrap( -1 );
 	fgSizer2->Add( m_staticText45, 0, wxALL, 5 );
 	
 	m_textCtrl40 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("50"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl40, 0, wxALL, 5 );
 	
-	m_staticText46 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Number of Pixels"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText46 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Steps per MM"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText46->Wrap( -1 );
 	fgSizer2->Add( m_staticText46, 0, wxALL, 5 );
 	
-	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("400"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl41, 0, wxALL, 5 );
 	
-	m_staticText47 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Measurement Time"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText47 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Measurement Time (s)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText47->Wrap( -1 );
 	fgSizer2->Add( m_staticText47, 0, wxALL, 5 );
 	
