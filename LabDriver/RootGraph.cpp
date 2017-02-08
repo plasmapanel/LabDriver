@@ -14,8 +14,19 @@ void HGraph::makeGraphBmp(int arr[20]){
     gr->SetBinContent(i + 1, arr[i]);
   }
   c1->Update();
-  c1->SaveAs(".bmp");
+  c1->SaveAs("c1.bmp");
 }
+
+void HGraph::makeGraphBmp(vector<int> arr)
+{
+	for (int i = 0; i < arr.size(); i++)
+	{
+		gr->SetBinContent(i + 1, arr[i]);
+	}
+	c1->Update();
+	c1->SaveAs("c1.bmp");
+}
+
 HGraph::~HGraph(){
   delete c1;
   delete gr;

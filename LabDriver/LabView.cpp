@@ -55,7 +55,11 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 {
-	volt->end();
+	if (volt)
+	{
+		volt->turnOff();
+		volt->end();
+	}
 	delete volt;
 	delete nim;
 	delete mot;
@@ -65,6 +69,7 @@ void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 	Close(true);
 
 }
+
 //
 void BigFrame::yUpButtonClicked(wxCommandEvent & event)
 {
@@ -540,6 +545,41 @@ void BigFrame::stopSelected(wxCommandEvent& event)
 
 void BigFrame::startSelected(wxCommandEvent& event)
 {
+	if (!volt)
+	{
+		wxMessageBox("Voltage controller not connected");
+		run = true;
+	}
+
+	if (!nim)
+	{
+		wxMessageBox("NIMBox not connected");
+		run = true;
+	}
+
+	if (!mot)
+	{
+		wxMessageBox("X-Y controller not connected");
+		run = true;
+	}
+
+	if (!pglobalheader)
+	{
+		wxMessageBox("Header information not found");
+		run = true;
+	}
+
+	if (!message)
+	{
+		wxMessageBox("Please update run type information");
+		run = true;
+	}
+
+	if (!readout)
+	{
+		wxMessageBox("Readout information not found");
+		run = true;
+	}
 
 	if (scanType == "LineScan" && run == false)
 	{

@@ -460,7 +460,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	distanceBox->SetSelection( 3 );
 	bSizer21->Add( distanceBox, 0, wxALL, 5 );
 	
-	m_staticText28 = new wxStaticText( this, wxID_ANY, wxT("Distance (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText28 = new wxStaticText( this, wxID_ANY, wxT("User Distance (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText28->Wrap( -1 );
 	bSizer21->Add( m_staticText28, 0, wxALL, 5 );
 	

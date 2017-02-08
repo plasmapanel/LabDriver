@@ -3538,13 +3538,13 @@ void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, Voltage 
 				volt->setVoltage(j);
 				log << "Begin Counting" << endl;
 				temp = runName + "_" + to_string(j) + "_" + "volts" + "_" + to_string((long)i) + "_steps";
-				doAfterPulseAny(temp, nim, *header, starting, readout);
+				doAfterPulseAny(temp, nim, *header, starting, readout, run);
 				log << "Finished Counting" << endl;
 
 			}
 
 		}
-		log << "Creating Graphs" << endl;
+		//log << "Creating Graphs" << endl;
 	}
 }
 
@@ -3591,7 +3591,7 @@ void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltag
 			{
 				log << "Begin Counting" << endl;
 				temp = runName + "_" + to_string(starting) + "_" + "volts";
-				doAfterPulseAny(temp, nim, *header, starting, readout);
+				doAfterPulseAny(temp, nim, *header, starting, readout, run);
 				log << "Finished Counting" << endl;
 			}
 
@@ -3601,7 +3601,7 @@ void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltag
 		log << "Creating Graphs" << endl;
 	}
 
-void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, Readout* readout){
+void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, Readout* readout, atomic<bool>* run){
 	HeaderInfoAfter ha;
 	ha.numPixels = readout->numActive;
 	ha.numReadings = readout->samples;
@@ -3624,25 +3624,25 @@ void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &h
 	boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
 	atomic<bool> done = false;
 	thread t2(writeInfoAfterAny, &q, &t, &done, fileName, ha, hg, *readout);
-	readFromPixAfterAny(&done, &q, &t, nim, readout);
+	readFromPixAfterAny(&done, &q, &t, nim, readout, run);
 	t2.join();
 }
 
-static void readFromPixAfterAny(atomic<bool> *done, boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, WeinerCounter *nim, Readout* readout){
+static void readFromPixAfterAny(atomic<bool> *done, boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, WeinerCounter *nim, Readout* readout, atomic<bool>* run){
 	const int total = readout->numActive;
-	//array<int, 15> arr;
+	//array<int, 20> arr;
 	vector<int> arr;
 	nim->resetAll();
 	t->push(HighResClock::now());
 
 	for (int i = 0; i < readout->numActive; i++)
 	{
-		arr[i] = nim->readCounter(readout->lines[i]);
+		arr.push_back(nim->readCounter(readout->lines[i]));
 	}
 
 	q->push(arr);
 
-	for (int i = 0; i < readout->samples; ++i){
+	for (int i = 0; i < readout->samples && *run == true; ++i){
 		t->push(HighResClock::now());
 		for (int i = 0; i < readout->numActive; i++)
 		{
@@ -3668,12 +3668,11 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 
 	while (q->read_available() == 0 || t->read_available() == 0){}
 	this_thread::sleep_for(chrono::microseconds(1000));
-	//int count[20] = { q->front()[0], q->front()[1], q->front()[2], q->front()[3], q->front()[4], q->front()[5], q->front()[6],
-	//	q->front()[7], q->front()[8], q->front()[9], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
 	int prev[20];
 	int count[20];
 
-	for (int i = 0; i < readout.numActive; i++)
+	for (int i = 0; i < 18; i++)
 	{
 		count[i] = q->front()[readout.lines[i]];
 	}
@@ -3715,15 +3714,15 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 	Int_t pixX[20];
 	Int_t pixY[20];
 	char holding[30];
-	for (int i = 0; i < 20; ++i){
-		pixX[i] = 0;
-		pixY[i] = 0;
-	}
-	for (int i = 0, len = ha.pixels.size(); i < len; ++i){
-		strcpy(holding, ha.pixels[i].c_str());
-		pixX[i] = atoi(strtok(holding, "-"));
-		pixY[i] = atoi(strtok(nullptr, "-"));
-	}
+	//for (int i = 0; i < 20; ++i){
+	//	pixX[i] = 0;
+	//	pixY[i] = 0;
+	//}
+	//for (int i = 0, len = ha.pixels.size(); i < len; ++i){
+	//	strcpy(holding, ha.pixels[i].c_str());
+	//	pixX[i] = atoi(strtok(holding, "-"));
+	//	pixY[i] = atoi(strtok(NULL, "-"));
+	//}
 	Int_t tempSamp = ha.numReadings;
 	Int_t tempPix = ha.numPixels;
 	tr.Branch("panel", tempPanel, "panel[200]/C");

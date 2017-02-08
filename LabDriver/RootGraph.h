@@ -16,7 +16,9 @@ class HGraph{
 public:
   HGraph();
   void makeGraphBmp(int arr[20]);
+  void makeGraphBmp(vector<int> arr);
   ~HGraph();
+
 private:
   TCanvas *c1;
   TH1I *gr;
