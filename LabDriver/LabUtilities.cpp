@@ -3762,7 +3762,7 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 	t->pop();
 	tr.Fill();
 	while (!*done){
-		this_thread::sleep_for(chrono::microseconds(10));
+		this_thread::sleep_for(chrono::microseconds(1000));
 		while (q->read_available() > 0 && t->read_available() > 0){
 			for (int i = 0; i < readout->numActive; ++i){
 				prev[i] = count[i];
@@ -3787,6 +3787,9 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 			q->pop();
 			t->pop();
 		}
+		tr.Write();
+		f.Save();
+
 	}
 	this_thread::sleep_for(chrono::microseconds(1000));
 	while (!t->empty() && !q->empty()){
@@ -3813,4 +3816,5 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 	}
 	tr.Write();
 	f.Save();
+	out.close();
 }
