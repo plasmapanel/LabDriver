@@ -3623,7 +3623,7 @@ void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &h
 
 	boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
 	atomic<bool> done = false;
-	thread t2(writeInfoAfterAny, &q, &t, &done, fileName, ha, hg, *readout);
+	thread t2(writeInfoAfterAny, &q, &t, &done, fileName, ha, hg, readout);
 	readFromPixAfterAny(&done, &q, &t, nim, readout, run);
 	t2.join();
 }
@@ -3653,7 +3653,7 @@ static void readFromPixAfterAny(atomic<bool> *done, boost::lockfree::spsc_queue<
 	*done = true;
 }
 
-static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoAfter &ha, const HeaderInfoGen &hg, Readout& readout){
+static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoAfter &ha, const HeaderInfoGen &hg, Readout* readout){
 	this_thread::sleep_for(chrono::microseconds(1000));
 	std::chrono::duration<double, std::milli> elapsed;
 	ofstream out;
@@ -3672,13 +3672,13 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 	int prev[20];
 	int count[20];
 
-	for (int i = 0; i < 18; i++)
+	for (int i = 0; i < readout->numActive; i++)
 	{
-		count[i] = q->front()[readout.lines[i]];
+		count[i] = q->front()[i];
 	}
 
 
-	for (int i = 0; i < readout.numActive; ++i){
+	for (int i = 0; i < readout->numActive; ++i){
 		prev[i] = count[i];
 	}
 	//for (int i = 0; i < 10; ++i){
@@ -3753,7 +3753,7 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 	tstamp = elapsed.count();
 	out << setw(9) << fixed << setprecision(2) << elapsed.count();
 	
-	for (int i = 0; i < readout.numActive; i++)
+	for (int i = 0; i < readout->numActive; i++)
 	{
 		out << "    " << setw(13) << count[i];
 	}
@@ -3764,16 +3764,16 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 	while (!*done){
 		this_thread::sleep_for(chrono::microseconds(10));
 		while (q->read_available() > 0 && t->read_available() > 0){
-			for (int i = 0; i < readout.numActive; ++i){
+			for (int i = 0; i < readout->numActive; ++i){
 				prev[i] = count[i];
 				correctCount(count[i], q->front()[i]);
 			}
-			for (int i = 0; i < readout.numActive; ++i){
+			for (int i = 0; i < readout->numActive; ++i){
 				if (count[i] > prev[i]){
 					elapsed = t->front() - first;
 					tstamp = elapsed.count();
 					out << setw(9) << fixed << setprecision(2) << elapsed.count();
-					for (int i = 0; i < readout.numActive; i++)
+					for (int i = 0; i < readout->numActive; i++)
 					{
 						out << "    " << setw(13) << count[i];
 					}
@@ -3790,16 +3790,16 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 	}
 	this_thread::sleep_for(chrono::microseconds(1000));
 	while (!t->empty() && !q->empty()){
-		for (int i = 0; i < readout.numActive; ++i){
+		for (int i = 0; i < readout->numActive; ++i){
 			prev[i] = count[i];
 			correctCount(count[i], q->front()[i]);
 		}
-		for (int i = 0; i < readout.numActive; ++i){
+		for (int i = 0; i < readout->numActive; ++i){
 			if (count[i] > prev[i]){
 				elapsed = t->front() - first;
 				tstamp = elapsed.count();
 				out << setw(9) << fixed << setprecision(2) << elapsed.count();
-				for (int i = 0; i < readout.numActive; i++)
+				for (int i = 0; i < readout->numActive; i++)
 				{
 					out << "    " << setw(13) << count[i];
 				}
