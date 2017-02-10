@@ -15,7 +15,6 @@ void HGraph::makeGraphBmp(int arr[20]){
   }
   c1->Update();
   c1->SaveAs("c1.bmp");
-  c1->Show();
 }
 
 void HGraph::makeGraphBmp(vector<int> arr)
