@@ -865,3 +865,15 @@ MyFrame4::~MyFrame4()
 	m_button22->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::okbuttonclicked ), NULL, this );
 	
 }
+
+ImageFrame::ImageFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	
+	this->Centre( wxBOTH );
+}
+
+ImageFrame::~ImageFrame()
+{
+}

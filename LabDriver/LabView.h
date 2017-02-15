@@ -105,5 +105,16 @@ public:
 
 };
 
+class Histogram : public ImageFrame
+{
+public:
+	wxBitmap image;
+	Histogram(wxWindow* parent);
+	void updateImage(string filename, atomic<bool> run);
+	void paintNow();
+	void render(wxDC& dc);
+	wxPanel* display;
+};
+
 
 #endif // ..PY_H

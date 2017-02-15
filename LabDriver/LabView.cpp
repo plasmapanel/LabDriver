@@ -41,6 +41,7 @@ HeaderInfoGen* pglobalheader;
 VoltageFactory* vf;
 Readout* readout;
 readoutedit* readoutframe;
+Histogram* Image;
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
@@ -557,7 +558,7 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		run = true;
 	}
 
-	if (!mot)
+	if (!mot && !(scanType == "Free"))
 	{
 		wxMessageBox("X-Y controller not connected");
 		run = true;
@@ -591,9 +592,16 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	else if (scanType == "Free" && run == false)
 	{
 		run = true;
+		readout->samples = 0;
+
 		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
 		//run = true;
 		t1.detach();
+		Histogram* Image = new Histogram(this);
+		Image->Update();
+		Image->Show(true);
+		Image->updateImage("c1.bmp", &run);
+
 	}
 	else if (scanType == "LineScanAP" && run == false)
 	{
@@ -614,6 +622,7 @@ void BigFrame::openReadoutPane(wxCommandEvent& event)
 		readoutframe = new readoutedit(this);
 	readoutframe->update();
 	readoutframe->Show(true);
+
 }
 
 readoutedit::readoutedit(wxWindow* parent) : MyFrame4(parent)
@@ -832,3 +841,47 @@ void readoutedit::update()
 	else
 		m_checkBox861->SetValue(false);
 }
+
+Histogram::Histogram(wxWindow* parent) : ImageFrame(parent)
+{
+	display = new wxPanel();
+	wxBoxSizer* sizer1;
+	sizer1 = new wxBoxSizer(wxVERTICAL);
+
+	sizer1->Add(display);
+	this->SetSizer(sizer1);
+	this->Layout();
+	// run updateimage in a thread
+
+
+	//display->Connect(wxEVT_PAINT, wxCommandEventHandler(Histogram::paint);
+
+}
+
+void Histogram::updateImage(string filename, atomic<bool> run)
+{
+
+	while (run == true)
+	{
+		//delay 1 second
+		this_thread::sleep_for(chrono::microseconds(1000));
+
+		image.LoadFile(filename);
+		Update();
+		//display image
+	}
+
+
+}
+
+void Histogram::paintNow()
+{
+	wxClientDC dc(this);
+	render(dc);
+}
+
+void Histogram::render(wxDC& dc)
+{
+	dc.DrawBitmap(image, 0, 0, false);
+}
+

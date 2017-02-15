@@ -279,4 +279,21 @@ class MyFrame4 : public wxFrame
 	
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class ImageFrame
+///////////////////////////////////////////////////////////////////////////////
+class ImageFrame : public wxFrame 
+{
+	private:
+	
+	protected:
+	
+	public:
+		
+		ImageFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Histogram"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		
+		~ImageFrame();
+	
+};
+
 #endif //__LABVIEWVIRTUAL_H__

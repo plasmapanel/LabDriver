@@ -3642,13 +3642,28 @@ static void readFromPixAfterAny(atomic<bool> *done, boost::lockfree::spsc_queue<
 
 	q->push(arr);
 
-	for (int i = 0; i < readout->samples && *run == true; ++i){
-		t->push(HighResClock::now());
-		for (int i = 0; i < readout->numActive; i++)
-		{
-			arr[i] = nim->readCounter(readout->lines[i]);
+	if (readout->samples == 0) // free run
+	{
+		for (int i = 0; *run == true; ++i){
+			t->push(HighResClock::now());
+			for (int i = 0; i < readout->numActive; i++)
+			{
+				arr[i] = nim->readCounter(readout->lines[i]);
+			}
+			q->push(arr);
 		}
-		q->push(arr);
+	}
+
+	else
+	{
+		for (int i = 0; i < readout->samples && *run == true; ++i){
+			t->push(HighResClock::now());
+			for (int i = 0; i < readout->numActive; i++)
+			{
+				arr[i] = nim->readCounter(readout->lines[i]);
+			}
+			q->push(arr);
+		}
 	}
 	*done = true;
 }
