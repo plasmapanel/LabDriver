@@ -589,6 +589,11 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		//doLineScan(mot, nim, volt, message, pglobalheader);
 		t1.detach();
 	}
+	else if (scanType == "FreeScan" && run == false)
+	{
+		run = true;
+
+	}
 	else if (scanType == "Free" && run == false)
 	{
 		run = true;
