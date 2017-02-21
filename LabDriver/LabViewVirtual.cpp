@@ -482,10 +482,10 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	sbSizer5->Add( bSizer40, 1, wxEXPAND, 5 );
 	
-	wxString m_choice1Choices[] = { wxT("Free"), wxT("Pixel Scan"), wxT("Pixel Map"), wxT("Line Scan") };
+	wxString m_choice1Choices[] = { wxT("Free"), wxT("FreeAP"), wxT("Pixel Scan"), wxT("Pixel Map"), wxT("Line Scan") };
 	int m_choice1NChoices = sizeof( m_choice1Choices ) / sizeof( wxString );
 	m_choice1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1NChoices, m_choice1Choices, 0 );
-	m_choice1->SetSelection( 3 );
+	m_choice1->SetSelection( 0 );
 	m_choice1->SetToolTip( wxT("Sets the type of scan. \nFree: Control the position of the drive and voltage settings manually.\nVoltage Scan: Do a voltage scan across multiple pixels") );
 	
 	sbSizer5->Add( m_choice1, 0, wxALL, 5 );

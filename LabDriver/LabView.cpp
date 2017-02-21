@@ -589,12 +589,13 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		//doLineScan(mot, nim, volt, message, pglobalheader);
 		t1.detach();
 	}
-	else if (scanType == "FreeScan" && run == false)
+	else if (scanType == "Free" && run == false)
 	{
 		run = true;
-
+		thread t1(doWeinerCountInf, nim, 1, message->voltageStart, pglobalheader, message->temp, &run);
+		t1.detach();
 	}
-	else if (scanType == "Free" && run == false)
+	else if (scanType == "FreeAP" && run == false)
 	{
 		run = true;
 		readout->samples = 0;
