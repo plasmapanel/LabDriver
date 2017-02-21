@@ -1377,9 +1377,9 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   out.open(fileName);
   string temp;
   out << hg << ha;
-  time_t time(nullptr);
+  time_t tm = time(nullptr);
   string tmp;
-  tmp = "Start time: " + to_string(time);
+  tmp = "Start time: " + to_string(tm);
   out << tmp << endl;
   out << "Time (s)    ";
   for (int i = 0; i < 20; ++i){
@@ -1617,7 +1617,7 @@ static void userInterrupt(atomic<bool> *t){
 }
 void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, const HeaderInfoGen *hg, string fileName, atomic<bool> *run){
   HeaderInfoCounter hc;
-  time_t time(nullptr);
+  time_t tm = time(nullptr);
   hc.samplingLength = sampleLength;
   hc.timeLength = 0;
   hc.voltage = volt;
@@ -1626,7 +1626,7 @@ void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, cons
   CreateDirectory(runName.c_str(), NULL);
   runName += hg->gas + "\\";
   CreateDirectory(runName.c_str(), NULL);
-  runName += hg->panelName + "_" + to_string(time);
+  runName += hg->panelName + "_" + to_string(tm);
   boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> q;
   boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
   atomic<bool> done = false;
