@@ -228,7 +228,7 @@ void BigFrame::setStartVoltage(wxCommandEvent& event)
 
 void BigFrame::motorControllerConnectClicked(wxCommandEvent & event)
 {
-	static bool connected = false;
+	//static bool connected = false;
 	static int portnum;
 
 	if (!connected)
@@ -237,6 +237,7 @@ void BigFrame::motorControllerConnectClicked(wxCommandEvent & event)
 		mot = new MotorController(portnum, 9600);
 		connected = true;
 		m_button15->Disable();
+		m_button16->Enable();
 	}
 }
 

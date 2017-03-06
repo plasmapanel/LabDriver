@@ -3408,7 +3408,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 			volt->turnOn();
 			log << "Going to home" << endl;
 			mot->goZero();
-			mot->stepMotor(2, -motstepy);
+			//mot->stepMotor(2, -motstepy);
 			if (motstepx != 0)
 			{
 				mot->stepMotor(1, -motstepx);
@@ -3419,16 +3419,16 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 			{
 				motbeginy = motendy;
 				step = 10000;
-
 			}
 
 			int stepsiny = 0;
 
 			for (int i = motbeginx; i <= motendx && *run == true; i += motstepx)
 			{
-				mot->stepMotor(2, -stepsiny*motstepy);
+				mot->stepMotor(2, -stepsiny*motendy);
 				mot->stepMotor(2, -motstepy);
-				mot->stepMotor(1, motstepx);
+				//mot->stepMotor(2, motstepy);
+				mot->stepMotor(1, motstepx); 
 
 				log << "At " << i << "steps x" << ", ";
 
@@ -3436,7 +3436,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 				{	
 					stepsiny=1;
 					mot->stepMotor(2, motstepy);
-					log << "At " << i << "steps y" << endl;
+					log << i << "steps y" << endl;
 
 					for (int j = starting; j <= stop && *run == true; j += step)
 					{
@@ -3452,6 +3452,8 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 					}
 				}
 			}
+
+			mot->goZero();
 		}
 	
 
