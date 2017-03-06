@@ -43,6 +43,8 @@ Readout* readout;
 readoutedit* readoutframe;
 Histogram* Image;
 
+static bool connected = false;
+
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
 	//mot = new MotorController(3, 9600);
@@ -161,12 +163,15 @@ void BigFrame::scanTypeSelected(wxCommandEvent & event)
 		scanType = "Free";
 		break;
 	case 1:
-		scanType = "PixelScan";
+		scanType = "FreeAP";
 		break;
 	case 2:
-		scanType = "PixelMap";
+		scanType = "PixelScan";
 		break;
 	case 3:
+		scanType = "PixelMap";
+		break;
+	case 4:
 		scanType = "LineScan";
 		break;
 	default:
@@ -241,6 +246,8 @@ void BigFrame::motorControllerDisconnectClicked(wxCommandEvent & event)
 	mot = nullptr;
 	m_button15->Enable();
 	m_button16->Disable();
+	delete(mot);
+	connected = false;
 }
 
 void BigFrame::HVConnectClicked(wxCommandEvent & event)
@@ -312,11 +319,21 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 		yoffset = motorstepx * yoffsetmm;
 		ystepsize = motorstepx * ystepsizemm;
 
-		totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize*dwelltime;
+		if (endvoltage != startvoltage)
+			totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize*dwelltime;
+		else
+			totaltime = xoffset / xstepsize * yoffset / ystepsize / dwelltime;
 	}
 	else
-		totaltime = (endvoltage - startvoltage) / voltagestepsize*dwelltime;
+	{
+		if (endvoltage != startvoltage)
+			totaltime = (endvoltage - startvoltage) / voltagestepsize*dwelltime;
+		else
+		{
+			totaltime = dwelltime;
+		}
 
+	}
 	frequency = wxAtoi(m_textCtrl43->GetLineText(0));
 
 	m_textCtrl46->SelectAll();
@@ -451,7 +468,7 @@ void HeaderEdit::openHeader(wxCommandEvent& event)
 	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Save" instead of "Cancel"
 	{
 
-		fullpath = OpenDialog->GetFilename();
+		fullpath = OpenDialog->GetPath();
 		//wxMessageBox(fullpath);
 
 		makeGenHeadFile(globalHeader, fullpath);
@@ -479,9 +496,9 @@ void HeaderEdit::updateGas(wxCommandEvent& event)
 
 	while (!gasTypes.empty())
 	{
-		gasMix += gasPercent.back() + "% ";
+		gasMix += gasPercent.back() + "_";
 		gasTotal += wxAtoi(gasPercent.back());
-		gasMix += gasTypes.back() + " ";
+		gasMix += gasTypes.back() + "-";
 		gasPercent.pop_back();
 		gasTypes.pop_back();
 	}
@@ -515,18 +532,27 @@ void HeaderEdit::copyData(HeaderInfoGen &headerInfo)
 
 void HeaderEdit::putData(HeaderInfoGen &headerInfo)
 {
+	m_textCtrl1->Clear();
 	m_textCtrl1->WriteText(headerInfo.panelName);
+	m_textCtrl11->Clear();
 	m_textCtrl11->WriteText(headerInfo.sourceName);
 	//m_textCtrl1322->WriteText(headerInfo.triggerSetup);
+	m_textCtrl13->Clear();
 	m_textCtrl13->WriteText(headerInfo.gas);
+	m_textCtrl131->Clear();
 	m_textCtrl131->WriteText(wxString::Format(wxT("%f"), headerInfo.pressure));
+	m_textCtrl48->Clear();
 	m_textCtrl48->WriteText(wxString::Format(wxT("%f"), headerInfo.discThresh));
+	m_textCtrl132->Clear();
 	m_textCtrl132->WriteText(wxString::Format(wxT("%f"), headerInfo.quench));
 	//m_textCtrl47->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
 	//m_textCtrl1321->WriteText(headerInfo.roLines);
 	//m_textCtrl12->WriteText(headerInfo.triggerRO);
+	m_textCtrl24->Clear();
 	m_textCtrl24->WriteText(wxString::Format(wxT("%f"), headerInfo.attenRO));
+	m_textCtrl1324->Clear();
 	m_textCtrl1324->WriteText(wxString::Format(wxT("%i"), headerInfo.numHV));
+	m_textCtrl1325->Clear();
 	m_textCtrl1325->WriteText(headerInfo.linesHV);
 	//m_textCtrl1323->WriteText(headerInfo.triggerHV);
 	//m_textCtrl1326->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
@@ -600,9 +626,8 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		run = true;
 		readout->samples = 0;
 
-		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
 		//run = true;
-		t1.detach();
+		//t1.detach();
 		Histogram* Image = new Histogram(this);
 		Image->Update();
 		Image->Show(true);

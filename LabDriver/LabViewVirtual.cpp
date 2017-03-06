@@ -140,7 +140,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText14->Wrap( -1 );
 	bSizer36->Add( m_staticText14, 0, wxALL, 5 );
 	
-	m_textCtrl13 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxT("1%Ar49%Ne50%CF4"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl13 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxT("1_Ar-49_Ne-50_CF4"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer36->Add( m_textCtrl13, 0, wxALL, 5 );
 	
 	m_staticText51 = new wxStaticText( sbSizer3->GetStaticBox(), wxID_ANY, wxT("Total Percentage"), wxDefaultPosition, wxDefaultSize, 0 );

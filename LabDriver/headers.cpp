@@ -124,48 +124,49 @@ void makeGenHeadFile(HeaderInfoGen &hg, string file){
   }
   string trash;
   in >> trash >> trash;
-  in >> ws;
-  getline(in, hg.panelName);
+  in >> ws >> hg.panelName;
+  //getline(in, hg.panelName);
   in >> trash;
-  in >> ws;
-  getline(in, hg.sourceName);
+  in >> ws >> hg.sourceName;
+  //getline(in, hg.sourceName);
   in >> trash >> trash;
-  in >> ws;
-  getline(in, hg.sourceConfig);
-  if (!(hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic" || hg.sourceConfig == "User")){
-    cerr << "Invalid Source Configuation option give." << endl;
-    throw;
-  }
+  in >> ws >> hg.sourceConfig;
+  //getline(in, hg.sourceConfig);
+  //if (!(hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic" || hg.sourceConfig == "User")){
+  //  cerr << "Invalid Source Configuation option give." << endl;
+  //  throw;
+  //}
   in >> trash >> trash;
-  in >> ws;
-  getline(in, hg.gas);
+  in >> ws >> hg.gas;
+  //getline(in, hg.gas);
   in >> trash >> trash >> trash;
-  in >> ws;
-  in >> hg.pressure;
+  in >> ws >> hg.pressure;
+  //in >> hg.pressure;
   in >> trash >> trash;
-  in >> ws;
-  in >> hg.quench;
+  in >> ws >> hg.quench;
+  //in >> hg.quench;
   in >> trash >> trash;
-  in >> ws;
-  getline(in, hg.triggerSetup);
-  in >> trash >> trash >> trash>>ws;
-  in >> hg.discThresh;
+  in >> trash;
+  //getline(in, hg.triggerSetup);
+  in >> trash >> trash >> trash>> ws >> hg.discThresh;
+  //in >> hg.discThresh;
   in >> trash >> trash >> trash >> ws;
   in >> hg.numRO;
-  in >> trash >> trash >> ws;
-  getline(in, hg.roLines);
-  in >> trash >> trash >> ws;
-  getline(in, hg.triggerRO);
-  in >> trash >> trash >> trash >> ws;
-  in >> hg.attenRO;
-  in >> trash >> trash >> trash >> ws;
-  in >> hg.numHV;
-  in >> trash >> trash >> ws;
-  getline(in, hg.linesHV);
-  in >> trash >> trash >> ws;
-  in >> hg.triggerHV;
-  in >> trash >> trash >> trash >> ws;
-  in >> hg.attenHV;
+  in >> trash >> trash >> ws >> hg.roLines;
+  //getline(in, hg.roLines);
+  in >> trash >> trash >> trash;
+  //getline(in, hg.triggerRO);
+  in >> trash >> trash >> trash >> ws >> hg.attenRO;
+  //in >> hg.attenRO;
+  in >> trash >> trash >> trash >> ws >> hg.numHV;
+  //in >> hg.numHV;
+  in >> trash >> trash >> ws >> hg.linesHV;
+  //getline(in, hg.linesHV);
+  //in >> trash >> trash >> ws;
+  //in >> hg.triggerHV;
+  //in >> trash >> trash >> trash >> ws;
+  //in >> hg.attenHV;
+  in.close();
 
 }
 bool isHeaderValid(string filename){

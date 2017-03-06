@@ -3361,7 +3361,8 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	ofstream log;
 	vector<string> pix;
 	pix.push_back("1");
-	int motbegin = 0, motend = message->maxOffsetY, motstep = message->maxStepY;
+	int motbeginy = 0, motendy = message->maxOffsetY, motstepy = message->maxStepY;
+	int motbeginx = 0, motendx = message->maxOffsetX, motstepx = message->maxStepX;
 	int starting = message->voltageStart;
 	int stop = message->voltageEnd;
 	int duration = message->time;
@@ -3407,19 +3408,35 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 			volt->turnOn();
 			log << "Going to home" << endl;
 			mot->goZero();
-			mot->stepMotor(2, -motstep);
+			mot->stepMotor(2, -motstepy);
+			if (motstepx != 0)
+			{
+				mot->stepMotor(1, -motstepx);
+			}
 			//mot->stepMotor(2, motstep);
 			//mot->mapPixel(fullFile, nim, 1, 1, duration, 0, motend, 0, motstep);
-			if (motstep == 0)
+			if (motstepy == 0)
 			{
-				motbegin = motend;
+				motbeginy = motendy;
 				step = 10000;
 
 			}
-				for (int i = motbegin; i <= motend && *run == true; i += motstep)
-				{
-					mot->stepMotor(2, motstep);
-					log << "At " << i << endl;
+
+			int stepsiny = 0;
+
+			for (int i = motbeginx; i <= motendx && *run == true; i += motstepx)
+			{
+				mot->stepMotor(2, -stepsiny*motstepy);
+				mot->stepMotor(2, -motstepy);
+				mot->stepMotor(1, motstepx);
+
+				log << "At " << i << "steps x" << ", ";
+
+				for (int i = motbeginy; i <= motendy && *run == true; i += motstepy) // loop y
+				{	
+					stepsiny=1;
+					mot->stepMotor(2, motstepy);
+					log << "At " << i << "steps y" << endl;
 
 					for (int j = starting; j <= stop && *run == true; j += step)
 					{
@@ -3434,6 +3451,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 
 					}
 				}
+			}
 		}
 	
 
