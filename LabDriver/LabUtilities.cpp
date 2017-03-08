@@ -1353,7 +1353,7 @@ inline static void correctCount(int &count, int next){
     count += OVER + next - temp;
   }
 }
-void doWeinerCount(WeinerCounter *nim, double time, double sampleLength, double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName){
+void doWeinerCount(WeinerCounter *nim, double time, double sampleLength, double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName, int x, int y){
   HeaderInfoCounter hc;
   hc.pixels = activePix;
   hc.samplingLength = sampleLength;
@@ -1362,11 +1362,11 @@ void doWeinerCount(WeinerCounter *nim, double time, double sampleLength, double 
   boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> q;
   boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
   atomic<bool> done = false;
-  thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, hg);
+  thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, hg, x, y);
   readWeinerCount(&q, &t, &done, nim, time, sampleLength);
   t2.join();
 }
-static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoCounter &ha, const HeaderInfoGen &hg){
+static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoCounter &ha, const HeaderInfoGen &hg, int x, int y){
   cimg_library::CImg<unsigned char> *img;
   cimg_library::CImgDisplay disp;
   int imgnum = 0;
@@ -1404,7 +1404,7 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   TFile f(tempst.c_str(), "RECREATE");
   tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) Weiner";
   TTree tr("w", tempst.c_str());
-  char  tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
+  char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
   strcpy(tempPanel, hg.panelName.c_str());
   strcpy(tempSource, hg.sourceName.c_str());
   strcpy(tempGas, hg.gas.c_str());
@@ -1413,6 +1413,10 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   strcpy(tempHV, hg.linesHV.c_str());
   strcpy(tempTrigHV, hg.triggerHV.c_str());
   strcpy(tempTrigRO, hg.triggerRO.c_str());
+
+  char tempMotX = x;
+  char tempMotY = y;
+  char startTime = tm;
   Double_t tstamp, tempPress, tempVolt, tempDiscThr, tempQuench, tempNumHv, tempNumRo, tempAttenRo, tempAttenHV, tempSamp;
   tempPress = hg.pressure;
   tempVolt = ha.voltage;
@@ -1440,6 +1444,9 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
   tr.Branch("nch_hv", &tempNumHv, "nch_hv/s");
   tr.Branch("line_hv", tempHV, "line_hv[200]/C");
+  tr.Branch("Mot_X", tempMotX, "steps/C");
+  tr.Branch("Mot_Y", tempMotY, "steps/C");
+  tr.Branch("Time", startTime, "seconds/C");
   tr.Branch("tstamp", &tstamp, "tstamp/D");
   tr.Branch("data", count, "data[20]/i");
   /////////////////////////////////////////////////////
@@ -1601,7 +1608,7 @@ void doWeinerCountInter(WeinerCounter *nim, double time, double sampleLength, do
   boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> q;
   boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
   atomic<bool> done = false;
-  thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, hg);
+  thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, hg,0,0);
   readWeinerCountInter(&q, &t, &done, nim, time, sampleLength);
   t2.join();
 }
@@ -1630,7 +1637,7 @@ void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, cons
   boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> q;
   boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
   atomic<bool> done = false;
-  thread t2(writeWeinerCount, &q, &t, &done, runName, hc, *hg);
+  thread t2(writeWeinerCount, &q, &t, &done, runName, hc, *hg,0,0);
   readWeinerCountInf(&q, &t, &done, nim, sampleLength, run);
   t2.join();
 }
@@ -1787,7 +1794,7 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
         volt->setVoltage(i);
         log << "Begin Counting" << endl;
         temp = runName + to_string(x[k]) + "_" + to_string(y[k]) + "_" + to_string(i) + "_sor_vs.txt";
-        doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+        doWeinerCount(nim, duration, freq, i, hg, pix, temp, 0, 0);
         log << "Finished Counting" << endl;
       }
     }
@@ -1799,7 +1806,7 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
       volt->setVoltage(i);
       log << "Begin Counting" << endl;
       temp = runName + "all_" + to_string(i) + "_sor_vs.txt";
-      doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+      doWeinerCount(nim, duration, freq, i, hg, pix, temp, 0, 0);
       log << "Finished Counting" << endl;
     }
   }
@@ -1821,7 +1828,7 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
         volt->setVoltage(i);
         log << "Begin Counting" << endl;
         temp = runName + to_string(x[k]) + "_" + to_string(y[k]) + "_" + to_string(i) + "_sor_vs.txt";
-        doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+        doWeinerCount(nim, duration, freq, i, hg, pix, temp,0 ,0);
         log << "Finished Counting" << endl;
       }
     }
@@ -1855,7 +1862,7 @@ void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *vol
     volt->setVoltage(i);
     log << "Begin Counting" << endl;
     temp = runName + to_string(i) + "_bkg_vs.txt";
-    doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+    doWeinerCount(nim, duration, freq, i, hg, pix, temp,0,0);
     log << "Finished Counting" << endl;
   }
   if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
@@ -1952,7 +1959,7 @@ void doVoltageScanFile(MotorController* mot, WeinerCounter* nim, VoltageControl*
         volt->setVoltage(i);
         log << "Begin Counting" << endl;
         temp = runName + to_string(x[k]) + "_" + to_string(y[k]) + "_" + to_string(i) + "_sor_vs.txt";
-        doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+        doWeinerCount(nim, duration, freq, i, hg, pix, temp,0,0);
         log << "Finished Counting" << endl;
       }
     }
@@ -1964,7 +1971,7 @@ void doVoltageScanFile(MotorController* mot, WeinerCounter* nim, VoltageControl*
       volt->setVoltage(i);
       log << "Begin Counting" << endl;
       temp = runName + "all_" + to_string(i) + "_sor_vs.txt";
-      doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+      doWeinerCount(nim, duration, freq, i, hg, pix, temp,0,0);
       log << "Finished Counting" << endl;
     }
   }
@@ -1986,7 +1993,7 @@ void doVoltageScanFile(MotorController* mot, WeinerCounter* nim, VoltageControl*
         volt->setVoltage(i);
         log << "Begin Counting" << endl;
         temp = runName + to_string(x[k]) + "_" + to_string(y[k]) + "_" + to_string(i) + "_sor_vs.txt";
-        doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+        doWeinerCount(nim, duration, freq, i, hg, pix, temp,0,0);
         log << "Finished Counting" << endl;
       }
     }
@@ -2020,7 +2027,7 @@ void doVoltageScanFile(MotorController* mot, WeinerCounter* nim, VoltageControl*
     volt->setVoltage(i);
     log << "Begin Counting" << endl;
     temp = runName + to_string(i) + "_bkg_vs.txt";
-    doWeinerCount(nim, duration, freq, i, hg, pix, temp);
+    doWeinerCount(nim, duration, freq, i, hg, pix, temp,0,0);
     log << "Finished Counting" << endl;
   }
   if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
@@ -2772,7 +2779,7 @@ void doAfterScanGraphMultiAndBack(MotorController *mot, WeinerCounter *nim, Volt
     volt->setVoltage(i);
     log << "Begin Counting" << endl;
     temp = runName + to_string(i) + "_bkg_vs.txt";
-    doWeinerCount(nim, 10*60, 1, i, hg, pix, temp);
+    doWeinerCount(nim, 10*60, 1, i, hg, pix, temp,0,0);
     log << "Finished Counting" << endl;
   }
   if (hg.sourceConfig == "Static" || hg.sourceConfig == "Dynamic"){
@@ -3432,28 +3439,26 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 
 				log << "At " << i << "steps x" << ", ";
 
-				for (int i = motbeginy; i <= motendy && *run == true; i += motstepy) // loop y
+				for (int j = motbeginy; j <= motendy && *run == true; j += motstepy) // loop y
 				{	
 					stepsiny=1;
 					mot->stepMotor(2, motstepy);
 					log << i << "steps y" << endl;
 
-					for (int j = starting; j <= stop && *run == true; j += step)
+					for (int k = starting; k <= stop && *run == true; k += step)
 					{
 						//if (end == true)
 						//break;
-						log << "Setting Voltage to: " << j << endl;
-						volt->setVoltage(j);
+						log << "Setting Voltage to: " << k << endl;
+						volt->setVoltage(k);
 						log << "Begin Counting" << endl;
-						temp = runName + "_" + to_string(j) + "_" + "volts" + "_" + to_string((long)i) + "_steps";
-						doWeinerCount(nim, message->time, message->frequency, j, *header, pix, temp);
+						temp = runName + to_string(k) + "_" + "volts" + "_" + to_string((long)i) + "_x" + to_string((long)j) + "_y" + ".txt";
+						doWeinerCount(nim, message->time, message->frequency, k, *header, pix, temp,i,j);
 						log << "Finished Counting" << endl;
 
 					}
 				}
 			}
-
-			mot->goZero();
 		}
 	
 
@@ -3480,6 +3485,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 
 	log << "Turning off High Voltage" << endl;
 	volt->turnOff();
+	mot->goZero();
 	log << "Voltage Scan Completed" << endl;
 	log.close();
 	*run = false;

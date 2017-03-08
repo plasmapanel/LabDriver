@@ -49,7 +49,7 @@ void doAfterPulseNCountStop(string fileName, WeinerCounter* nim, const HeaderInf
 //counter functions
 //time-dependent non interruptable version
 void doWeinerCount(WeinerCounter *nim, double time, double sampleLength,
-                   double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
+                   double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName, int x, int y);
 //interruptable version
 void doWeinerCountInter(WeinerCounter *nim, double time, double sampleLength,
                         double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
@@ -138,7 +138,7 @@ static void writeInfoAfterN(vector<boost::lockfree::spsc_queue<int, boost::lockf
 //counter helper functions
 static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q,
                              boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done,
-                             string fileName, const HeaderInfoCounter &ha, const HeaderInfoGen &hg);
+                             string fileName, const HeaderInfoCounter &ha, const HeaderInfoGen &hg, int x, int y);
 
 static void readWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q,
                             boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t,
