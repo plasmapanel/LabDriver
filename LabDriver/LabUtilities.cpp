@@ -1444,9 +1444,9 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
   tr.Branch("nch_hv", &tempNumHv, "nch_hv/s");
   tr.Branch("line_hv", tempHV, "line_hv[200]/C");
-  tr.Branch("Mot_X", tempMotX, "steps/C");
-  tr.Branch("Mot_Y", tempMotY, "steps/C");
-  tr.Branch("Time", startTime, "seconds/C");
+  //tr.Branch("Mot_X", tempMotX, "steps/C");
+  //tr.Branch("Mot_Y", tempMotY, "steps/C");
+  //tr.Branch("Time", startTime, "seconds/C");
   tr.Branch("tstamp", &tstamp, "tstamp/D");
   tr.Branch("data", count, "data[20]/i");
   /////////////////////////////////////////////////////
