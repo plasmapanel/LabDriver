@@ -79,7 +79,7 @@ void BigFrame::yUpButtonClicked(wxCommandEvent & event)
 	//distanceToMove = distanceBox->GetSelection();
 	try
 	{
-		mot->stepMotor(2, distanceToMove);
+		mot->stepMotor(2, distanceToMoveY);
 	}
 	catch (...)
 	{ }
@@ -89,21 +89,21 @@ void BigFrame::yUpButtonClicked(wxCommandEvent & event)
 void BigFrame::yDownButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
-	mot->stepMotor(2, -distanceToMove);
+	mot->stepMotor(2, -distanceToMoveY);
 
 }
 
 void BigFrame::xLeftButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
-	mot->stepMotor(1, distanceToMove);
+	mot->stepMotor(1, distanceToMoveX);
 
 }
 
 void BigFrame::xRightButtonClicked(wxCommandEvent & event)
 {
 	//distanceToMove = distanceBox->GetSelection();
-	mot->stepMotor(1, -distanceToMove);
+	mot->stepMotor(1, -distanceToMoveX);
 
 }
 
@@ -122,13 +122,19 @@ void BigFrame::goToHomeButtonClicked(wxCommandEvent & event)
 
 void BigFrame::distanceBoxClicked(wxCommandEvent & event)
 {
-	distanceToMove = convertDistance(distanceBox->GetSelection());
+	distanceToMoveX = convertDistance(distanceBox->GetSelection(), 1);
+	distanceToMoveY = convertDistance(distanceBox->GetSelection(), 2);
 }
 //
-int BigFrame::convertDistance(int radioButton)
+int BigFrame::convertDistance(int radioButton, int motor)
 {
 	int ret;
 	int stepsmm = 400;
+	if (motor == 1)
+		stepsmm = wxAtoi(m_textCtrl41->GetLineText(0));
+	if (motor == 2)
+		stepsmm = wxAtoi(m_textCtrl29->GetLineText(0));
+
 	switch (radioButton)
 	{
 	case 0:

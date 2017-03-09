@@ -37,7 +37,7 @@ class BigFrame : public MainFrame
 public:
 	BigFrame(wxWindow* parent );
 	void distanceBoxClicked(wxCommandEvent& event);
-	int convertDistance(int);
+	int convertDistance(int, int);
 	void onQuit(wxCommandEvent& WXUNUSED(event)); 
 	void yUpButtonClicked(wxCommandEvent & event);
 	void yDownButtonClicked(wxCommandEvent & event);
@@ -68,7 +68,8 @@ public:
 	atomic<bool> run = false;
 
 private:
-	int distanceToMove = 400;
+	int distanceToMoveX = 400;
+	int distanceToMoveY = 400;
 
 
 
