@@ -141,21 +141,21 @@ class MainFrame : public wxFrame
 		wxTextCtrl* m_textCtrl20;
 		wxStaticText* m_staticText21;
 		wxTextCtrl* m_textCtrl21;
+		wxStaticText* m_staticText46;
+		wxTextCtrl* m_textCtrl41;
+		wxStaticText* m_staticText29;
+		wxTextCtrl* m_textCtrl29;
 		wxStaticText* m_staticText22;
 		wxTextCtrl* m_textCtrl22;
 		wxStaticText* m_staticText23;
 		wxTextCtrl* m_textCtrl23;
 		wxStaticText* m_staticText45;
 		wxTextCtrl* m_textCtrl40;
-		wxStaticText* m_staticText46;
-		wxTextCtrl* m_textCtrl41;
 		wxStaticText* m_staticText47;
 		wxTextCtrl* m_textCtrl42;
 		wxStaticText* m_staticText48;
 		wxTextCtrl* m_textCtrl43;
 		wxRadioBox* m_radioBox3;
-		wxStaticText* m_staticText49;
-		wxTextCtrl* m_textCtrl44;
 		wxButton* m_button20;
 		wxStaticText* m_staticText471;
 		wxTextCtrl* m_textCtrl45;
@@ -192,13 +192,12 @@ class MainFrame : public wxFrame
 		virtual void setYOffset( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setXStepSize( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setYStepSize( wxCommandEvent& event ) { event.Skip(); }
+		virtual void setNumPixels( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setStartVoltage( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setEndVoltage( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setVoltageStepSize( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setNumPixels( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setDwellTime( wxCommandEvent& event ) { event.Skip(); }
 		virtual void toggleHV( wxCommandEvent& event ) { event.Skip(); }
-		virtual void setOutFilename( wxCommandEvent& event ) { event.Skip(); }
 		virtual void updateButtonClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void startSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void stopSelected( wxCommandEvent& event ) { event.Skip(); }

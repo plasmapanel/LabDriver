@@ -166,13 +166,13 @@ void BigFrame::scanTypeSelected(wxCommandEvent & event)
 		scanType = "FreeAP";
 		break;
 	case 2:
-		scanType = "PixelScan";
+		scanType = "LineScan";
 		break;
 	case 3:
-		scanType = "PixelMap";
+		scanType = "HexScanX";
 		break;
 	case 4:
-		scanType = "LineScan";
+		scanType = "HexScanY";
 		break;
 	default:
 		scanType = "None";
@@ -291,7 +291,7 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 {
 	int startvoltage, endvoltage, xoffset, yoffset, xstepsize, ystepsize, voltagestepsize, dwelltime;
 	int numsteps, frequency;
-	int motorstepx;
+	int motorstepx, motorstepy;
 
 	double xoffsetmm, yoffsetmm, xstepsizemm, ystepsizemm;
 	double totaltime;
@@ -309,16 +309,17 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	yoffsetmm = wxAtof(m_textCtrl19->GetLineText(0));
 	xstepsizemm = wxAtof(m_textCtrl20->GetLineText(0));
 	ystepsizemm = wxAtof(m_textCtrl21->GetLineText(0));
-	motorstepx = wxAtoi(m_textCtrl41->GetLineText(0)); //add y setsize
+	motorstepx = wxAtoi(m_textCtrl41->GetLineText(0));
+	motorstepy = wxAtoi(m_textCtrl29->GetLineText(0));
 
 	dwelltime = wxAtoi(m_textCtrl42->GetLineText(0));
-	if (xstepsizemm || ystepsizemm != 0)
+	if (xstepsizemm && ystepsizemm != 0)
 	{
 		xoffset = motorstepx * xoffsetmm;
 		xstepsize = motorstepx * xstepsizemm;
 
-		yoffset = motorstepx * yoffsetmm;
-		ystepsize = motorstepx * ystepsizemm;
+		yoffset = motorstepy * yoffsetmm;
+		ystepsize = motorstepy * ystepsizemm;
 
 		if (endvoltage != startvoltage)
 			totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize*dwelltime;
@@ -352,8 +353,13 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	message->voltageStart = startvoltage;
 	message->voltageEnd = endvoltage;
 	message->voltageStep = voltagestepsize;
-	message->temp = m_textCtrl44->GetLineText(0);
+	//message->temp = m_textCtrl44->GetLineText(0);
 	message->runtype = scanType;
+	//message->motorstepx = motorstepx;
+	//message->motorstepy = motorstepy;
+	globalHeader.motorstepx = motorstepx;
+	globalHeader.motorstepy = motorstepy;
+
 }
 
 void markButtonClicked(wxCommandEvent& event)

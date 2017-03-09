@@ -1379,7 +1379,8 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   out << hg << ha;
   time_t tm = time(nullptr);
   string tmp;
-  tmp = "Start time: " + to_string(tm);
+
+  tmp = "Start run: " + to_string(tm);
   out << tmp << endl;
   out << "Time (s)    ";
   for (int i = 0; i < 20; ++i){

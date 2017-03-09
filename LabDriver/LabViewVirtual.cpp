@@ -377,7 +377,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxString m_choice2Choices[] = { wxT("1"), wxT("3"), wxT("6") };
 	int m_choice2NChoices = sizeof( m_choice2Choices ) / sizeof( wxString );
 	m_choice2 = new wxChoice( sbSizer6->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice2NChoices, m_choice2Choices, 0 );
-	m_choice2->SetSelection( 1 );
+	m_choice2->SetSelection( 2 );
 	sbSizer6->Add( m_choice2, 0, wxALL, 5 );
 	
 	m_button15 = new wxButton( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Connect"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -482,7 +482,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	sbSizer5->Add( bSizer40, 1, wxEXPAND, 5 );
 	
-	wxString m_choice1Choices[] = { wxT("Free"), wxT("FreeAP"), wxT("Pixel Scan"), wxT("Pixel Map"), wxT("Line Scan") };
+	wxString m_choice1Choices[] = { wxT("Free"), wxT("FreeAP"), wxT("Line Scan"), wxT("Hex Scan X"), wxT("Hex Scan Y") };
 	int m_choice1NChoices = sizeof( m_choice1Choices ) / sizeof( wxString );
 	m_choice1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1NChoices, m_choice1Choices, 0 );
 	m_choice1->SetSelection( 0 );
@@ -523,6 +523,20 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_textCtrl21 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("0.1"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl21, 0, wxALL, 5 );
 	
+	m_staticText46 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("X (steps/mm)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText46->Wrap( -1 );
+	fgSizer2->Add( m_staticText46, 0, wxALL, 5 );
+	
+	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("400"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_textCtrl41, 0, wxALL, 5 );
+	
+	m_staticText29 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y (steps/mm)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText29->Wrap( -1 );
+	fgSizer2->Add( m_staticText29, 0, wxALL, 5 );
+	
+	m_textCtrl29 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("400"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_textCtrl29, 0, wxALL, 5 );
+	
 	m_staticText22 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Start Voltage (V)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText22->Wrap( -1 );
 	fgSizer2->Add( m_staticText22, 0, wxALL, 5 );
@@ -536,7 +550,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText23->Wrap( -1 );
 	fgSizer2->Add( m_staticText23, 0, wxALL, 5 );
 	
-	m_textCtrl23 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1200"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl23 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("1000"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_textCtrl23->SetToolTip( wxT("The last voltage that will be tested") );
 	
 	fgSizer2->Add( m_textCtrl23, 0, wxALL, 5 );
@@ -547,13 +561,6 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_textCtrl40 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("50"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl40, 0, wxALL, 5 );
-	
-	m_staticText46 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Steps per MM"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText46->Wrap( -1 );
-	fgSizer2->Add( m_staticText46, 0, wxALL, 5 );
-	
-	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("400"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_textCtrl41, 0, wxALL, 5 );
 	
 	m_staticText47 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Measurement Time (s)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText47->Wrap( -1 );
@@ -576,13 +583,6 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_radioBox3 = new wxRadioBox( sbSizer5->GetStaticBox(), wxID_ANY, wxT("High Voltage"), wxDefaultPosition, wxDefaultSize, m_radioBox3NChoices, m_radioBox3Choices, 2, wxRA_SPECIFY_COLS );
 	m_radioBox3->SetSelection( 1 );
 	fgSizer2->Add( m_radioBox3, 0, wxALL, 5 );
-	
-	m_staticText49 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Output File Name"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText49->Wrap( -1 );
-	fgSizer2->Add( m_staticText49, 0, wxALL, 5 );
-	
-	m_textCtrl44 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Panel"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_textCtrl44, 0, wxALL, 5 );
 	
 	m_button20 = new wxButton( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Update"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_button20, 0, wxALL, 5 );
@@ -660,13 +660,12 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_textCtrl19->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setYOffset ), NULL, this );
 	m_textCtrl20->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setXStepSize ), NULL, this );
 	m_textCtrl21->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setYStepSize ), NULL, this );
+	m_textCtrl41->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setNumPixels ), NULL, this );
 	m_textCtrl22->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setStartVoltage ), NULL, this );
 	m_textCtrl23->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( MainFrame::setEndVoltage ), NULL, this );
 	m_textCtrl40->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setVoltageStepSize ), NULL, this );
-	m_textCtrl41->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setNumPixels ), NULL, this );
 	m_textCtrl42->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setDwellTime ), NULL, this );
 	m_radioBox3->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( MainFrame::toggleHV ), NULL, this );
-	m_textCtrl44->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setOutFilename ), NULL, this );
 	m_button20->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::updateButtonClicked ), NULL, this );
 	start->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::startSelected ), NULL, this );
 	stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
@@ -701,13 +700,12 @@ MainFrame::~MainFrame()
 	m_textCtrl19->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setYOffset ), NULL, this );
 	m_textCtrl20->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setXStepSize ), NULL, this );
 	m_textCtrl21->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setYStepSize ), NULL, this );
+	m_textCtrl41->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setNumPixels ), NULL, this );
 	m_textCtrl22->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setStartVoltage ), NULL, this );
 	m_textCtrl23->Disconnect( wxEVT_KILL_FOCUS, wxFocusEventHandler( MainFrame::setEndVoltage ), NULL, this );
 	m_textCtrl40->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setVoltageStepSize ), NULL, this );
-	m_textCtrl41->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setNumPixels ), NULL, this );
 	m_textCtrl42->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setDwellTime ), NULL, this );
 	m_radioBox3->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( MainFrame::toggleHV ), NULL, this );
-	m_textCtrl44->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::setOutFilename ), NULL, this );
 	m_button20->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::updateButtonClicked ), NULL, this );
 	start->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::startSelected ), NULL, this );
 	stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
