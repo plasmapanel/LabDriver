@@ -195,13 +195,16 @@ void BigFrame::setScanType()
 		scanType = "Free";
 		break;
 	case 1:
-		scanType = "PixelScan";
+		scanType = "FreeAP";
 		break;
 	case 2:
-		scanType = "PixelMap";
+		scanType = "LineScan";
 		break;
 	case 3:
-		scanType = "LineScan";
+		scanType = "HexScanX";
+		break;
+	case 4:
+		scanType = "HexScanY";
 		break;
 	default:
 		scanType = "None";
@@ -647,7 +650,7 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		Image->updateImage("c1.bmp", &run);
 
 	}
-	else if (scanType == "LineScanAP" && run == false)
+	else if (scanType == "ScanAP" && run == false)
 	{
 		run = true;
 		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
@@ -658,6 +661,13 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	//run = false;
 	//messagebox.Show(false);
 	//messagebox.Destroy();
+
+	if (scanType == "HexScanX" && run == false)
+	{
+		run = true;
+		thread t1(doHexScanX, mot, nim, volt, message, pglobalheader, &run);
+		t1.detach();
+	}
 }
 
 void BigFrame::openReadoutPane(wxCommandEvent& event)

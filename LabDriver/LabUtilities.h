@@ -173,6 +173,8 @@ static void readFromPixAfterAny(atomic<bool> *done, boost::lockfree::spsc_queue<
 static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoAfter &ha, const HeaderInfoGen &hg, Readout* readout);
 
 
+void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
+
 
 
 #endif
