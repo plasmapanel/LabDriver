@@ -17,9 +17,9 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/textctrl.h>
-#include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/radiobox.h>
 #include <wx/combobox.h>
 #include <wx/button.h>
 #include <wx/bitmap.h>
@@ -48,8 +48,10 @@ class header : public wxFrame
 		wxStaticText* m_staticText11;
 		wxTextCtrl* m_textCtrl11;
 		wxRadioBox* m_radioBox1;
-		wxStaticText* m_staticText31;
-		wxTextCtrl* m_textCtrl31;
+		wxStaticText* m_staticText29;
+		wxTextCtrl* m_textCtrl29;
+		wxStaticText* m_staticText30;
+		wxTextCtrl* m_textCtrl30;
 		wxComboBox* m_comboBox1;
 		wxTextCtrl* m_textCtrl49;
 		wxComboBox* m_comboBox2;
@@ -72,6 +74,10 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl24;
 		wxStaticText* discThr;
 		wxTextCtrl* m_textCtrl48;
+		wxStaticText* m_staticText33;
+		wxTextCtrl* m_textCtrl33;
+		wxStaticText* m_staticText34;
+		wxTextCtrl* m_textCtrl34;
 		wxButton* m_button1;
 		wxButton* m_button2;
 		wxMenuBar* m_menubar1;
@@ -95,7 +101,7 @@ class header : public wxFrame
 	
 	public:
 		
-		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 905,626 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 914,756 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~header();
 	

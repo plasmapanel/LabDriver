@@ -23,31 +23,50 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText1->Wrap( -1 );
 	sbSizer1->Add( m_staticText1, 0, wxALL, 5 );
 	
-	m_textCtrl1 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Name"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl1 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Test"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_textCtrl1, 0, wxALL, 5 );
-	
-	m_staticText11 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Source"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText11->Wrap( -1 );
-	sbSizer1->Add( m_staticText11, 0, wxALL, 5 );
-	
-	m_textCtrl11 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Sr90"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer1->Add( m_textCtrl11, 0, wxALL, 5 );
-	
-	wxString m_radioBox1Choices[] = { wxT("Static"), wxT("Dynamic"), wxT("User") };
-	int m_radioBox1NChoices = sizeof( m_radioBox1Choices ) / sizeof( wxString );
-	m_radioBox1 = new wxRadioBox( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Source Setup"), wxDefaultPosition, wxDefaultSize, m_radioBox1NChoices, m_radioBox1Choices, 1, wxRA_SPECIFY_ROWS );
-	m_radioBox1->SetSelection( 0 );
-	sbSizer1->Add( m_radioBox1, 0, wxALL, 5 );
-	
-	m_staticText31 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Steps Per mm"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText31->Wrap( -1 );
-	sbSizer1->Add( m_staticText31, 0, wxALL, 5 );
-	
-	m_textCtrl31 = new wxTextCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxT("400"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer1->Add( m_textCtrl31, 0, wxALL, 5 );
 	
 	
 	bSizer21->Add( sbSizer1, 1, wxEXPAND, 5 );
+	
+	wxStaticBoxSizer* sbSizer9;
+	sbSizer9 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("label") ), wxHORIZONTAL );
+	
+	m_staticText11 = new wxStaticText( sbSizer9->GetStaticBox(), wxID_ANY, wxT("Source"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11->Wrap( -1 );
+	sbSizer9->Add( m_staticText11, 0, wxALL, 5 );
+	
+	m_textCtrl11 = new wxTextCtrl( sbSizer9->GetStaticBox(), wxID_ANY, wxT("Sr90"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer9->Add( m_textCtrl11, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizer22;
+	bSizer22 = new wxBoxSizer( wxHORIZONTAL );
+	
+	
+	sbSizer9->Add( bSizer22, 1, wxEXPAND, 5 );
+	
+	wxString m_radioBox1Choices[] = { wxT("Static"), wxT("Dynamic"), wxT("User") };
+	int m_radioBox1NChoices = sizeof( m_radioBox1Choices ) / sizeof( wxString );
+	m_radioBox1 = new wxRadioBox( sbSizer9->GetStaticBox(), wxID_ANY, wxT("Source Setup"), wxDefaultPosition, wxDefaultSize, m_radioBox1NChoices, m_radioBox1Choices, 1, wxRA_SPECIFY_ROWS );
+	m_radioBox1->SetSelection( 0 );
+	sbSizer9->Add( m_radioBox1, 0, wxALL, 5 );
+	
+	m_staticText29 = new wxStaticText( sbSizer9->GetStaticBox(), wxID_ANY, wxT("Collimator (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText29->Wrap( -1 );
+	sbSizer9->Add( m_staticText29, 0, wxALL, 5 );
+	
+	m_textCtrl29 = new wxTextCtrl( sbSizer9->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer9->Add( m_textCtrl29, 0, wxALL, 5 );
+	
+	m_staticText30 = new wxStaticText( sbSizer9->GetStaticBox(), wxID_ANY, wxT("Source Height (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText30->Wrap( -1 );
+	sbSizer9->Add( m_staticText30, 0, wxALL, 5 );
+	
+	m_textCtrl30 = new wxTextCtrl( sbSizer9->GetStaticBox(), wxID_ANY, wxT("2"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer9->Add( m_textCtrl30, 0, wxALL, 5 );
+	
+	
+	bSizer21->Add( sbSizer9, 1, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Gas Information") ), wxHORIZONTAL );
@@ -140,7 +159,7 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText14->Wrap( -1 );
 	bSizer36->Add( m_staticText14, 0, wxALL, 5 );
 	
-	m_textCtrl13 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxT("1_Ar-49_Ne-50_CF4"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl13 = new wxTextCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxT("1Ar-49Ne-50CF4"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer36->Add( m_textCtrl13, 0, wxALL, 5 );
 	
 	m_staticText51 = new wxStaticText( sbSizer3->GetStaticBox(), wxID_ANY, wxT("Total Percentage"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -184,11 +203,11 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxBoxSizer* bSizer326;
 	bSizer326 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText142 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Quench Resistance (GOhm):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText142 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Quench Resistance (MOhm):"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText142->Wrap( -1 );
 	bSizer326->Add( m_staticText142, 0, wxALL, 5 );
 	
-	m_textCtrl132 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("0.1"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl132 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("1000"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer326->Add( m_textCtrl132, 0, wxALL, 5 );
 	
 	m_staticText1424 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Number of HV Lines"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -242,6 +261,32 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_textCtrl48 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_textCtrl48, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizer25;
+	bSizer25 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText33 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Numerator Channel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText33->Wrap( -1 );
+	bSizer25->Add( m_staticText33, 0, wxALL, 5 );
+	
+	m_textCtrl33 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer25->Add( m_textCtrl33, 0, wxALL, 5 );
+	
+	
+	bSizer20->Add( bSizer25, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer26;
+	bSizer26 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText34 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Denominator Channel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText34->Wrap( -1 );
+	bSizer26->Add( m_staticText34, 0, wxALL, 5 );
+	
+	m_textCtrl34 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer26->Add( m_textCtrl34, 0, wxALL, 5 );
+	
+	
+	bSizer20->Add( bSizer26, 1, wxEXPAND, 5 );
 	
 	
 	sbSizer4->Add( bSizer20, 1, wxEXPAND, 5 );
@@ -377,7 +422,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxString m_choice2Choices[] = { wxT("1"), wxT("3"), wxT("6") };
 	int m_choice2NChoices = sizeof( m_choice2Choices ) / sizeof( wxString );
 	m_choice2 = new wxChoice( sbSizer6->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice2NChoices, m_choice2Choices, 0 );
-	m_choice2->SetSelection( 2 );
+	m_choice2->SetSelection( 1 );
 	sbSizer6->Add( m_choice2, 0, wxALL, 5 );
 	
 	m_button15 = new wxButton( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Connect"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -527,7 +572,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText46->Wrap( -1 );
 	fgSizer2->Add( m_staticText46, 0, wxALL, 5 );
 	
-	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("400"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl41 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("398"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl41, 0, wxALL, 5 );
 	
 	m_staticText29 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Y (steps/mm)"), wxDefaultPosition, wxDefaultSize, 0 );
