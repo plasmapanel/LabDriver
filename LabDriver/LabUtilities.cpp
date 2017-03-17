@@ -3984,3 +3984,97 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	log.close();
 	*run = false;
 }
+
+void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run)
+{
+	string path = ".\\CollectedData\\";
+	string runName;
+	ofstream log;
+	vector<string> pix;
+	pix.push_back("1");
+	int motbeginy = 0, motendy = message->maxOffsetY, motstepy = message->maxStepY;
+	int motbeginx = 0, motendx = message->maxOffsetX, motstepx = message->maxStepX;
+	int starting = message->voltageStart;
+	int stop = message->voltageEnd;
+	int duration = message->time;
+
+	int step = message->voltageStep;
+	char tempc = 25;
+	string temp;
+
+	time_t t = time(nullptr);
+	CreateDirectory(path.c_str(), NULL);
+	runName = path + "\\";
+	runName += header->panelName + "_" + to_string(t) + "\\";
+	CreateDirectory(runName.c_str(), NULL);
+	runName += to_string((int)header->pressure);
+	runName += +"torr\\";
+	CreateDirectory(runName.c_str(), NULL);
+	log.open(runName + "log.txt", ofstream::ate);
+	runName += "HexScanX\\";
+	CreateDirectory(runName.c_str(), NULL);
+	log << "Intitalized Line Scan Run" << endl;
+	log << "Starting: " << starting << endl;
+	log << "Stop: " << stop << endl;
+	log << "Step Size: " << step << endl;
+	log << "Interval Duration: " << message->time << endl;
+	log << "Sampling Frequency: " << message->frequency << endl;
+
+	log << "Turning On High Voltage" << endl;
+	volt->setVoltage(0);
+	volt->turnOn();
+	string fullFile = "test.txt";
+	if (header->sourceConfig == "Dynamic")
+	{
+		int row;
+		int column = 0;
+		volt->setVoltage(starting);
+		volt->turnOn();
+		log << "Going to home" << endl;
+		mot->goZero();
+		mot->stepMotor(1, -motstepx);
+		if (motstepy == 0)
+		{
+			motbeginy = motendy;
+			step = 10000;
+		}
+
+		int stepsiny = 0;
+
+		for (int i = motbeginx; i <= motendx && *run == true; i += motstepx)
+		{
+			++column;
+			mot->stepMotor(2, -motstepy);
+
+			mot->stepMotor(1, motstepx);
+
+			log << "At " << i << " steps x" << ", ";
+
+			for (int j = motbeginy; j <= motendy && *run == true; j += motstepy) // loop y
+			{
+				stepsiny = 1;
+				mot->stepMotor(2, motstepy);
+				log << i << " steps y" << endl;
+
+				for (int k = starting; k <= stop && *run == true; k += step)
+				{
+
+					log << "Setting Voltage to: " << k << endl;
+					volt->setVoltage(k);
+					log << "Begin Counting" << endl;
+					temp = runName + to_string(k) + "_" + "volts" + "_" + to_string((long)i) + "_x" + to_string((long)j) + "_y" + ".txt";
+					doWeinerCount(nim, message->time, message->frequency, k, *header, pix, temp, i, j);
+					log << "Finished Counting" << endl;
+
+				}
+			}
+		}
+	}
+
+	log << "Turning off High Voltage" << endl;
+	volt->turnOff();
+	mot->goZero();
+	log << "Voltage Scan Completed" << endl;
+	log.close();
+	*run = false;
+}

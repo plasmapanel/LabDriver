@@ -143,6 +143,10 @@ class MainFrame : public wxFrame
 		wxTextCtrl* m_textCtrl18;
 		wxStaticText* m_staticText19;
 		wxTextCtrl* m_textCtrl19;
+		wxStaticText* m_staticText32;
+		wxTextCtrl* m_textCtrl32;
+		wxStaticText* m_staticText33;
+		wxTextCtrl* m_textCtrl33;
 		wxStaticText* m_staticText20;
 		wxTextCtrl* m_textCtrl20;
 		wxStaticText* m_staticText21;

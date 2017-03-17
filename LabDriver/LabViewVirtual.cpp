@@ -527,7 +527,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	sbSizer5->Add( bSizer40, 1, wxEXPAND, 5 );
 	
-	wxString m_choice1Choices[] = { wxT("Free"), wxT("FreeAP"), wxT("Line Scan"), wxT("Hex Scan X"), wxT("Hex Scan Y") };
+	wxString m_choice1Choices[] = { wxT("Free"), wxT("FreeAP"), wxT("Line Scan"), wxT("Hex Scan X"), wxT("Hex Scan Y"), wxT("X Y Scan") };
 	int m_choice1NChoices = sizeof( m_choice1Choices ) / sizeof( wxString );
 	m_choice1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1NChoices, m_choice1Choices, 0 );
 	m_choice1->SetSelection( 0 );
@@ -553,6 +553,28 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_textCtrl19 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("8"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl19, 0, wxALL, 5 );
+	
+	m_staticText32 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Num Pixels"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText32->Wrap( -1 );
+	m_staticText32->Hide();
+	
+	fgSizer2->Add( m_staticText32, 0, wxALL, 5 );
+	
+	m_textCtrl32 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl32->Hide();
+	
+	fgSizer2->Add( m_textCtrl32, 0, wxALL, 5 );
+	
+	m_staticText33 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Num Pixels"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText33->Wrap( -1 );
+	m_staticText33->Hide();
+	
+	fgSizer2->Add( m_staticText33, 0, wxALL, 5 );
+	
+	m_textCtrl33 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl33->Hide();
+	
+	fgSizer2->Add( m_textCtrl33, 0, wxALL, 5 );
 	
 	m_staticText20 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("X Step Size (mm)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText20->Wrap( -1 );

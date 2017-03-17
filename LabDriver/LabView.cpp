@@ -180,6 +180,9 @@ void BigFrame::scanTypeSelected(wxCommandEvent & event)
 	case 4:
 		scanType = "HexScanY";
 		break;
+	case 5:
+		scanType = "XYScan";
+		break;
 	default:
 		scanType = "None";
 		break;
@@ -205,6 +208,9 @@ void BigFrame::setScanType()
 		break;
 	case 4:
 		scanType = "HexScanY";
+		break;
+	case 5:
+		scanType = "XYScan";
 		break;
 	default:
 		scanType = "None";
@@ -666,6 +672,13 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	{
 		run = true;
 		thread t1(doHexScanX, mot, nim, volt, message, pglobalheader, &run);
+		t1.detach();
+	}
+
+	if (scanType == "XYScan" && run == false)
+	{
+		run = true;
+		thread t1(doXYScan, mot, nim, volt, message, pglobalheader, &run);
 		t1.detach();
 	}
 }

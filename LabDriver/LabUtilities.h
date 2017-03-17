@@ -174,6 +174,7 @@ static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lo
 
 
 void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
+void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
 
 
 
