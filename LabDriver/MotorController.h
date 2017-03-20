@@ -21,7 +21,6 @@ class MotorController{
 public:
   MotorController(long PortNumber, long BaudRate);
   MotorController(long PortNumber, long BaudRate, string filename);
-  MotorController(int PortNumber);
   ~MotorController();
   void stepMotor(int num, int dist);
   //steps the motor but does not wait for the motor to send the completion signal

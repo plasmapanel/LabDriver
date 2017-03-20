@@ -1526,7 +1526,7 @@ static void readWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::l
     count[i] = 0;
   }
   int numSamps = ceil(time / intervalLength);
-  chrono::duration<int, milli> dur((int)(intervalLength * 75) - 29);
+  chrono::duration<int, milli> dur((int)(intervalLength * 1000) - 29);
   nim->resetAll();
   t->push(HighResClock::now());
   q->push(count);

@@ -17,22 +17,6 @@ MotorController::MotorController(long PortNumber, long BaudRate, string filename
   setUpMaxAndCenter();
 }
 
-MotorController::MotorController(int PortNumber)
-{
-	string temp;
-	stringstream ss;
-	ss << "COM" << PortNumber;
-	ss >> temp;
-	port = temp.c_str();
-	//open port
-	DWORD error = 0;
-	error = PxSerialOpen(port);
-	if (error != 0){
-		throw;
-}
-
-
-
 MotorController::~MotorController(){
   PortClose();
   try{
@@ -62,9 +46,11 @@ void MotorController::stepMotor(int num, int dist){
   string temp;
   ss << "F,C,I" << num << "M" << dist << ",R";
   ss >> temp;
-  char *c = new char[temp.size()];
+ char *c = new char[temp.size() + 1];
+  //char *c = temp.c_str();
   for (int i = 0, len = temp.size(); i < len; ++i){
     c[i] = temp[i];
+	c[i + 1] = '\0';
   }
   PortSendCommands(c);
   char *d = "^";
@@ -93,9 +79,10 @@ void MotorController::stepMotorNoWait(int num, int dist){
   string temp;
   ss << "F,C,I" << num << "M" << dist << ",R";
   ss >> temp;
-  char *c = new char[temp.size()];
+  char *c = new char[temp.size() + 1];
   for (int i = 0, len = temp.size(); i < len; ++i){
     c[i] = temp[i];
+	c[i + 1] = '\0';
   }
   PortSendCommands(c);
   char *d = "^";
