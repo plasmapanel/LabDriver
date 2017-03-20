@@ -1,5 +1,6 @@
 #include "MotorController.h"
 #include "LabUtilities.h"
+#include "ComPort.h"
 using namespace std;
 static const int STEP_WAIT_TIME = 10000; //this is the timeout time for checking for '^' this stops the program from hanging if it is not found
 //this should be set such that it is long enough where the motor waits for the longest possible move to complete
@@ -15,6 +16,22 @@ MotorController::MotorController(long PortNumber, long BaudRate, string filename
   setUpGrid(filename);
   setUpMaxAndCenter();
 }
+
+MotorController::MotorController(int PortNumber)
+{
+	string temp;
+	stringstream ss;
+	ss << "COM" << PortNumber;
+	ss >> temp;
+	port = temp.c_str();
+	//open port
+	DWORD error = 0;
+	error = PxSerialOpen(port);
+	if (error != 0){
+		throw;
+}
+
+
 
 MotorController::~MotorController(){
   PortClose();

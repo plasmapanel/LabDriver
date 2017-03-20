@@ -21,6 +21,7 @@ class MotorController{
 public:
   MotorController(long PortNumber, long BaudRate);
   MotorController(long PortNumber, long BaudRate, string filename);
+  MotorController(int PortNumber);
   ~MotorController();
   void stepMotor(int num, int dist);
   //steps the motor but does not wait for the motor to send the completion signal
@@ -91,5 +92,6 @@ private:
   vector<vector<Pixel>> grid;
   vector<Pixel> list;
   vector<string> listStrings;
+  const char* port;
 };
 #endif
