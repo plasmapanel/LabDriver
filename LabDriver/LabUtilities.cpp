@@ -4032,9 +4032,11 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 			volt->setVoltage(starting);
 			volt->turnOn();
 			log << "Going to home" << endl;
-			mot->goZero();
+			mot->goZero(); 
+			log << to_string(mot->getAbsolutePositionX()) << " abs X     " << to_string(mot->getAbsolutePositionY()) << " abs Y" << endl;
 			//Sleep(4);
 			mot->stepMotor(1, -motstepx);
+			log << mot->getAbsolutePositionX() << " absolute X" << endl;
 			if (motstepy == 0)
 			{
 				motbeginy = motendy;
@@ -4051,32 +4053,40 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 				if (!firstLine)
 				{
 					mot->stepMotorNoWait(2, -motendy);
-					this_thread::sleep_for(chrono::milliseconds(8000));
+					log << (int)mot->getAbsolutePositionY() << "abs Y" << endl;
+					this_thread::sleep_for(chrono::milliseconds(10000));
 
 				}
 				++column;
 				//Sleep(4);
 
 				mot->stepMotorNoWait(2, -motstepy);
+				log << (int)mot->getAbsolutePositionY() << " abs Y" << endl;
+
 				this_thread::sleep_for(chrono::milliseconds(500));
 				//Sleep(4);
 				mot->stepMotorNoWait(1, motstepx);
+				log << (int)mot->getAbsolutePositionX() << " abs X" << endl;
+
 				this_thread::sleep_for(chrono::milliseconds(500));
 				log << "At " << i << " steps x" << ", ";
+				
 
 				for (int j = motbeginy; j <= motendy && *run == true; j += motstepy) // loop y
 				{
 					stepsiny = 1;
 					mot->stepMotorNoWait(2, motstepy);
 					this_thread::sleep_for(chrono::milliseconds(100));
+					int posY = mot->getAbsolutePositionY();
 
-					log << i << " steps y" << endl;
+					log << j << " steps y" << endl;
+					log << posY << " abs Y" << endl;
 
 					for (int k = starting; k <= stop && *run == true; k += step)
 					{
 
 						log << "Setting Voltage to: " << k << endl;
-						volt->setVoltage(k);
+						//volt->setVoltage(k);
 						log << "Begin Counting" << endl;
 						temp = runName + to_string(k) + "_" + "volts" + "_" + to_string(i) + "_x" + to_string(j) + "_y" + ".txt";
 						doWeinerCount(nim, message->time, message->frequency, k, *header, pix, temp, i, j);
