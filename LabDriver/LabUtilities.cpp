@@ -1367,11 +1367,11 @@ void doWeinerCount(WeinerCounter *nim, double time, double sampleLength, double 
   t2.join();
 }
 static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoCounter &ha, const HeaderInfoGen &hg, int x, int y){
-  cimg_library::CImg<unsigned char> *img;
-  cimg_library::CImgDisplay disp;
+  //cimg_library::CImg<unsigned char> *img;
+  //cimg_library::CImgDisplay disp;
   int imgnum = 0;
   HGraph gr;
-  this_thread::sleep_for(chrono::microseconds(100));
+  this_thread::sleep_for(chrono::microseconds(1000));
   std::chrono::duration<double> elapsed;
   ofstream out;
   out.open(fileName);
@@ -1390,7 +1390,7 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   out << endl;
   while (q->read_available() == 0 || t->read_available() == 0){}
   while (q->read_available() == 0 || t->read_available() == 0){}
-  this_thread::sleep_for(chrono::microseconds(100));
+  this_thread::sleep_for(chrono::microseconds(1000));
   int count[20];
   for (int i = 0; i < 20; ++i){
     count[i] = q->front()[i];
@@ -1461,9 +1461,9 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
     out << setw(13) << count[i] << "      ";
   }
   out << endl;
-  gr.makeGraphBmp(count);
-   img = new cimg_library::CImg<unsigned char>("c1.bmp");
-  disp.display(*img);
+  //gr.makeGraphBmp(count);
+  // img = new cimg_library::CImg<unsigned char>("c1.bmp");
+  //disp.display(*img);
   q->pop();
   t->pop();
   while (!*done){
@@ -1482,15 +1482,15 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
         out << setw(13) << count[i] << "      ";
       }
       out << endl;
-      gr.makeGraphBmp(count);
-      delete img;
-      img = new cimg_library::CImg<unsigned char>("c1.bmp");
-      disp.display(*img);
+     // gr.makeGraphBmp(count);
+     // delete img;
+     // img = new cimg_library::CImg<unsigned char>("c1.bmp");
+     // disp.display(*img);
       q->pop();
       t->pop();
     }
   }
-  this_thread::sleep_for(chrono::microseconds(100));
+  this_thread::sleep_for(chrono::microseconds(1000));
   while (!t->empty() && !q->empty()){
     for (int i = 0; i < 20; ++i){
       prev[i] = count[i];
@@ -1505,10 +1505,10 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
       out << setw(13) << count[i] << "      ";
     }
     out << endl;
-    gr.makeGraphBmp(count);
-    delete img;
-    img = new cimg_library::CImg<unsigned char>("c1.bmp");
-    disp.display(*img);
+   // gr.makeGraphBmp(count);
+   // delete img;
+   // img = new cimg_library::CImg<unsigned char>("c1.bmp");
+   // disp.display(*img);
     q->pop();
     t->pop();
   }
@@ -1516,7 +1516,7 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   //char buffer[50];
   //sprintf(buffer, "hist%d.bmp", (int)elapsed.count());
  // CopyFileA("c1.bmp", buffer, false);
-  delete img;
+  //delete img;
   tr.Write();
   f.Save();
 }
@@ -4034,7 +4034,7 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 			log << "Going to home" << endl;
 			mot->goZero();
 			//Sleep(4);
-			//mot->stepMotor(1, -motstepx);
+			mot->stepMotor(1, -motstepx);
 			if (motstepy == 0)
 			{
 				motbeginy = motendy;
@@ -4061,7 +4061,7 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 				this_thread::sleep_for(chrono::milliseconds(500));
 				//Sleep(4);
 				mot->stepMotorNoWait(1, motstepx);
-				this_thread::sleep_for(chrono::milliseconds(8000));
+				this_thread::sleep_for(chrono::milliseconds(500));
 				log << "At " << i << " steps x" << ", ";
 
 				for (int j = motbeginy; j <= motendy && *run == true; j += motstepy) // loop y
@@ -4076,7 +4076,7 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 					{
 
 						log << "Setting Voltage to: " << k << endl;
-						//volt->setVoltage(k);
+						volt->setVoltage(k);
 						log << "Begin Counting" << endl;
 						temp = runName + to_string(k) + "_" + "volts" + "_" + to_string(i) + "_x" + to_string(j) + "_y" + ".txt";
 						doWeinerCount(nim, message->time, message->frequency, k, *header, pix, temp, i, j);
