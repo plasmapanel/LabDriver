@@ -4047,16 +4047,13 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 			bool firstLine = true;
 			for (int i = motbeginx; i <= motendx && *run == true; i += motstepx)
 			{
-				if (i >= motstepx)
-					firstLine = false;
 
-				if (!firstLine)
-				{
+					mot->goZeroY();
 					//mot->stepMotorNoWait(2, -motendy);
-					this_thread::sleep_for(chrono::milliseconds(10000));
+					//this_thread::sleep_for(chrono::milliseconds(10000));
 					log << (int)mot->getAbsolutePositionY() << "abs Y" << endl;
+					log << "returned to y 0" << endl;
 
-				}
 				++column;
 				//Sleep(4);
 

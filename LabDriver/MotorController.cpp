@@ -114,6 +114,15 @@ void MotorController::goZero(){
   PortSendCommands(c);
   PortWaitForChar(d, STEP_WAIT_TIME);
 }
+
+void MotorController::goZeroY()
+{
+	char *c = "F,C,IA2M0,R";
+	PortSendCommands(c);
+	char *d = "^";
+	PortWaitForChar(d, STEP_WAIT_TIME);
+}
+
 void MotorController::goTo(int x1, int y1){
   stringstream ss;
   string temp;

@@ -32,6 +32,7 @@ public:
   void setZeroY();
   void setUpGrid(string filename);
   void goZero();
+  void goZeroY();
   void goTo(int x1, int y1);
   void goToNoWait(int x1, int y1);
   void goToCenter();
