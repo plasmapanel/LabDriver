@@ -4052,23 +4052,23 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 
 				if (!firstLine)
 				{
-					mot->stepMotorNoWait(2, -motendy);
-					log << (int)mot->getAbsolutePositionY() << "abs Y" << endl;
+					//mot->stepMotorNoWait(2, -motendy);
 					this_thread::sleep_for(chrono::milliseconds(10000));
+					log << (int)mot->getAbsolutePositionY() << "abs Y" << endl;
 
 				}
 				++column;
 				//Sleep(4);
 
 				mot->stepMotorNoWait(2, -motstepy);
+				this_thread::sleep_for(chrono::milliseconds(1000));
 				log << (int)mot->getAbsolutePositionY() << " abs Y" << endl;
 
-				this_thread::sleep_for(chrono::milliseconds(500));
 				//Sleep(4);
 				mot->stepMotorNoWait(1, motstepx);
+				this_thread::sleep_for(chrono::milliseconds(1000));
 				log << (int)mot->getAbsolutePositionX() << " abs X" << endl;
 
-				this_thread::sleep_for(chrono::milliseconds(500));
 				log << "At " << i << " steps x" << ", ";
 				
 
@@ -4076,7 +4076,7 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 				{
 					stepsiny = 1;
 					mot->stepMotorNoWait(2, motstepy);
-					this_thread::sleep_for(chrono::milliseconds(100));
+					this_thread::sleep_for(chrono::milliseconds(200));
 					int posY = mot->getAbsolutePositionY();
 
 					log << j << " steps y" << endl;
