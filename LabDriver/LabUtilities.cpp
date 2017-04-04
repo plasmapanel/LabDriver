@@ -3936,7 +3936,8 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 		for (int i = motbeginx; i <= motendx && *run == true; i += motstepx)
 		{
 			++column;
-			mot->stepMotor(2, -stepsiny*motendy);
+			//mot->stepMotor(2, -stepsiny*motendy);
+			mot->goZeroY();
 			mot->stepMotor(2, -motstepy);
 
 			mot->stepMotor(1, motstepx);
@@ -3945,12 +3946,12 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 			{
 				//mot->stepMotor(2, motstepy);
 				mot->stepMotor(2, motstepy/2); // step motor on even columns to line up with hex
-				motendy = message->maxOffsetY - motstepy;
+				//motendy = message->maxOffsetY;// -motstepy;
 			}
 			else if (column % 2 == 1 && column != 1)
 			{
 				motendy = message->maxOffsetY;
-				mot->stepMotor(2, -motstepy / 2);
+				//mot->stepMotor(2, -motstepy / 2);
 				//mot->stepMotor(2, motstepy);
 			}
 
