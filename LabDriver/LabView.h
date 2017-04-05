@@ -19,6 +19,15 @@
 #include "LabViewVirtual.h"
 #include "headers.h"
 
+#include "MotorController.h"
+//#include "VoltageControl.h"
+//#include "VoltageControlNI.h"
+#include "Panel.h"
+#include "messages.h"
+#include "Readout.h"
+#include "LabUtilities.h"
+#include "Offset.h"
+
 #ifndef APP_CATALOG
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
 #endif

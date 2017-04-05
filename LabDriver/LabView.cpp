@@ -10,13 +10,6 @@
 //
 
 #include "LabView.h"
-#include "MotorController.h"
-//#include "VoltageControl.h"
-//#include "VoltageControlNI.h"
-#include "Panel.h"
-#include "messages.h"
-#include "Readout.h"
-#include "LabUtilities.h"
 
 std::atomic<bool> control = true;
 

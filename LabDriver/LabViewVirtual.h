@@ -126,6 +126,7 @@ class MainFrame : public wxFrame
 		wxChoice* hvChoice;
 		wxButton* m_button17;
 		wxButton* m_button18;
+		wxRadioBox* m_radioBox4;
 		wxButton* homeAll;
 		wxButton* up;
 		wxButton* m_button5;
@@ -172,9 +173,11 @@ class MainFrame : public wxFrame
 		wxStaticText* m_staticText481;
 		wxTextCtrl* m_textCtrl46;
 		wxButton* start;
-		wxButton* stop;
-		wxButton* preview;
 		wxButton* m_button19;
+		wxButton* preview;
+		wxButton* stop;
+		wxButton* m_button23;
+		wxButton* m_button24;
 		wxStatusBar* m_statusBar1;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -210,14 +213,14 @@ class MainFrame : public wxFrame
 		virtual void toggleHV( wxCommandEvent& event ) { event.Skip(); }
 		virtual void updateButtonClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void startSelected( wxCommandEvent& event ) { event.Skip(); }
-		virtual void stopSelected( wxCommandEvent& event ) { event.Skip(); }
-		virtual void previewSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void connectNIMClicked( wxCommandEvent& event ) { event.Skip(); }
+		virtual void previewSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void stopSelected( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("LabDriver"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1298,815 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("LabDriver"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1144,653 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~MainFrame();
 	

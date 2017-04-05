@@ -463,6 +463,15 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer19;
 	bSizer19 = new wxBoxSizer( wxVERTICAL );
 	
+	wxBoxSizer* bSizer25;
+	bSizer25 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxString m_radioBox4Choices[] = { wxT("H"), wxT("M1"), wxT("M2"), wxT("M3"), wxT("M4") };
+	int m_radioBox4NChoices = sizeof( m_radioBox4Choices ) / sizeof( wxString );
+	m_radioBox4 = new wxRadioBox( this, wxID_ANY, wxT("Marks"), wxDefaultPosition, wxDefaultSize, m_radioBox4NChoices, m_radioBox4Choices, 1, wxRA_SPECIFY_COLS );
+	m_radioBox4->SetSelection( 0 );
+	bSizer25->Add( m_radioBox4, 0, wxALL, 5 );
+	
 	wxGridSizer* gSizer1;
 	gSizer1 = new wxGridSizer( 0, 3, 0, 0 );
 	
@@ -494,7 +503,10 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	gSizer1->Add( homeY, 0, wxALL, 5 );
 	
 	
-	bSizer19->Add( gSizer1, 1, wxEXPAND, 5 );
+	bSizer25->Add( gSizer1, 1, wxEXPAND, 5 );
+	
+	
+	bSizer19->Add( bSizer25, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer21;
 	bSizer21 = new wxBoxSizer( wxHORIZONTAL );
@@ -674,23 +686,29 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	fgSizer3->Add( sbSizer5, 1, wxEXPAND, 5 );
 	
-	wxBoxSizer* bSizer17;
-	bSizer17 = new wxBoxSizer( wxHORIZONTAL );
+	wxGridSizer* gSizer3;
+	gSizer3 = new wxGridSizer( 0, 3, 0, 0 );
 	
 	start = new wxButton( this, wxID_ANY, wxT("Start"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer17->Add( start, 0, wxALIGN_CENTER|wxALL, 5 );
-	
-	stop = new wxButton( this, wxID_ANY, wxT("Stop"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer17->Add( stop, 0, wxALIGN_CENTER|wxALL, 5 );
-	
-	preview = new wxButton( this, wxID_ANY, wxT("Run Preview"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer17->Add( preview, 0, wxALIGN_CENTER|wxALL, 5 );
+	gSizer3->Add( start, 0, wxALL, 5 );
 	
 	m_button19 = new wxButton( this, wxID_ANY, wxT("Connect NIM"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer17->Add( m_button19, 0, wxALL, 5 );
+	gSizer3->Add( m_button19, 0, wxALL, 5 );
+	
+	preview = new wxButton( this, wxID_ANY, wxT("Run Preview"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer3->Add( preview, 0, wxALL, 5 );
+	
+	stop = new wxButton( this, wxID_ANY, wxT("Stop"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer3->Add( stop, 0, wxALL, 5 );
+	
+	m_button23 = new wxButton( this, wxID_ANY, wxT("Disconnet NIM"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer3->Add( m_button23, 0, wxALL, 5 );
+	
+	m_button24 = new wxButton( this, wxID_ANY, wxT("Camera"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer3->Add( m_button24, 0, wxALL, 5 );
 	
 	
-	fgSizer3->Add( bSizer17, 1, wxEXPAND, 5 );
+	fgSizer3->Add( gSizer3, 1, wxEXPAND, 5 );
 	
 	
 	gbSizer4->Add( fgSizer3, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), 0, 5 );
@@ -735,9 +753,9 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_radioBox3->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( MainFrame::toggleHV ), NULL, this );
 	m_button20->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::updateButtonClicked ), NULL, this );
 	start->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::startSelected ), NULL, this );
-	stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
-	preview->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::previewSelected ), NULL, this );
 	m_button19->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::connectNIMClicked ), NULL, this );
+	preview->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::previewSelected ), NULL, this );
+	stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
 }
 
 MainFrame::~MainFrame()
@@ -775,9 +793,9 @@ MainFrame::~MainFrame()
 	m_radioBox3->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( MainFrame::toggleHV ), NULL, this );
 	m_button20->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::updateButtonClicked ), NULL, this );
 	start->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::startSelected ), NULL, this );
-	stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
-	preview->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::previewSelected ), NULL, this );
 	m_button19->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::connectNIMClicked ), NULL, this );
+	preview->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::previewSelected ), NULL, this );
+	stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::stopSelected ), NULL, this );
 	
 }
 
