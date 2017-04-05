@@ -594,6 +594,17 @@ void BigFrame::stopSelected(wxCommandEvent& event)
 
 void BigFrame::startSelected(wxCommandEvent& event)
 {
+	fstream runfile;
+	runfile.open("runfile.txt", std::fstream::in | std::fstream::out);
+	char temp[200];
+	runfile.getline(temp, 200);
+	long int tempNum = atol(temp);
+	globalHeader.runNumber = tempNum;
+	tempNum++;
+	runfile.seekg(0, ios::beg);
+	runfile << tempNum;
+	runfile.close();
+
 	if (!volt)
 	{
 		wxMessageBox("Voltage controller not connected");

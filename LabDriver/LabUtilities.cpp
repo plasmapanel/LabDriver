@@ -1450,6 +1450,7 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   //tr.Branch("Time", startTime, "seconds/C");
   tr.Branch("tstamp", &tstamp, "tstamp/D");
   tr.Branch("data", count, "data[20]/i");
+  tr.Branch("runNum", hg.runNumber, "runNum/L");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t->front();
   elapsed = t->front() - first;

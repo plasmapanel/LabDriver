@@ -28,8 +28,9 @@ struct HeaderInfoGen{
   double attenHV = 0; //remove
   int motorstepx = 400;
   int motorstepy = 400;
-
+  long int runNumber = 0;
 };
+
 //the header for after-pulse tests
 struct HeaderInfoAfter{
   double voltage;
