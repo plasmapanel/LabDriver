@@ -37,6 +37,7 @@ readoutedit* readoutframe;
 Histogram* Image;
 
 static bool connected = false;
+Offset offsets[4];
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 {
@@ -47,6 +48,7 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 	pglobalheader = &globalHeader;
 	vf = new VoltageFactory();
 	readout = new Readout();
+
 }
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
@@ -100,17 +102,32 @@ void BigFrame::xRightButtonClicked(wxCommandEvent & event)
 
 }
 
-void BigFrame::homeButtonClicked(wxCommandEvent & event)
+void BigFrame::setHome(wxCommandEvent& event)
 {
-	//distanceToMove = distanceBox->GetSelection();
-	mot->setZeroX();
-	mot->setZeroY();
+	mot->setZero();
 }
 
-void BigFrame::goToHomeButtonClicked(wxCommandEvent & event)
+void BigFrame::goToHome(wxCommandEvent& event)
 {
-	//distanceToMove = distanceBox->GetSelection();
-	mot->goZero();
+	int selection = m_radioBox4->GetSelection();
+	if (selection == 0)
+		mot->goZero();
+	else
+	{
+		mot->goZero();
+		mot->goTo(offsets[selection].stepsX, offsets[selection].stepsY);
+	}
+}
+
+void BigFrame::markButtonClicked(wxCommandEvent & event)
+{
+	int selection = m_radioBox4->GetSelection();
+
+	if (selection != 0)
+	{
+		offsets[selection].stepsX = mot->getAbsolutePositionX();
+		offsets[selection].stepsY = mot->getAbsolutePositionY();
+	}
 }
 
 void BigFrame::distanceBoxClicked(wxCommandEvent & event)
@@ -118,6 +135,8 @@ void BigFrame::distanceBoxClicked(wxCommandEvent & event)
 	distanceToMoveX = convertDistance(distanceBox->GetSelection(), 1);
 	distanceToMoveY = convertDistance(distanceBox->GetSelection(), 2);
 }
+
+
 //
 int BigFrame::convertDistance(int radioButton, int motor)
 {
@@ -368,21 +387,6 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	globalHeader.motorstepx = motorstepx;
 	globalHeader.motorstepy = motorstepy;
 
-}
-
-void markButtonClicked(wxCommandEvent& event)
-{
-
-}
-
-void BigFrame::setHome(wxCommandEvent& event)
-{
-	mot->setZero();
-}
-
-void BigFrame::goToHome(wxCommandEvent& event)
-{
-	mot->goZero();
 }
 
 HeaderEdit::HeaderEdit(wxWindow* parent) : header(parent)

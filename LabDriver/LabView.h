@@ -32,9 +32,9 @@
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
 #endif
 
-#define TRAVELPERSTEP 0.0050
+//#define TRAVELPERSTEP 0.0050
 
-const double MMPERSTEP = TRAVELPERSTEP;
+//const double MMPERSTEP = TRAVELPERSTEP;
 // begin wxGlade: ::dependencies
 // end wxGlade
 
@@ -73,6 +73,7 @@ public:
 	std::string scanType;
 	void openReadoutPane(wxCommandEvent& event);
 	void stopSelected(wxCommandEvent& event);
+	void markButtonClicked(wxCommandEvent& event);
 
 	atomic<bool> run = false;
 

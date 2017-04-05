@@ -190,6 +190,7 @@ class MainFrame : public wxFrame
 		virtual void motorControllerDisconnectClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void HVConnectClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void HVDisconnectClicked( wxCommandEvent& event ) { event.Skip(); }
+		virtual void changeMark( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setHome( wxCommandEvent& event ) { event.Skip(); }
 		virtual void yUpButtonClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void markButtonClicked( wxCommandEvent& event ) { event.Skip(); }
@@ -216,6 +217,8 @@ class MainFrame : public wxFrame
 		virtual void connectNIMClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void previewSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void stopSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void disconnectNIM( wxCommandEvent& event ) { event.Skip(); }
+		virtual void startCamera( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
