@@ -59,17 +59,6 @@ void doWeinerCountInf(WeinerCounter *nim, double sampleLength,
 //peforms a voltage scan
 void doVoltageScan(MotorController *mot, WeinerCounter *nim, VoltageControl *volt, Messages* message);
 void doVoltageScanFile(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
-//peforms an after pulse scan on maximum of 1 pixle at a time and produces no graphs
-void doAfterScanNoGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
-//peforms an after pulse scan on maximum of 1 pixle at a time and produces graphs
-void doAfterScanGraph(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
-//peforms an after pulse scan on multiple pixles and produces graphs
-void doAfterScanGraphMulti(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
-void doAfterScanGraphMultiAndBack(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
-//performs an after pulse scan on multiple pixels and produces graphs with adaptive time intervals based on a proportion
-void doAfterScanGraphMultiAdapt(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
-void doAfterScanGraphMultiCount(MotorController *mot, WeinerCounter *nim, VoltageControl *volt);
-//initiates user free mode
 
 //IF YOU ARE USING THINS PACKAGE JUST FOR THE UTILITIES YOU DO NOT NEED TO BE CONCERNED WITH THE CODE BELOW
 //ALL CODE BELOW IS HELPER FUNCTIONS OR CONSTANTS
