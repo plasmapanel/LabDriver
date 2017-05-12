@@ -25,9 +25,6 @@ using Spsc_time = boost::lockfree::spsc_queue < HighResClock::time_point, boost:
 //time-dependent non interruptable version
 void doWeinerCount(WeinerCounter *nim, double time, double sampleLength,
                    double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName, int x, int y);
-//interruptable version
-void doWeinerCountInter(WeinerCounter *nim, double time, double sampleLength,
-                        double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName);
 //time independent verison
 void doWeinerCountInf(WeinerCounter *nim, double sampleLength,
                       double volt, const HeaderInfoGen *hg, string fileName, atomic<bool> *run);
@@ -44,15 +41,7 @@ static void readWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::l
                             boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t,
                             atomic<bool> *done, WeinerCounter *nim, double time, double intervalLength);
 
-static void readWeinerCountInter(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q,
-                                 boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t,
-                                 atomic<bool> *done, WeinerCounter *nim, double time, double intervalLength);
 
-static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q,
-                               boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t,
-                               atomic<bool> *done, WeinerCounter *nim,double intervalLength, atomic<bool> *run);
-//opens prompt for user interrupt
-static void userInterrupt(atomic<bool> *t);
 double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLength = 1);
 //measures all 20 lines and stores there times/ count in the vectors
 void measureLines(WeinerCounter* nim, double time, double &actualTime, vector<int> &count,double intervalLength = 1);

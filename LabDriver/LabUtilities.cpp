@@ -22,12 +22,12 @@ static bool checkqg(const Spsc_int &x){
 static bool checkqe(const Spsc_int &x){
   return x.read_available() == 0;
 }
-void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, atomic<bool> *control, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg, int countStop){
+void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, atomic<bool> *control, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg){
   //assert(q.size() < 20);
   this_thread::sleep_for(chrono::microseconds(1000));
   std::chrono::duration<double, std::milli> elapsed;
   ofstream out;
-  out.open(fileName);
+  out.open(fileName + ".txt");
   out << hg << ha;
   out << " Time (ms)   ";
   for (int i = 0, leni = ha.pixels.size(); i < leni; ++i){
@@ -46,8 +46,7 @@ void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, atom
   
   ////////////////////////////////////////////////////
   string tempst;
-  tempst = fileName.substr(0, fileName.size() - 4);
-  tempst += ".root";
+  tempst = fileName + ".root";
   TFile f(tempst.c_str(), "RECREATE");
   tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) AP";
   TTree tr("ap", tempst.c_str());
@@ -136,15 +135,8 @@ void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, atom
           elapsed = t.front() - first;
           tstamp = elapsed.count();
           out << setw(9) << fixed << setprecision(2) << elapsed.count();
-          bool countCheck = true;
           for (int j = 0, lenj = q.size(); j < lenj; ++j){
             out << "    " << setw(13) << count[j];
-            if (count[j] < countStop){
-              countCheck = false;
-            }
-            if (countCheck){
-              *control = true;
-            }
           }
           out << endl;
           tr.Fill();
@@ -187,6 +179,21 @@ void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, atom
   
 }
 
+//////////////////////
+void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim){
+	//assert(q->size() == pix.size());
+    size_t size = pix.size();
+	nim->resetAll();
+	while(*control){
+		t.push(HighResClock::now());
+		for (size_t j = 0; j < size; ++j){
+			q[j].push(nim->readCounter(pix[j]));
+		}
+	}
+	*done = true;
+}
+
+/////////////////////////////
 
 inline static void correctCount(int &count, int next){
   int temp = count % OVER;
@@ -216,9 +223,10 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
   int imgnum = 0;
   HGraph gr;
   this_thread::sleep_for(chrono::microseconds(1000));
-  std::chrono::duration<double> elapsed;
+  std::chrono::duration<double, std::milli> elapsed;
   ofstream out;
-  out.open(fileName);
+  string outFileName = fileName + ".txt";
+  out.open(outFileName.c_str());
   string temp;
   out << hg << ha;
   time_t tm = time(nullptr);
@@ -244,7 +252,7 @@ static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::
     prev[i] = count[i];
   }
   string tempst;
-  tempst = fileName.substr(0, fileName.size() - 4);
+  tempst = fileName;
   tempst += ".root";
   TFile f(tempst.c_str(), "RECREATE");
   tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) Weiner";
@@ -407,132 +415,43 @@ static void readWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::l
   }
   *done = true;
 }
-static void readWeinerCountInter(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, Spsc_time *t, atomic<bool> *done, WeinerCounter *nim, double time, double intervalLength){
-  array<int, 20> count;
-  for (int i = 0; i < 20; ++i){
-    count[i] = 0;
-  }
-  int numSamps = ceil(time / intervalLength);
-  atomic<bool> control = true;
-  thread t1(userInterrupt, &control);
-  chrono::duration<int, milli> dur((int)(intervalLength * 1000) - 29);
-  nim->resetAll();
-  t->push(HighResClock::now());
-  q->push(count);
-  this_thread::sleep_for(dur);
-  for (int i = 0; i < numSamps && control; ++i){
-    t->push(HighResClock::now());
-    count[0] = nim->readCounter(1);
-    count[1] = nim->readCounter(2);
-    count[2] = nim->readCounter(3);
-    count[3] = nim->readCounter(4);
-    count[4] = nim->readCounter(5);
-    count[5] = nim->readCounter(6);
-    count[6] = nim->readCounter(7);
-    count[7] = nim->readCounter(8);
-    count[8] = nim->readCounter(9);
-    count[9] = nim->readCounter(10);
-    count[10] = nim->readCounter(11);
-    count[11] = nim->readCounter(12);
-    count[12] = nim->readCounter(13);
-    count[13] = nim->readCounter(14);
-    count[14] = nim->readCounter(15);
-    count[15] = nim->readCounter(16);
-    count[16] = nim->readCounter(17);
-    count[17] = nim->readCounter(18);
-    count[18] = nim->readCounter(19);
-    count[19] = nim->readCounter(20);
-    q->push(count);
-    this_thread::sleep_for(dur);
-  }
-  control = false;
-  *done = true;
-  t1.join();
-}
-void doWeinerCountInter(WeinerCounter *nim, double time, double sampleLength, double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName){
-  HeaderInfoCounter hc;
-  hc.pixels = activePix;
-  hc.samplingLength = sampleLength;
-  hc.timeLength = time;
-  hc.voltage = volt;
-  boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> q;
-  Spsc_time t;
-  atomic<bool> done = false;
-  thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, hg,0,0);
-  readWeinerCountInter(&q, &t, &done, nim, time, sampleLength);
-  t2.join();
-}
-static void userInterrupt(atomic<bool> *t){
-  cout << "Press Any key to stop reading." << endl;
-  while (!_kbhit() && *t){
-    this_thread::sleep_for(chrono::seconds(1));
-  }
-  if (*t){
-    cout << "Readings stopped.." << endl;
-  }
-  *t = false;
-}
 void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, const HeaderInfoGen *hg, string fileName, atomic<bool> *run){
-  HeaderInfoCounter hc;
-  time_t tm = time(nullptr);
-  hc.samplingLength = sampleLength;
-  hc.timeLength = 0;
-  hc.voltage = volt;
-  string runName;
-  runName = ".\\CollectedData\\";
-  CreateDirectory(runName.c_str(), NULL);
-  runName += hg->gas + "\\";
-  CreateDirectory(runName.c_str(), NULL);
-  runName += hg->panelName + "_" + to_string(tm);
-  boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> q;
-  Spsc_time t;
-  atomic<bool> done = false;
-  thread t2(writeWeinerCount, &q, &t, &done, runName, hc, *hg,0,0);
-  readWeinerCountInf(&q, &t, &done, nim, sampleLength, run);
-  t2.join();
+	time_t tm = time(nullptr);
+	string runName;
+	runName = ".\\CollectedData\\";
+	CreateDirectory(runName.c_str(), NULL);
+	runName += hg->gas + "\\";
+	CreateDirectory(runName.c_str(), NULL);
+	runName += hg->panelName + "_" + to_string(tm);
+	vector<int> x = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+	vector<int> y = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+	int numReadings = 10000;
+	double voltage = 100;
+	//assert(x.size() == y.size());
+	HeaderInfoAfter ha;
+	ha.numPixels = x.size();
+	ha.numReadings = numReadings;
+	ha.voltage = voltage;
+	stringstream ss;
+	string temp;
+	for (int i = 0, leni = x.size(); i < leni; ++i){
+		ss.str(std::string());
+		ss.clear();
+		ss << x[i] << "-" << y[i];
+		ss >> temp;
+		ha.pixels.push_back(temp);
+	}
+	vector < boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>> > q(x.size());
+	boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
+	atomic<bool> done = false;
+	atomic<bool> control = false;
+	thread t2(writeInfoAfterN, ref(q), ref(t), &done, run, runName, ha, *hg);
+	readFromPixAfterNInf(x, &done, run, q, t, nim);
+	if (t2.joinable()){
+		t2.join();
+	}
 }
-static void readWeinerCountInf(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, Spsc_time *t, atomic<bool> *done, WeinerCounter *nim, double intervalLength, atomic<bool> *run){
-  array<int, 20> count;
-  for (int i = 0; i < 20; ++i){
-    count[i] = 0;
-  }
-  //atomic<bool> control = true;
-  //thread t1(userInterrupt, &control);
-  chrono::duration<int, milli> dur((int)(intervalLength * 1000) - 29);
-  nim->resetAll();
-  t->push(HighResClock::now());
-  q->push(count);
-  this_thread::sleep_for(dur);
- // for (int i = 0; *run == true; ){
- while (*run == true)
-  {
-    t->push(HighResClock::now());
-    count[0] = nim->readCounter(1);
-    count[1] = nim->readCounter(2);
-    count[2] = nim->readCounter(3);
-    count[3] = nim->readCounter(4);
-    count[4] = nim->readCounter(5);
-    count[5] = nim->readCounter(6);
-    count[6] = nim->readCounter(7);
-    count[7] = nim->readCounter(8);
-    count[8] = nim->readCounter(9);
-    count[9] = nim->readCounter(10);
-    count[10] = nim->readCounter(11);
-    count[11] = nim->readCounter(12);
-    count[12] = nim->readCounter(13);
-    count[13] = nim->readCounter(14);
-    count[14] = nim->readCounter(15);
-    count[15] = nim->readCounter(16);
-    count[16] = nim->readCounter(17);
-    count[17] = nim->readCounter(18);
-    count[18] = nim->readCounter(19);
-    count[19] = nim->readCounter(20);
-    q->push(count);
-    this_thread::sleep_for(dur);
-  }
-  *done = true;
-  //t1.join();
-}
+
 
 
 void measureLines(WeinerCounter* nim, double time, double& actualTime, vector<int>& count, double intervalLength){
