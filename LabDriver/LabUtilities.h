@@ -20,26 +20,19 @@ This file contains all of the utilities that will be used with our lab setup
 using namespace std;
 using Spsc_int = boost::lockfree::spsc_queue < int, boost::lockfree::capacity<10000> >;
 using Spsc_time = boost::lockfree::spsc_queue < HighResClock::time_point, boost::lockfree::capacity<10000> > ;
+
 //uses the nim box to produce a counter file for the entire device saved in a file with the name fileName
 //counter functions
 //time-dependent non interruptable version
-void doWeinerCount(WeinerCounter *nim, double time, double sampleLength,
-                   double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName, int x, int y);
+void doWeinerCount(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, double measurementDuration,
+  vector<int> activeReadout = {1, 2, 3, 4, 5, 6, 7, 8 , 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
+
 //time independent verison
-void doWeinerCountInf(WeinerCounter *nim, double sampleLength,
-                      double volt, const HeaderInfoGen *hg, string fileName, atomic<bool> *run);
+void doWeinerCountInf(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run,
+  vector<int> activeReadout = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 });
 
 //IF YOU ARE USING THINS PACKAGE JUST FOR THE UTILITIES YOU DO NOT NEED TO BE CONCERNED WITH THE CODE BELOW
 //ALL CODE BELOW IS HELPER FUNCTIONS OR CONSTANTS
-
-//counter helper functions
-static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q,
-                             boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done,
-                             string fileName, const HeaderInfoCounter &ha, const HeaderInfoGen &hg, int x, int y);
-
-static void readWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q,
-                            boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t,
-                            atomic<bool> *done, WeinerCounter *nim, double time, double intervalLength);
 
 
 double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLength = 1);

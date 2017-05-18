@@ -647,7 +647,14 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	else if (scanType == "Free" && run == false)
 	{
 		run = true;
-		thread t1(doWeinerCountInf, nim, 1, message->voltageStart, pglobalheader, message->temp, &run);
+    //cant use default params for some reason
+    vector<int> activeReadout;
+    for (size_t i = 0; i < readout->active.size(); ++i){
+      if (readout->active[i]){
+        activeReadout.push_back(i + 1);
+      }
+    }
+    thread t1(doWeinerCountInf, nim, message->voltageStart, pglobalheader, "free", "", &run, readout->lines);
 		t1.detach();
 	}
 	else if (scanType == "FreeAP" && run == false)

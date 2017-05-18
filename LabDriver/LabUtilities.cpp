@@ -5,10 +5,9 @@
 #include "headers.h"
 
 
-//extern atomic<bool> control;
+static const double NIM_MS_PER_CHANNEL_MEASUREMENT = 0.4;
 
-
-//Dunction used for converting weiner counter bin value to a count value
+//Function used for converting weiner counter bin value to a count value
 //used in afterpulse tests
 inline static void correctCount(int &count, int next);
 
@@ -22,7 +21,16 @@ static bool checkqg(const Spsc_int &x){
 static bool checkqe(const Spsc_int &x){
   return x.read_available() == 0;
 }
-void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, atomic<bool> *control, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg){
+inline static void correctCount(int &count, int next){
+  int temp = count % OVER;
+  if (temp < next){
+    count += next - temp;
+  }
+  else if (temp > next){
+    count += OVER + next - temp;
+  }
+}
+void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg){
   //assert(q.size() < 20);
   this_thread::sleep_for(chrono::microseconds(1000));
   std::chrono::duration<double, std::milli> elapsed;
@@ -180,6 +188,18 @@ void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, atom
 }
 
 //////////////////////
+void readFromPixAfterN(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim, int numSamples){
+	//assert(q->size() == pix.size());
+	size_t size = pix.size();
+	nim->resetAll();
+	for (int i = 0; *control && i < numSamples; ++i){
+		t.push(HighResClock::now());
+		for (size_t j = 0; j < size; ++j){
+			q[j].push(nim->readCounter(pix[j]));
+		}
+	}
+	*done = true;
+}
 void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim){
 	//assert(q->size() == pix.size());
     size_t size = pix.size();
@@ -192,266 +212,100 @@ void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<boo
 	}
 	*done = true;
 }
+//////////////////////////
 
-/////////////////////////////
 
-inline static void correctCount(int &count, int next){
-  int temp = count % OVER;
-  if (temp < next){
-    count += next - temp;
+
+void doWeinerCount(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, double measurementDuration, vector<int> activeReadout){
+  time_t tm = time(nullptr);
+  string runFullName;
+  runFullName = ".\\CollectedData\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  runFullName += hg->panelName + "\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  runFullName += hg->gas + "\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  runFullName += to_string(hg->pressure) + "torr\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  runFullName += runType + "\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  if (runName != ""){
+    runFullName += runName += "\\";
   }
-  else if (temp > next){
-    count += OVER + next - temp;
+  runFullName += to_string(volt) + "V" +"_" + to_string(tm) + "_AP";
+  vector<int> x = activeReadout;
+  vector<int> y = activeReadout;
+  int numSamples = measurementDuration * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / x.size();
+  HeaderInfoAfter ha;
+  ha.numPixels = x.size();
+  ha.numReadings = numSamples;
+  ha.voltage = volt;
+  stringstream ss;
+  string temp;
+  for (int i = 0, leni = x.size(); i < leni; ++i){
+    ss.str(std::string());
+    ss.clear();
+    ss << x[i] << "-" << y[i];
+    ss >> temp;
+    ha.pixels.push_back(temp);
   }
-}
-void doWeinerCount(WeinerCounter *nim, double time, double sampleLength, double volt, const HeaderInfoGen &hg, const vector<string> &activePix, string fileName, int x, int y){
-  HeaderInfoCounter hc;
-  hc.pixels = activePix;
-  hc.samplingLength = sampleLength;
-  hc.timeLength = time;
-  hc.voltage = volt;
-  boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> q;
+  //get the number of samples for this number of lines
+  vector <Spsc_int> q(x.size());
   Spsc_time t;
   atomic<bool> done = false;
-  thread t2(writeWeinerCount, &q, &t, &done, fileName, hc, hg, x, y);
-  readWeinerCount(&q, &t, &done, nim, time, sampleLength);
-  t2.join();
+  atomic<bool> control = false;
+  thread t2(writeInfoAfterN, ref(q), ref(t), &done, runFullName, ha, *hg);
+  readFromPixAfterN(x, &done, run, q, t, nim, numSamples);
+  if (t2.joinable()){
+    t2.join();
+  }
 }
-static void writeWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, Spsc_time *t, atomic<bool> *done, string fileName, const HeaderInfoCounter &ha, const HeaderInfoGen &hg, int x, int y){
-  //cimg_library::CImg<unsigned char> *img;
-  //cimg_library::CImgDisplay disp;
-  int imgnum = 0;
-  HGraph gr;
-  this_thread::sleep_for(chrono::microseconds(1000));
-  std::chrono::duration<double, std::milli> elapsed;
-  ofstream out;
-  string outFileName = fileName + ".txt";
-  out.open(outFileName.c_str());
-  string temp;
-  out << hg << ha;
+
+
+void doWeinerCountInf(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, vector<int> activeReadout){
   time_t tm = time(nullptr);
-  string tmp;
-
-  tmp = "Start run: " + to_string(tm);
-  out << tmp << endl;
-  out << "Time (s)    ";
-  for (int i = 0; i < 20; ++i){
-    temp = "channel " + to_string(i);
-    out << left << setw(19) << temp;
+  string runFullName;
+  runFullName = ".\\CollectedData\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  runFullName += hg->panelName + "\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  runFullName += hg->gas + "\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  runFullName += to_string(hg->pressure) + "torr\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  runFullName += runType + "\\";
+  CreateDirectory(runFullName.c_str(), NULL);
+  if (runName != ""){
+    runFullName += runName += "\\";
   }
-  out << endl;
-  while (q->read_available() == 0 || t->read_available() == 0){}
-  while (q->read_available() == 0 || t->read_available() == 0){}
-  this_thread::sleep_for(chrono::microseconds(1000));
-  int count[20];
-  for (int i = 0; i < 20; ++i){
-    count[i] = q->front()[i];
+  runFullName += to_string(volt) + "V" + "_" + to_string(tm) + "_AP";
+  vector<int> x = activeReadout;
+  vector<int> y = activeReadout;
+  int numSamples = -1;
+  HeaderInfoAfter ha;
+  ha.numPixels = x.size();
+  ha.numReadings = numSamples;
+  ha.voltage = volt;
+  stringstream ss;
+  string temp;
+  for (int i = 0, leni = x.size(); i < leni; ++i){
+    ss.str(std::string());
+    ss.clear();
+    ss << x[i] << "-" << y[i];
+    ss >> temp;
+    ha.pixels.push_back(temp);
   }
-  int prev[20];
-  for (int i = 0; i < 20; ++i){
-    prev[i] = count[i];
+  //get the number of samples for this number of lines
+  vector <Spsc_int> q(x.size());
+  Spsc_time t;
+  atomic<bool> done = false;
+  atomic<bool> control = false;
+  thread t2(writeInfoAfterN, ref(q), ref(t), &done, runFullName, ha, *hg);
+  readFromPixAfterNInf(x, &done, run, q, t, nim);
+  if (t2.joinable()){
+    t2.join();
   }
-  string tempst;
-  tempst = fileName;
-  tempst += ".root";
-  TFile f(tempst.c_str(), "RECREATE");
-  tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) Weiner";
-  TTree tr("w", tempst.c_str());
-  char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
-  strcpy(tempPanel, hg.panelName.c_str());
-  strcpy(tempSource, hg.sourceName.c_str());
-  strcpy(tempGas, hg.gas.c_str());
-  strcpy(tempSetup, hg.sourceConfig.c_str());
-  strcpy(tempRO, hg.roLines.c_str());
-  strcpy(tempHV, hg.linesHV.c_str());
-  strcpy(tempTrigHV, hg.triggerHV.c_str());
-  strcpy(tempTrigRO, hg.triggerRO.c_str());
-
-  char tempMotX = x;
-  char tempMotY = y;
-  char startTime = tm;
-  Double_t tstamp, tempPress, tempVolt, tempDiscThr, tempQuench, tempNumHv, tempNumRo, tempAttenRo, tempAttenHV;
-  int tempPix = 20;
-  int pixX[20] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-  int pixY[20] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-  tempPress = hg.pressure;
-  tempVolt = ha.voltage;
-  tempDiscThr = hg.discThresh;
-  tempQuench = hg.quench;
-  tempNumHv = hg.numHV;
-  tempNumRo = hg.numRO;
-  tempAttenRo = hg.attenRO;
-  tempAttenHV = hg.attenHV;
-  tr.Branch("panel", tempPanel, "panel[200]/C");
-  tr.Branch("source", tempSource, "source[200]/C");
-  tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
-  tr.Branch("gasmix", tempGas, "gasmix[200]/C");
-  tr.Branch("press", &tempPress, "press/D");
-  tr.Branch("hvVal", &tempVolt, "hvVal/D");
-  tr.Branch("disThr", &tempDiscThr, "disThr/D");
-  tr.Branch("quench", &tempQuench, "quench/D");
-  tr.Branch("trg_ro", tempTrigRO, "trg_ro[200]/C");
-  tr.Branch("dB_ro", &tempAttenRo, "dB_ro/s");
-  tr.Branch("nch_ro", &tempNumRo, "nch_ro/s");
-  tr.Branch("line_ro", tempRO, "line_ro[200]/C");
-  tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
-  tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
-  tr.Branch("nch_hv", &tempNumHv, "nch_hv/s");
-  tr.Branch("line_hv", tempHV, "line_hv[200]/C");
-  //tr.Branch("Mot_X", tempMotX, "steps/C");
-  //tr.Branch("Mot_Y", tempMotY, "steps/C");
-  //tr.Branch("Time", startTime, "seconds/C");
-  tr.Branch("tstamp", &tstamp, "tstamp/D");
-  tr.Branch("data", count, "data[20]/i");
-  tr.Branch("num_pix", &tempPix, "num_pix/i");
-  tr.Branch("pixX", pixX, "pixX[20]/i");
-  tr.Branch("pixY", pixY, "pixY[20]/i");
-  tr.Branch("runNum", hg.runNumber, "runNum/L");
-  /////////////////////////////////////////////////////
-  HighResClock::time_point first = t->front();
-  elapsed = t->front() - first;
-  tstamp = elapsed.count();
-  tr.Fill();
-  out << setw(10) << fixed
-    << setprecision(3) << elapsed.count() << "    ";
-  for (int i = 0; i < 20; ++i){
-    out << setw(13) << count[i] << "      ";
-  }
-  out << endl;
-  //gr.makeGraphBmp(count);
-  // img = new cimg_library::CImg<unsigned char>("c1.bmp");
-  //disp.display(*img);
-  q->pop();
-  t->pop();
-  while (!*done){
-    this_thread::sleep_for(chrono::microseconds(10));
-    while (q->read_available() > 0 && t->read_available() > 0){
-      for (int i = 0; i < 20; ++i){
-        prev[i] = count[i];
-        correctCount(count[i], q->front()[i]);
-      }
-      elapsed = t->front() - first;
-      tstamp = elapsed.count();
-      tr.Fill();
-      out << setw(10) << fixed
-        << setprecision(3) << elapsed.count() << "    ";
-      for (int i = 0; i < 20; ++i){
-        out << setw(13) << count[i] << "      ";
-      }
-      out << endl;
-     // gr.makeGraphBmp(count);
-     // delete img;
-     // img = new cimg_library::CImg<unsigned char>("c1.bmp");
-     // disp.display(*img);
-      q->pop();
-      t->pop();
-    }
-  }
-  this_thread::sleep_for(chrono::microseconds(1000));
-  while (!t->empty() && !q->empty()){
-    for (int i = 0; i < 20; ++i){
-      prev[i] = count[i];
-      correctCount(count[i], q->front()[i]);
-    }
-    elapsed = t->front() - first;
-    tstamp = elapsed.count();
-    tr.Fill();
-    out << setw(10) << fixed
-      << setprecision(3) << elapsed.count() << "    ";
-    for (int i = 0; i < 20; ++i){
-      out << setw(13) << count[i] << "      ";
-    }
-    out << endl;
-   // gr.makeGraphBmp(count);
-   // delete img;
-   // img = new cimg_library::CImg<unsigned char>("c1.bmp");
-   // disp.display(*img);
-    q->pop();
-    t->pop();
-  }
-  out.close();
-  //char buffer[50];
-  //sprintf(buffer, "hist%d.bmp", (int)elapsed.count());
- // CopyFileA("c1.bmp", buffer, false);
-  //delete img;
-  tr.Write();
-  f.Save();
 }
-static void readWeinerCount(boost::lockfree::spsc_queue<array<int, 20>, boost::lockfree::capacity<10000>> *q, Spsc_time *t, atomic<bool> *done, WeinerCounter *nim, double time, double intervalLength){
-  array<int, 20> count;
-  for (int i = 0; i < 20; ++i){
-    count[i] = 0;
-  }
-  int numSamps = ceil(time / intervalLength);
-  chrono::duration<int, milli> dur((int)(intervalLength * 1000) - 29);
-  nim->resetAll();
-  t->push(HighResClock::now());
-  q->push(count);
-  this_thread::sleep_for(dur);
-  for (int i = 0; i < numSamps; ++i){
-    t->push(HighResClock::now());
-    count[0] = nim->readCounter(1);
-    count[1] = nim->readCounter(2);
-    count[2] = nim->readCounter(3);
-    count[3] = nim->readCounter(4);
-    count[4] = nim->readCounter(5);
-    count[5] = nim->readCounter(6);
-    count[6] = nim->readCounter(7);
-    count[7] = nim->readCounter(8);
-    count[8] = nim->readCounter(9);
-    count[9] = nim->readCounter(10);
-    count[10] = nim->readCounter(11);
-    count[11] = nim->readCounter(12);
-    count[12] = nim->readCounter(13);
-    count[13] = nim->readCounter(14);
-    count[14] = nim->readCounter(15);
-    count[15] = nim->readCounter(16);
-    count[16] = nim->readCounter(17);
-    count[17] = nim->readCounter(18);
-    count[18] = nim->readCounter(19);
-    count[19] = nim->readCounter(20);
-    q->push(count);
-    this_thread::sleep_for(dur);
-  }
-  *done = true;
-}
-void doWeinerCountInf(WeinerCounter *nim, double sampleLength, double volt, const HeaderInfoGen *hg, string fileName, atomic<bool> *run){
-	time_t tm = time(nullptr);
-	string runName;
-	runName = ".\\CollectedData\\";
-	CreateDirectory(runName.c_str(), NULL);
-	runName += hg->gas + "\\";
-	CreateDirectory(runName.c_str(), NULL);
-	runName += hg->panelName + "_" + to_string(tm);
-	vector<int> x = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
-	vector<int> y = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
-	int numReadings = 10000;
-	double voltage = 100;
-	//assert(x.size() == y.size());
-	HeaderInfoAfter ha;
-	ha.numPixels = x.size();
-	ha.numReadings = numReadings;
-	ha.voltage = voltage;
-	stringstream ss;
-	string temp;
-	for (int i = 0, leni = x.size(); i < leni; ++i){
-		ss.str(std::string());
-		ss.clear();
-		ss << x[i] << "-" << y[i];
-		ss >> temp;
-		ha.pixels.push_back(temp);
-	}
-	vector < boost::lockfree::spsc_queue<int, boost::lockfree::capacity<10000>> > q(x.size());
-	boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> t;
-	atomic<bool> done = false;
-	atomic<bool> control = false;
-	thread t2(writeInfoAfterN, ref(q), ref(t), &done, run, runName, ha, *hg);
-	readFromPixAfterNInf(x, &done, run, q, t, nim);
-	if (t2.joinable()){
-		t2.join();
-	}
-}
-
 
 
 void measureLines(WeinerCounter* nim, double time, double& actualTime, vector<int>& count, double intervalLength){
@@ -630,35 +484,14 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 						volt->setVoltage(k);
 						log << "Begin Counting" << endl;
 						temp = runName + to_string(k) + "_" + "volts" + "_" + to_string((long)i) + "_x" + to_string((long)j) + "_y" + ".txt";
-						doWeinerCount(nim, message->time, message->frequency, k, *header, pix, temp,i,j);
-						log << "Finished Counting" << endl;
+            time_t tm = time(nullptr);
+            doWeinerCount(nim, k, header, "LineScan", "LineScan_" + to_string(tm), run, message->time);
+            log << "Finished Counting" << endl;
 
 					}
 				}
 			}
 		}
-	
-
-	//if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
-	//	mot->goToBackGround();
-	//	//------------------------------
-	//	//--------WARNING--------------
-	//	//----------------------------
-	//	//when a the motor is moved to the background location it always needs to be moved out in order to be used again
-	//	//aka always call leaveBackGround() when done with taking a background measure ment
-	//}
-	//header->sourceName = "bkg";
-	//for (int i = starting; i <= stop; i += step){
-	//	log << "Setting Voltage to: " << i << endl;
-	//	volt->setVoltage(i);
-	//	log << "Begin Counting" << endl;
-	//	temp = runName + to_string(i) + "_bkg_vs.txt";
-	//	doWeinerCount(nim, message->time, message->frequency, i, *header, pix, message->temp);
-	//	log << "Finished Counting" << endl;
-	//}
-	//if (header->sourceConfig == "Static" || header->sourceConfig == "Dynamic"){
-	//	mot->leaveBackGround();
-	//}
 
 	log << "Turning off High Voltage" << endl;
 	volt->turnOff();
@@ -668,8 +501,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	*run = false;
 }
 
-string createFileName(HeaderInfoGen *header, Messages* message, time_t t)
-{
+string createFileName(HeaderInfoGen *header, Messages* message, time_t t){
 	string runName;
 	runName = ".\\CollectedData\\";
 	// TODO: add identifier to first directory, possibly panel name?
@@ -770,10 +602,6 @@ void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltag
 		string runName;
 		ofstream log;
 		int starting = message->voltageStart;
-		//int stop = message->voltageEnd;
-		//int step = message->voltageStep;
-		//int num;
-		//int numMeas = 1;
 		int tempNum;
 		int numSamples;
 		int intLength;
@@ -1146,7 +974,8 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 					volt->setVoltage(k);
 					log << "Begin Counting" << endl;
 					temp = runName + to_string(k) + "_" + "volts" + "_" + to_string((long)i) + "_x" + to_string((long)j) + "_y" + ".txt";
-					doWeinerCount(nim, message->time, message->frequency, k, *header, pix, temp, i, j);
+          time_t tm = time(nullptr);
+          doWeinerCount(nim, k, header, "doHexScanX", "doHexScanX_" + to_string(tm), run, message->time);
 					log << "Finished Counting" << endl;
 
 				}
@@ -1262,8 +1091,8 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 						log << "Setting Voltage to: " << k << endl;
 						//volt->setVoltage(k);
 						log << "Begin Counting" << endl;
-						temp = runName + to_string(k) + "_" + "volts" + "_" + to_string(i) + "_x" + to_string(j) + "_y" + ".txt";
-						doWeinerCount(nim, message->time, message->frequency, k, *header, pix, temp, i, j);
+            time_t tm = time(nullptr);
+            doWeinerCount(nim, k, header, "XYScan", "XYScan_" + to_string(tm), run, message->time);
 						log << "Finished Counting" << endl;
 					}
 					//mot->stepMotor(2, -motendy);
