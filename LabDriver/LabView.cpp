@@ -614,7 +614,7 @@ void BigFrame::startSelected(wxCommandEvent& event)
 		run = true;
 	}
 
-	if (!mot && !(scanType == "Free"))
+	if (!mot && !(scanType == "Free" || scanType == "FreeAP"))
 	{
 		wxMessageBox("X-Y controller not connected");
 		run = true;
@@ -660,15 +660,9 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	else if (scanType == "FreeAP" && run == false)
 	{
 		run = true;
-		readout->samples = 0;
-
-		//run = true;
-		//t1.detach();
-		Histogram* Image = new Histogram(this);
-		Image->Update();
-		Image->Show(true);
-		Image->updateImage("c1.bmp", &run);
-
+    thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
+    //run = true;
+    t1.detach();
 	}
 	else if (scanType == "ScanAP" && run == false)
 	{

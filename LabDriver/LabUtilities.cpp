@@ -231,8 +231,9 @@ void doWeinerCount(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, str
   CreateDirectory(runFullName.c_str(), NULL);
   if (runName != ""){
     runFullName += runName += "\\";
+    CreateDirectory(runFullName.c_str(), NULL);
   }
-  runFullName += to_string(volt) + "V" +"_" + to_string(tm) + "_AP";
+  runFullName += hg->panelName +"_" + hg->gas + "_" + to_string(hg->pressure)+ "torr_" + to_string(volt) + "V" + "_" + to_string(tm) + "_AP";
   vector<int> x = activeReadout;
   vector<int> y = activeReadout;
   int numSamples = measurementDuration * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / x.size();
@@ -277,6 +278,7 @@ void doWeinerCountInf(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, 
   CreateDirectory(runFullName.c_str(), NULL);
   if (runName != ""){
     runFullName += runName += "\\";
+    CreateDirectory(runFullName.c_str(), NULL);
   }
   runFullName += to_string(volt) + "V" + "_" + to_string(tm) + "_AP";
   vector<int> x = activeReadout;
@@ -597,53 +599,12 @@ void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, Voltage 
 }
 
 void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltage *volt, Messages* message, Readout* readout, atomic<bool>* run){
-
-		//string path = ".\\CollectedData\\";
-		string runName;
-		ofstream log;
-		int starting = message->voltageStart;
-		int tempNum;
-		int numSamples;
-		int intLength;
-		//vector<int> x;
-		//vector<int> y;
-		string temp;
-
-		time_t t = time(nullptr);
-
-		runName = createFileName(header, message, t);
-		readout->timeToSamples(message->time);
-
-		log.open(runName + "log.txt", ofstream::ate);
-		log << "Intitalized After-Pulse Test" << endl;
-		log << "Starting: " << starting << endl;
-		log << "Interval Duration: " << message->time << endl;
-		log << "Readout List: " << endl;
-		for (int i = 0; i < readout->numActive; ++i){
-			log << readout->lines[i] << endl;
-			//log << x[i] << "-" << y[i] << endl;
-		}
-
-		string fullFile = "test.txt";
-		if (header->sourceConfig == "Dynamic")
-		{	
-			log << "Turning On High Voltage" << endl;
-			volt->setVoltage(starting);
-			volt->turnOn();
-			
-			while (*run == true)
-			{
-				log << "Begin Counting" << endl;
-				temp = runName + "_" + to_string(starting) + "_" + "volts";
-				doAfterPulseAny(temp, nim, *header, starting, readout, run);
-				log << "Finished Counting" << endl;
-			}
-
-		}
-		log << "Turning off High Voltage" << endl;
-		volt->turnOff();
-		log << "Creating Graphs" << endl;
-	}
+  for (double i = message->voltageStart; i <= message->voltageEnd; i += message->voltageStep){
+    doWeinerCount(nim, i, header, "Scan", "scan_" + header->panelName + "_" + header->gas + "_" + to_string(header->pressure) + "torr_" + to_string(time(nullptr)),
+      run, message->time);
+  }
+  return;
+}
 
 void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, Readout* readout, atomic<bool>* run){
 	HeaderInfoAfter ha;
