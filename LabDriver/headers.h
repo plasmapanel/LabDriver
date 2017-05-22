@@ -35,7 +35,7 @@ struct HeaderInfoGen{
 struct HeaderInfoAfter{
   double voltage;
   int numPixels;
-  vector<string> pixels;
+  vector<int> readoutLines;
   int numReadings;
 };
 struct HeaderInfoCounter{

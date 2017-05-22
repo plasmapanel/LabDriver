@@ -654,7 +654,10 @@ void BigFrame::startSelected(wxCommandEvent& event)
         activeReadout.push_back(i + 1);
       }
     }
-    thread t1(doWeinerCountInf, nim, message->voltageStart, pglobalheader, "free", "", &run, readout->lines);
+    //void doWeinerCounta(WeinerCounter *nim, double volt, string runType, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool> *run)
+    //doWeinerCount(nim, pglobalheader, message, readout, &run);
+    thread t1(doWeinerCounta, nim, "", pglobalheader, message, readout, &run);
+    //thread t1(doWeinerCountInf, nim, message->voltageStart, pglobalheader, "free", "", &run, readout->lines);
 		t1.detach();
 	}
 	else if (scanType == "FreeAP" && run == false)

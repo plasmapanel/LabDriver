@@ -26,10 +26,10 @@ ostream& operator<<(ostream& os, const HeaderInfoGen &h){
 ostream& operator<<(ostream& os, const HeaderInfoAfter& h){
   os << "After-Pulse Test" << endl;
   os << "Voltage   " << h.voltage << endl;
-  os << "# Pixels Tested   " << h.numPixels << endl;
-  os << "Pixels Tested   ";
-  for (int i = 0, len = h.pixels.size(); i < len; ++i){
-    os << h.pixels[i] << " ";
+  os << "# Readout Lines Tested   " << h.numPixels << endl;
+  os << "Readout Lines Tested   ";
+  for (int i = 0, len = h.readoutLines.size(); i < len; ++i){
+    os << h.readoutLines[i] << " ";
   }
   os << endl;
   os << "# Readings Taken " << h.numReadings << endl;

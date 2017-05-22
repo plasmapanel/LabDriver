@@ -27,6 +27,7 @@ using Spsc_time = boost::lockfree::spsc_queue < HighResClock::time_point, boost:
 void doWeinerCount(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, double measurementDuration,
   vector<int> activeReadout = {1, 2, 3, 4, 5, 6, 7, 8 , 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
 
+void doWeinerCounta(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool> *run);
 //time independent verison
 void doWeinerCountInf(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run,
   vector<int> activeReadout = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 });
@@ -45,12 +46,8 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 
 string createFileName(HeaderInfoGen *header, Messages* message, time_t t);
 
-void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, Voltage *volt, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run);
-void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, Readout* readout, atomic<bool>* run);
 void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltage *volt, Messages* message, Readout* readout, atomic<bool>* run);
 
-static void readFromPixAfterAny(atomic<bool> *done, boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, WeinerCounter *nim, Readout* readout, atomic<bool>* run);
-static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, boost::lockfree::spsc_queue<HighResClock::time_point, boost::lockfree::capacity<10000>> *t, atomic<bool> *done, string fileName, const HeaderInfoAfter &ha, const HeaderInfoGen &hg, Readout* readout);
 
 
 void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);

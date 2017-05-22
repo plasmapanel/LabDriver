@@ -12,24 +12,10 @@ static const double NIM_MS_PER_CHANNEL_MEASUREMENT = 0.4;
 inline static void correctCount(int &count, int next);
 
 
-static bool checkq(const Spsc_int &x){
-  return x.read_available() == 0;
-}
-static bool checkqg(const Spsc_int &x){
-  return x.read_available() > 0;
-}
-static bool checkqe(const Spsc_int &x){
-  return x.read_available() == 0;
-}
-inline static void correctCount(int &count, int next){
-  int temp = count % OVER;
-  if (temp < next){
-    count += next - temp;
-  }
-  else if (temp > next){
-    count += OVER + next - temp;
-  }
-}
+static bool checkq(const Spsc_int &x);
+static bool checkqg(const Spsc_int &x);
+static bool checkqe(const Spsc_int &x);
+
 void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg){
   //assert(q.size() < 20);
   this_thread::sleep_for(chrono::microseconds(1000));
@@ -38,8 +24,8 @@ void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, stri
   out.open(fileName + ".txt");
   out << hg << ha;
   out << " Time (ms)   ";
-  for (int i = 0, leni = ha.pixels.size(); i < leni; ++i){
-    out <<"Count "<< left << setw(13) << ha.pixels[i];
+  for (int i = 0, leni = ha.readoutLines.size(); i < leni; ++i){
+    out <<"Count "<< left << setw(13) << ha.readoutLines[i];
   }
    out<<endl;
   
@@ -76,17 +62,9 @@ void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, stri
   tempNumRo = hg.numRO;
   tempAttenRo = hg.attenRO;
   tempAttenHV = hg.attenHV;
-  Int_t pixX[20];
-  Int_t pixY[20];
-  char holding[30];
-  for (int i = 0, len = ha.pixels.size(); i < len; ++i){
-    strcpy(holding, ha.pixels[i].c_str());
-    pixX[i] = atoi(strtok(holding, "-"));
-    pixY[i] = atoi(strtok(nullptr, "-"));
-  }
-  for (int i = ha.pixels.size(); i < 20; ++i){
-    pixX[i] = 0;
-    pixY[i] = 0;
+  Int_t readoutLines[20];
+  for (int i = 0, len = ha.readoutLines.size(); i < len; ++i){
+    readoutLines[i] = ha.readoutLines[i];
   }
   Int_t tempSamp = ha.numReadings;
   Int_t tempPix = ha.numPixels;
@@ -110,8 +88,7 @@ void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, stri
   tr.Branch("data", count, "data[20]/i");
   tr.Branch("samps", &tempSamp, "samps/i");
   tr.Branch("num_pix", &tempPix, "num_pix/i");
-  tr.Branch("pixX", pixX, "pixX[20]/i");
-  tr.Branch("pixY", pixY, "pixY[20]/i");
+  tr.Branch("readoutLines", readoutLines, "readoutLines[20]/i");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t.front();
   elapsed = t.front() - first;
@@ -187,7 +164,177 @@ void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, stri
   
 }
 
-//////////////////////
+void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg, const Messages& message){
+  //assert(q.size() < 20);
+  this_thread::sleep_for(chrono::microseconds(1000));
+  std::chrono::duration<double, std::milli> elapsed;
+  ofstream out;
+  out.open(fileName + ".txt");
+  out << hg << ha;
+  out << " Time (ms)   ";
+  for (int i = 0, leni = ha.readoutLines.size(); i < leni; ++i){
+    out << "Count " << left << setw(13) << ha.readoutLines[i];
+  }
+  out << endl;
+
+  //should use something like std bind here
+  while (any_of(q.begin(), q.end(), checkq) || t.read_available() == 0){}
+
+  this_thread::sleep_for(chrono::microseconds(1000));
+
+  int count[20], prev[20];
+  for (int i = 0, leni = q.size(); i < leni; ++i){ count[i] = prev[i] = q[i].front(); }
+  for (int i = q.size(); i < 20; ++i){ count[i] = prev[i] = 0; }
+
+  ////////////////////////////////////////////////////
+  string tempst;
+  tempst = fileName + ".root";
+  TFile f(tempst.c_str(), "RECREATE");
+  tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) AP";
+  TTree tr("ap", tempst.c_str());
+  //add the count variables
+  Double_t tstamp;
+  tr.Branch("tstamp", &tstamp, "tstamp/D");
+  tr.Branch("data", count, "data[20]/i");
+
+  //add all info from the general header
+  char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
+  Double_t tempPress, tempDiscThr, tempQuench, tempNumHv, tempNumRo, tempAttenRo, tempAttenHV;
+  strcpy(tempPanel, hg.panelName.c_str());
+  tr.Branch("panel", tempPanel, "panel[200]/C");
+  strcpy(tempSource, hg.sourceName.c_str());
+  tr.Branch("source", tempSource, "source[200]/C");
+  strcpy(tempSetup, hg.sourceConfig.c_str());
+  tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
+  strcpy(tempGas, hg.gas.c_str());
+  tr.Branch("gasmix", tempGas, "gasmix[200]/C");
+  tempPress = hg.pressure;
+  tr.Branch("press", &tempPress, "press/D");
+  tempDiscThr = hg.discThresh;
+  tr.Branch("disThr", &tempDiscThr, "disThr/D");
+  tempQuench = hg.quench;
+  tr.Branch("quench", &tempQuench, "quench/D");
+  tempNumRo = hg.numRO;
+  tr.Branch("nch_ro", &tempNumRo, "nch_ro/s");
+  strcpy(tempRO, hg.roLines.c_str());
+  tr.Branch("line_ro", tempRO, "line_ro[200]/C");
+  strcpy(tempTrigRO, hg.triggerRO.c_str());
+  tr.Branch("trg_ro", tempTrigRO, "trg_ro[200]/C");
+  tempAttenRo = hg.attenRO;
+  tr.Branch("dB_ro", &tempAttenRo, "dB_ro/s");
+  tempNumHv = hg.numHV;
+  tr.Branch("nch_hv", &tempNumHv, "nch_hv/s");
+  strcpy(tempHV, hg.linesHV.c_str());
+  tr.Branch("line_hv", tempHV, "line_hv[200]/C");
+  strcpy(tempTrigHV, hg.triggerHV.c_str());
+  tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
+  tempAttenHV = hg.attenHV;
+  tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
+
+  //add all info from the after-pulse header
+  Double_t tempVolt = ha.voltage;
+  Int_t tempPix = ha.numPixels;
+  Int_t numReadings = ha.numReadings;
+  Int_t readoutLines[20];
+  for (int i = 0, leni = ha.readoutLines.size(); i < leni; ++i){
+    readoutLines[i] = ha.readoutLines[i];
+  }
+  for (int i = ha.readoutLines.size(); i < 20; ++i){
+    readoutLines[i] = 0;
+  }
+  tr.Branch("hvVal", &tempVolt, "hvVal/D");
+  tr.Branch("num_pix", &tempPix, "num_pix/i");
+  tr.Branch("readoutLines", readoutLines, "readoutLines[20]/i");
+  tr.Branch("numReadings", numReadings, "numReadings/i");
+  //add all info from the message  
+  /*int voltage;
+	std::string filename;
+	std::string fullFile;
+	
+	int time;
+	int numPix, maxOffsetX;
+	int maxOffsetY, maxStepX;
+	int maxStepY;
+	int motorstepx;
+	int motorstepy;
+	int voltageStart, voltageStep, voltageEnd;
+	int frequency;
+	std::string temp = "";
+	std::string runtype = "";
+	int row;
+	int column;
+
+	std::vector<int> pixX, pixY;*/
+  
+  /////////////////////////////////////////////////////
+  HighResClock::time_point first = t.front();
+  elapsed = t.front() - first;
+  tstamp = elapsed.count();
+  out << setw(9) << fixed << setprecision(2) << elapsed.count();
+  for (int i = 0, leni = q.size(); i < leni; ++i){
+    out << "    " << setw(13) << count[i];
+  }
+  out << endl;
+
+  for (auto &x : q){ x.pop(); }
+  t.pop();
+
+  tr.Fill();
+  //loop until data is done being taken
+  while (!*done){
+    this_thread::sleep_for(chrono::microseconds(10));
+    while (all_of(q.begin(), q.end(), checkqg) && t.read_available() > 0){
+      for (int i = 0, leni = q.size(); i < leni; ++i){
+        prev[i] = count[i];
+        correctCount(count[i], q[i].front());
+      }
+      for (int i = 0, leni = q.size(); i < leni; ++i){
+        if (count[i] > prev[i]){
+          ////////////above this is fine
+          elapsed = t.front() - first;
+          tstamp = elapsed.count();
+          out << setw(9) << fixed << setprecision(2) << elapsed.count();
+          for (int j = 0, lenj = q.size(); j < lenj; ++j){
+            out << "    " << setw(13) << count[j];
+          }
+          out << endl;
+          tr.Fill();
+          break;
+
+        }
+      }
+      for (auto &x : q){x.pop();}
+      t.pop();
+    }
+  }
+  //finish writing data
+  this_thread::sleep_for(chrono::microseconds(1000));
+  while (!t.empty() && !any_of(q.begin(), q.end(), checkqe)){
+    for (int i = 0, leni = q.size(); i < q.size(); ++i){
+      prev[i] = count[i];
+      correctCount(count[i], q[i].front());
+    }
+    for (int i = 0, leni = q.size(); i < leni; ++i){
+      if (count[i] > prev[i]){
+        elapsed = t.front() - first;
+        tstamp = elapsed.count();
+        out << setw(9) << fixed << setprecision(2) << elapsed.count();
+        for (int j = 0, lenj = q.size(); j < lenj; ++j){
+          out << "    " << setw(13) << count[j];
+        }
+        out << endl;
+        tr.Fill();
+        break;
+      }
+      for (auto &x : q){ x.pop(); }
+      t.pop();
+    }
+  }
+  tr.Write();
+  f.Save();
+
+}
+
 void readFromPixAfterN(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim, int numSamples){
 	//assert(q->size() == pix.size());
 	size_t size = pix.size();
@@ -200,6 +347,7 @@ void readFromPixAfterN(const vector<int>& pix, atomic<bool>* done, atomic<bool> 
 	}
 	*done = true;
 }
+
 void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim){
 	//assert(q->size() == pix.size());
     size_t size = pix.size();
@@ -212,9 +360,30 @@ void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<boo
 	}
 	*done = true;
 }
-//////////////////////////
 
-
+static string initWeinerFile(HeaderInfoGen *header, string const & runType, string const & runName, double voltage){
+  static const string DEFAULT_DIR = ".\\CollectedData\\";
+  time_t tm = time(nullptr);
+  stringstream sstream;
+  sstream << fixed;
+  sstream.precision(2);
+  sstream << DEFAULT_DIR;
+  CreateDirectory(sstream.str().c_str(), NULL);
+  sstream << header->panelName << "\\";  
+  CreateDirectory(sstream.str().c_str(), NULL);
+  sstream << header->gas << "\\";
+  CreateDirectory(sstream.str().c_str(), NULL);
+  sstream << header->pressure << "torr\\";
+  CreateDirectory(sstream.str().c_str(), NULL);
+  sstream << runType << "\\";
+  CreateDirectory(sstream.str().c_str(), NULL);
+  if (runName != ""){
+    sstream << runName << "\\";
+    CreateDirectory(sstream.str().c_str(), NULL);
+  }
+  sstream << header->panelName << "_" << header->gas << "_" << header->pressure << "torr_" << voltage << "V" << "_" << tm << "_AP";
+  return sstream.str();
+}
 
 void doWeinerCount(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, double measurementDuration, vector<int> activeReadout){
   time_t tm = time(nullptr);
@@ -230,38 +399,53 @@ void doWeinerCount(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, str
   runFullName += runType + "\\";
   CreateDirectory(runFullName.c_str(), NULL);
   if (runName != ""){
-    runFullName += runName += "\\";
+    runFullName += runName + "\\";
     CreateDirectory(runFullName.c_str(), NULL);
   }
   runFullName += hg->panelName +"_" + hg->gas + "_" + to_string(hg->pressure)+ "torr_" + to_string(volt) + "V" + "_" + to_string(tm) + "_AP";
-  vector<int> x = activeReadout;
-  vector<int> y = activeReadout;
-  int numSamples = measurementDuration * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / x.size();
+  int numSamples = measurementDuration * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
   HeaderInfoAfter ha;
-  ha.numPixels = x.size();
+  ha.numPixels = activeReadout.size();
   ha.numReadings = numSamples;
   ha.voltage = volt;
-  stringstream ss;
-  string temp;
-  for (int i = 0, leni = x.size(); i < leni; ++i){
-    ss.str(std::string());
-    ss.clear();
-    ss << x[i] << "-" << y[i];
-    ss >> temp;
-    ha.pixels.push_back(temp);
-  }
+  ha.readoutLines = activeReadout;
   //get the number of samples for this number of lines
-  vector <Spsc_int> q(x.size());
+  vector <Spsc_int> q(activeReadout.size());
   Spsc_time t;
   atomic<bool> done = false;
   atomic<bool> control = false;
   thread t2(writeInfoAfterN, ref(q), ref(t), &done, runFullName, ha, *hg);
-  readFromPixAfterN(x, &done, run, q, t, nim, numSamples);
+  readFromPixAfterN(activeReadout, &done, run, q, t, nim, numSamples);
   if (t2.joinable()){
     t2.join();
   }
 }
 
+void doWeinerCounta(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool> *run){ 
+  string runFullName = initWeinerFile(header, message->runtype, runName, message->voltage);
+  vector<int> activeReadout;
+  for (size_t i = 0; i < readout->active.size(); ++i){
+    if (readout->active[i]){
+      activeReadout.push_back(i + 1);
+    }
+  }
+  int numSamples = 10000 * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
+  HeaderInfoAfter ha;
+  ha.numPixels = activeReadout.size();
+  ha.numReadings = numSamples;
+  ha.voltage = message->voltage;
+  ha.readoutLines = activeReadout;
+  //get the number of samples for this number of lines
+  vector <Spsc_int> q(activeReadout.size());
+  Spsc_time t;
+  atomic<bool> done = false;
+  atomic<bool> control = false;
+  thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, *header, *message);
+  readFromPixAfterN(activeReadout, &done, run, q, t, nim, numSamples);
+  if (t2.joinable()){
+    t2.join();
+  }
+}
 
 void doWeinerCountInf(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, vector<int> activeReadout){
   time_t tm = time(nullptr);
@@ -280,30 +464,19 @@ void doWeinerCountInf(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, 
     runFullName += runName += "\\";
     CreateDirectory(runFullName.c_str(), NULL);
   }
-  runFullName += to_string(volt) + "V" + "_" + to_string(tm) + "_AP";
-  vector<int> x = activeReadout;
-  vector<int> y = activeReadout;
-  int numSamples = -1;
+  runFullName += hg->panelName + "_" + hg->gas + "_" + to_string(hg->pressure) + "torr_" + to_string(volt) + "V" + "_" + to_string(tm) + "_AP";
   HeaderInfoAfter ha;
-  ha.numPixels = x.size();
-  ha.numReadings = numSamples;
+  ha.numPixels = activeReadout.size();
+  ha.numReadings = -1;
   ha.voltage = volt;
-  stringstream ss;
-  string temp;
-  for (int i = 0, leni = x.size(); i < leni; ++i){
-    ss.str(std::string());
-    ss.clear();
-    ss << x[i] << "-" << y[i];
-    ss >> temp;
-    ha.pixels.push_back(temp);
-  }
+  ha.readoutLines = activeReadout;
   //get the number of samples for this number of lines
-  vector <Spsc_int> q(x.size());
+  vector <Spsc_int> q(activeReadout.size());
   Spsc_time t;
   atomic<bool> done = false;
   atomic<bool> control = false;
   thread t2(writeInfoAfterN, ref(q), ref(t), &done, runFullName, ha, *hg);
-  readFromPixAfterNInf(x, &done, run, q, t, nim);
+  readFromPixAfterNInf(activeReadout, &done, run, q, t, nim);
   if (t2.joinable()){
     t2.join();
   }
@@ -520,324 +693,21 @@ string createFileName(HeaderInfoGen *header, Messages* message, time_t t){
 	return runName;
 }
 
-void doAfterScanGraphMultiGUI(MotorController *mot, WeinerCounter *nim, Voltage *volt, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool>* run){
-
-	//string path = ".\\CollectedData\\";
-	string runName;
-	ofstream log;
-	int starting = message->voltageStart;
-	int stop = message->voltageEnd;
-	int step = message->voltageStep;
-	int motbegin = 0;
-	int motend = message->maxOffsetY;
-	int motstep = message->maxStepY;
-	int num;
-	int numMeas = 1;
-	int tempNum;
-	int numSamples;
-	int intLength;
-	//vector<int> x;
-	//vector<int> y;
-	string temp;
-
-	time_t t = time(nullptr);
-
-	runName = createFileName(header, message, t);
-
-	log.open(runName + "log.txt", ofstream::ate);
-	log << "Intitalized After-Pulse Test" << endl;
-	log << "Starting: " << starting << endl;
-	log << "Stop: " << stop << endl;
-	log << "Step Size: " << step << endl;
-	log << "Number of Pixels: " << num << endl;
-	log << "Interval Duration: " << message->time << endl;
-	log << "Readout List: " << endl;
-	for (int i = 0; i < num; ++i){
-		//log << x[i] << "-" << y[i] << endl;
-	}
-	log << "Turning On High Voltage" << endl;
-	volt->turnOn();
-	volt->setVoltage(0);
-	volt->turnOn();
-	string fullFile = "test.txt";
-	if (header->sourceConfig == "Dynamic")
-	{
-		volt->setVoltage(starting);
-		volt->turnOn();
-		log << "Going to home" << endl;
-		mot->goZero();
-		mot->stepMotor(2, -motstep);
-		//mot->stepMotor(2, motstep);
-		//mot->mapPixel(fullFile, nim, 1, 1, duration, 0, motend, 0, motstep);
-		if (motstep == 0)
-		{
-			motbegin = motend;
-			step = 10000;
-
-		}
-		for (int i = motbegin; i <= motend && *run == true; i += motstep)
-		{
-			mot->stepMotor(2, motstep);
-			log << "At " << i << endl;
-
-			for (int j = starting; j <= stop && *run == true; j += step)
-			{
-				//if (end == true)
-				//break;
-				log << "Setting Voltage to: " << j << endl;
-				volt->setVoltage(j);
-				log << "Begin Counting" << endl;
-				temp = runName + "_" + to_string(j) + "_" + "volts" + "_" + to_string((long)i) + "_steps";
-				doAfterPulseAny(temp, nim, *header, starting, readout, run);
-				log << "Finished Counting" << endl;
-
-			}
-
-		}
-		//log << "Creating Graphs" << endl;
-	}
-}
-
 void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltage *volt, Messages* message, Readout* readout, atomic<bool>* run){
-  for (double i = message->voltageStart; i <= message->voltageEnd; i += message->voltageStep){
-    doWeinerCount(nim, i, header, "Scan", "scan_" + header->panelName + "_" + header->gas + "_" + to_string(header->pressure) + "torr_" + to_string(time(nullptr)),
-      run, message->time);
+  vector<int> activeReadout;
+  for (size_t i = 0; i < readout->active.size(); ++i){
+    if (readout->active[i]){
+      activeReadout.push_back(i + 1);
+    }
+  }
+  string scanName = "Scan_" + header->panelName + "_" + header->gas + "_" + to_string(header->pressure) + "torr_" + to_string(time(nullptr));
+  for (double i = message->voltageStart; i <= message->voltageEnd && run; i += message->voltageStep){
+    doWeinerCount(nim, i, header, "Scan", scanName, run, message->time, activeReadout);
   }
   return;
 }
 
-void doAfterPulseAny(string fileName, WeinerCounter *nim, const HeaderInfoGen &hg, int voltage, Readout* readout, atomic<bool>* run){
-	HeaderInfoAfter ha;
-	ha.numPixels = readout->numActive;
-	ha.numReadings = readout->samples;
-	ha.voltage = voltage;
-	stringstream ss;
-	string temp;
 
-	for (int i = 0; i < readout->numActive; i++)
-	{
-		ss.str(std::string());
-		ss.clear();
-		ss << readout->lines[i];
-		ss >> temp;
-		ha.pixels.push_back(temp);
-	}
-	
-	//boost::lockfree::spsc_queue<array<int, 10>, boost::lockfree::capacity<10000>> q;
-	boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> q;
-
-	Spsc_time t;
-	atomic<bool> done = false;
-	thread t2(writeInfoAfterAny, &q, &t, &done, fileName, ha, hg, readout);
-	readFromPixAfterAny(&done, &q, &t, nim, readout, run);
-	t2.join();
-}
-
-static void readFromPixAfterAny(atomic<bool> *done, boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, Spsc_time *t, WeinerCounter *nim, Readout* readout, atomic<bool>* run){
-	const int total = readout->numActive;
-	//array<int, 20> arr;
-	vector<int> arr;
-	nim->resetAll();
-	t->push(HighResClock::now());
-
-	for (int i = 0; i < readout->numActive; i++)
-	{
-		arr.push_back(nim->readCounter(readout->lines[i]));
-	}
-
-	q->push(arr);
-
-	if (readout->samples == 0) // free run
-	{
-		for (int i = 0; *run == true; ++i){
-			t->push(HighResClock::now());
-			for (int i = 0; i < readout->numActive; i++)
-			{
-				arr[i] = nim->readCounter(readout->lines[i]);
-			}
-			q->push(arr);
-		}
-	}
-
-	else
-	{
-		for (int i = 0; i < readout->samples && *run == true; ++i){
-			t->push(HighResClock::now());
-			for (int i = 0; i < readout->numActive; i++)
-			{
-				arr[i] = nim->readCounter(readout->lines[i]);
-			}
-			q->push(arr);
-		}
-	}
-	*done = true;
-}
-
-static void writeInfoAfterAny(boost::lockfree::spsc_queue<vector<int>, boost::lockfree::capacity<10000>> *q, Spsc_time *t, atomic<bool> *done, string fileName, const HeaderInfoAfter &ha, const HeaderInfoGen &hg, Readout* readout){
-	this_thread::sleep_for(chrono::microseconds(1000));
-	std::chrono::duration<double, std::milli> elapsed;
-	ofstream out;
-	out.open(fileName);
-	out << hg << ha;
-	out << " Time (ms)   Count ";
-	for (int i = 0; i < ha.numPixels; i++)
-	{
-		out << left << setw(13) << ha.pixels[i];
-	}
-	out << endl;
-
-	while (q->read_available() == 0 || t->read_available() == 0){}
-	this_thread::sleep_for(chrono::microseconds(1000));
-
-	int prev[20];
-	int count[20];
-
-	for (int i = 0; i < readout->numActive; i++)
-	{
-		count[i] = q->front()[i];
-	}
-
-
-	for (int i = 0; i < readout->numActive; ++i){
-		prev[i] = count[i];
-	}
-	//for (int i = 0; i < 10; ++i){
-	//	prev[i + 10] = count[i + 10];
-	//}
-
-
-	////////////////////////////////////////////////////
-	string tempst;
-	tempst = fileName.substr(0, fileName.size() - 4);
-	tempst += ".root";
-	TFile f(tempst.c_str(), "RECREATE");
-	tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) AP";
-	TTree tr("ap", tempst.c_str());
-	char  tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
-	strcpy(tempPanel, hg.panelName.c_str());
-	strcpy(tempSource, hg.sourceName.c_str());
-	strcpy(tempGas, hg.gas.c_str());
-	strcpy(tempSetup, hg.sourceConfig.c_str());
-	strcpy(tempRO, hg.roLines.c_str());
-	strcpy(tempHV, hg.linesHV.c_str());
-	strcpy(tempTrigHV, hg.triggerHV.c_str());
-	strcpy(tempTrigRO, hg.triggerRO.c_str());
-	Double_t tstamp, tempPress, tempVolt, tempDiscThr, tempQuench, tempNumHv, tempNumRo, tempAttenRo, tempAttenHV;
-	tempPress = hg.pressure;
-	tempVolt = ha.voltage;
-	tempDiscThr = hg.discThresh;
-	tempQuench = hg.quench;
-	tempNumHv = hg.numHV;
-	tempNumRo = hg.numRO;
-	tempAttenRo = hg.attenRO;
-	tempAttenHV = hg.attenHV;
-	Int_t pixX[20];
-	Int_t pixY[20];
-	char holding[30];
-	//for (int i = 0; i < 20; ++i){
-	//	pixX[i] = 0;
-	//	pixY[i] = 0;
-	//}
-	//for (int i = 0, len = ha.pixels.size(); i < len; ++i){
-	//	strcpy(holding, ha.pixels[i].c_str());
-	//	pixX[i] = atoi(strtok(holding, "-"));
-	//	pixY[i] = atoi(strtok(NULL, "-"));
-	//}
-	Int_t tempSamp = ha.numReadings;
-	Int_t tempPix = ha.numPixels;
-	tr.Branch("panel", tempPanel, "panel[200]/C");
-	tr.Branch("source", tempSource, "source[200]/C");
-	tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
-	tr.Branch("gasmix", tempGas, "gasmix[200]/C");
-	tr.Branch("press", &tempPress, "press/D");
-	tr.Branch("hvVal", &tempVolt, "hvVal/D");
-	tr.Branch("disThr", &tempDiscThr, "disThr/D");
-	tr.Branch("quench", &tempQuench, "quench/D");
-	tr.Branch("trg_ro", tempTrigRO, "trg_ro[200]/C");
-	tr.Branch("dB_ro", &tempAttenRo, "dB_ro/s");
-	tr.Branch("nch_ro", &tempNumRo, "nch_ro/s");
-	tr.Branch("line_ro", tempRO, "line_ro[200]/C");
-	tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
-	tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
-	tr.Branch("nch_hv", &tempNumHv, "nch_hv/s");
-	tr.Branch("line_hv", tempHV, "line_hv[200]/C");
-	tr.Branch("tstamp", &tstamp, "tstamp/D");
-	tr.Branch("data", count, "data[20]/i");
-	tr.Branch("samps", &tempSamp, "samps/i");
-	tr.Branch("num_pix", &tempPix, "num_pix/i");
-	tr.Branch("pixX", pixX, "pixX[20]/i");
-	tr.Branch("pixY", pixY, "pixY[20]/i");
-	/////////////////////////////////////////////////////
-	HighResClock::time_point first = t->front();
-	elapsed = t->front() - first;
-	tstamp = elapsed.count();
-	out << setw(9) << fixed << setprecision(2) << elapsed.count();
-	
-	for (int i = 0; i < readout->numActive; i++)
-	{
-		out << "    " << setw(13) << count[i];
-	}
-	out << endl;
-	q->pop();
-	t->pop();
-	tr.Fill();
-	while (!*done){
-		this_thread::sleep_for(chrono::microseconds(1000));
-		while (q->read_available() > 0 && t->read_available() > 0){
-			for (int i = 0; i < readout->numActive; ++i){
-				prev[i] = count[i];
-				correctCount(count[i], q->front()[i]);
-			}
-			for (int i = 0; i < readout->numActive; ++i){
-				if (count[i] > prev[i]){
-					elapsed = t->front() - first;
-					tstamp = elapsed.count();
-					out << setw(9) << fixed << setprecision(2) << elapsed.count();
-					for (int i = 0; i < readout->numActive; i++)
-					{
-						out << "    " << setw(13) << count[i];
-					}
-					out << endl;
-
-					tr.Fill();
-					break;
-
-				}
-			}
-			q->pop();
-			t->pop();
-		}
-		tr.Write();
-		f.Save();
-
-	}
-	this_thread::sleep_for(chrono::microseconds(1000));
-	while (!t->empty() && !q->empty()){
-		for (int i = 0; i < readout->numActive; ++i){
-			prev[i] = count[i];
-			correctCount(count[i], q->front()[i]);
-		}
-		for (int i = 0; i < readout->numActive; ++i){
-			if (count[i] > prev[i]){
-				elapsed = t->front() - first;
-				tstamp = elapsed.count();
-				out << setw(9) << fixed << setprecision(2) << elapsed.count();
-				for (int i = 0; i < readout->numActive; i++)
-				{
-					out << "    " << setw(13) << count[i];
-				}
-				out << endl;
-				tr.Fill();
-				break;
-			}
-			q->pop();
-			t->pop();
-		}
-	}
-	tr.Write();
-	f.Save();
-	out.close();
-}
 
 void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run)
 {
@@ -1071,4 +941,23 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 	catch (bad_alloc e){
 		cout << "found exception " << e.what() << endl;
 	}
+}
+
+static bool checkq(const Spsc_int &x){
+  return x.read_available() == 0;
+}
+static bool checkqg(const Spsc_int &x){
+  return x.read_available() > 0;
+}
+static bool checkqe(const Spsc_int &x){
+  return x.read_available() == 0;
+}
+inline static void correctCount(int &count, int next){
+  int temp = count % OVER;
+  if (temp < next){
+    count += next - temp;
+  }
+  else if (temp > next){
+    count += OVER + next - temp;
+  }
 }
