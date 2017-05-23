@@ -39,8 +39,7 @@ Histogram* Image;
 static bool connected = false;
 Offset offsets[4];
 
-BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
-{
+BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent){
 	//mot = new MotorController(3, 9600);
 	//volt = new VoltageNI();
 	//volt = new VoltageControl(5);
@@ -48,7 +47,6 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent)
 	pglobalheader = &globalHeader;
 	vf = new VoltageFactory();
 	readout = new Readout();
-
 }
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
@@ -384,8 +382,8 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event)
 	message->runtype = scanType;
 	//message->motorstepx = motorstepx;
 	//message->motorstepy = motorstepy;
-	globalHeader.motorstepx = motorstepx;
-	globalHeader.motorstepy = motorstepy;
+	//globalHeader.motorstepx = motorstepx;
+	//globalHeader.motorstepy = motorstepy;
 
 }
 
@@ -602,20 +600,16 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	runfile << tempNum;
 	runfile.close();
 
-	if (!volt)
-	{
+	if (!volt){
 		wxMessageBox("Voltage controller not connected");
 		run = true;
 	}
-
-	if (!nim)
-	{
+	if (!nim){
 		wxMessageBox("NIMBox not connected");
 		run = true;
 	}
 
-	if (!mot && !(scanType == "Free" || scanType == "FreeAP"))
-	{
+	if (!mot && !(scanType == "Free" || scanType == "FreeAP")){
 		wxMessageBox("X-Y controller not connected");
 		run = true;
 	}
@@ -641,7 +635,7 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	if (scanType == "LineScan" && run == false)
 	{
 		run = true;
-		thread t1(doLineScan, mot, nim, volt, message, pglobalheader, &run);
+		thread t1(doLineScan, mot, nim, volt, message, readout, pglobalheader, &run);
 		t1.detach();
 	}
 	else if (scanType == "Free" && run == false)
@@ -654,42 +648,29 @@ void BigFrame::startSelected(wxCommandEvent& event)
         activeReadout.push_back(i + 1);
       }
     }
-    //void doWeinerCounta(WeinerCounter *nim, double volt, string runType, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool> *run)
-    //doWeinerCount(nim, pglobalheader, message, readout, &run);
-    thread t1(doWeinerCounta, nim, "", pglobalheader, message, readout, &run);
-    //thread t1(doWeinerCountInf, nim, message->voltageStart, pglobalheader, "free", "", &run, readout->lines);
+    message->voltage = message->voltageStart;
+    thread t1(doWeinerCountInf, nim, "", pglobalheader, message, readout, volt, &run);
 		t1.detach();
 	}
-	else if (scanType == "FreeAP" && run == false)
-	{
+	else if (scanType == "FreeAP" && run == false){
 		run = true;
     thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
-    //run = true;
     t1.detach();
 	}
-	else if (scanType == "ScanAP" && run == false)
-	{
+	else if (scanType == "ScanAP" && run == false){
 		run = true;
 		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
-		//run = true;
+		t1.detach();
+	}
+	else if (scanType == "HexScanX" && run == false){
+		run = true;
+		thread t1(doHexScanX, mot, nim, volt, message, readout, pglobalheader, &run);
 		t1.detach();
 	}
 
-	//run = false;
-	//messagebox.Show(false);
-	//messagebox.Destroy();
-
-	else if (scanType == "HexScanX" && run == false)
-	{
+	else if (scanType == "XYScan" && run == false){
 		run = true;
-		thread t1(doHexScanX, mot, nim, volt, message, pglobalheader, &run);
-		t1.detach();
-	}
-
-	else if (scanType == "XYScan" && run == false)
-	{
-		run = true;
-		thread t1(doXYScan, mot, nim, volt, message, pglobalheader, &run);
+		thread t1(doXYScan, mot, nim, volt, message, readout, pglobalheader, &run);
 		t1.detach();
 	}
 }
@@ -703,13 +684,11 @@ void BigFrame::openReadoutPane(wxCommandEvent& event)
 
 }
 
-readoutedit::readoutedit(wxWindow* parent) : MyFrame4(parent)
-{
+readoutedit::readoutedit(wxWindow* parent) : MyFrame4(parent){
 
 }
 
-void readoutedit::okbuttonclicked(wxCommandEvent &event)
-{
+void readoutedit::okbuttonclicked(wxCommandEvent &event){
 	while(!readout->active.empty())
 	{
 		readout->active.pop_back();

@@ -16,154 +16,6 @@ static bool checkq(const Spsc_int &x);
 static bool checkqg(const Spsc_int &x);
 static bool checkqe(const Spsc_int &x);
 
-void writeInfoAfterN(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg){
-  //assert(q.size() < 20);
-  this_thread::sleep_for(chrono::microseconds(1000));
-  std::chrono::duration<double, std::milli> elapsed;
-  ofstream out;
-  out.open(fileName + ".txt");
-  out << hg << ha;
-  out << " Time (ms)   ";
-  for (int i = 0, leni = ha.readoutLines.size(); i < leni; ++i){
-    out <<"Count "<< left << setw(13) << ha.readoutLines[i];
-  }
-   out<<endl;
-  
-  //should use something like std bind here
-  while (any_of(q.begin(), q.end(), checkq) || t.read_available() == 0){}
-  
-  this_thread::sleep_for(chrono::microseconds(1000));
-  
-  int count[20],prev[20];
-  for (int i = 0, leni = q.size(); i < leni; ++i){ count[i] = prev[i] = q[i].front(); }
-  for (int i = q.size(); i < 20; ++i){ count[i] = prev[i] = 0; }
-  
-  ////////////////////////////////////////////////////
-  string tempst;
-  tempst = fileName + ".root";
-  TFile f(tempst.c_str(), "RECREATE");
-  tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) AP";
-  TTree tr("ap", tempst.c_str());
-  char  tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
-  strcpy(tempPanel, hg.panelName.c_str());
-  strcpy(tempSource, hg.sourceName.c_str());
-  strcpy(tempGas, hg.gas.c_str());
-  strcpy(tempSetup, hg.sourceConfig.c_str());
-  strcpy(tempRO, hg.roLines.c_str());
-  strcpy(tempHV, hg.linesHV.c_str());
-  strcpy(tempTrigHV, hg.triggerHV.c_str());
-  strcpy(tempTrigRO, hg.triggerRO.c_str());
-  Double_t tstamp, tempPress, tempVolt, tempDiscThr, tempQuench, tempNumHv, tempNumRo, tempAttenRo, tempAttenHV;
-  tempPress = hg.pressure;
-  tempVolt = ha.voltage;
-  tempDiscThr = hg.discThresh;
-  tempQuench = hg.quench;
-  tempNumHv = hg.numHV;
-  tempNumRo = hg.numRO;
-  tempAttenRo = hg.attenRO;
-  tempAttenHV = hg.attenHV;
-  Int_t readoutLines[20];
-  for (int i = 0, len = ha.readoutLines.size(); i < len; ++i){
-    readoutLines[i] = ha.readoutLines[i];
-  }
-  Int_t tempSamp = ha.numReadings;
-  Int_t tempPix = ha.numPixels;
-  tr.Branch("panel", tempPanel, "panel[200]/C");
-  tr.Branch("source", tempSource, "source[200]/C");
-  tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
-  tr.Branch("gasmix", tempGas, "gasmix[200]/C");
-  tr.Branch("press", &tempPress, "press/D");
-  tr.Branch("hvVal", &tempVolt, "hvVal/D");
-  tr.Branch("disThr", &tempDiscThr, "disThr/D");
-  tr.Branch("quench", &tempQuench, "quench/D");
-  tr.Branch("trg_ro", tempTrigRO, "trg_ro[200]/C");
-  tr.Branch("dB_ro", &tempAttenRo, "dB_ro/s");
-  tr.Branch("nch_ro", &tempNumRo, "nch_ro/s");
-  tr.Branch("line_ro", tempRO, "line_ro[200]/C");
-  tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
-  tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
-  tr.Branch("nch_hv", &tempNumHv, "nch_hv/s");
-  tr.Branch("line_hv", tempHV, "line_hv[200]/C");
-  tr.Branch("tstamp", &tstamp, "tstamp/D");
-  tr.Branch("data", count, "data[20]/i");
-  tr.Branch("samps", &tempSamp, "samps/i");
-  tr.Branch("num_pix", &tempPix, "num_pix/i");
-  tr.Branch("readoutLines", readoutLines, "readoutLines[20]/i");
-  /////////////////////////////////////////////////////
-  HighResClock::time_point first = t.front();
-  elapsed = t.front() - first;
-  tstamp = elapsed.count();
-  out << setw(9) << fixed << setprecision(2) << elapsed.count();
-  for (int i = 0, leni = q.size(); i < leni; ++i){
-    out << "    " << setw(13) << count[i];
-  }
-  out << endl;
-  
-  //this should be changed to a for_each wtih memfn
-  //for_each(q.begin(), q.end(), mem_fn(&Spsc_int::pop));
-  for (auto &x : q){
-    x.pop();
-  }
-  
-  t.pop();
-  tr.Fill();
-  while (!*done){
-    this_thread::sleep_for(chrono::microseconds(10));
-    while (all_of(q.begin(), q.end(), checkqg)  && t.read_available() > 0){
-      for (int i = 0, leni = q.size(); i < leni; ++i){
-        prev[i] = count[i];
-        correctCount(count[i], q[i].front());
-      }
-      for (int i = 0, leni = q.size(); i < leni; ++i){
-        if (count[i] > prev[i]){
-          ////////////above this is fine
-          elapsed = t.front() - first;
-          tstamp = elapsed.count();
-          out << setw(9) << fixed << setprecision(2) << elapsed.count();
-          for (int j = 0, lenj = q.size(); j < lenj; ++j){
-            out << "    " << setw(13) << count[j];
-          }
-          out << endl;
-          tr.Fill();
-          break;
-
-        }
-      }
-      for (auto &x : q){
-        x.pop();
-      }
-      t.pop();
-    }
-  }
-  this_thread::sleep_for(chrono::microseconds(1000));
-  while (!t.empty() && !any_of(q.begin(), q.end(), checkqe)){
-    for (int i = 0, leni = q.size(); i < q.size(); ++i){
-      prev[i] = count[i];
-      correctCount(count[i], q[i].front());
-    }
-    for (int i = 0, leni = q.size(); i < leni; ++i){
-      if (count[i] > prev[i]){
-        elapsed = t.front() - first;
-        tstamp = elapsed.count();
-        out << setw(9) << fixed << setprecision(2) << elapsed.count();
-        for (int j = 0, lenj = q.size(); j < lenj; ++j){
-          out << "    " << setw(13) << count[j];
-        }
-        out << endl;
-        tr.Fill();
-        break;
-      }
-      for (auto &x : q){
-        x.pop();
-      }
-      t.pop();
-    }
-  }
-  tr.Write();
-  f.Save();
-  
-}
-
 void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, string fileName, const HeaderInfoAfter& ha, const HeaderInfoGen& hg, const Messages& message){
   //assert(q.size() < 20);
   this_thread::sleep_for(chrono::microseconds(1000));
@@ -195,11 +47,12 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   //add the count variables
   Double_t tstamp;
   tr.Branch("tstamp", &tstamp, "tstamp/D");
-  tr.Branch("data", count, "data[20]/i");
+  tr.Branch("data", count, "data[20]/I");
 
   //add all info from the general header
   char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
   Double_t tempPress, tempDiscThr, tempQuench, tempNumHv, tempNumRo, tempAttenRo, tempAttenHV;
+  Long_t runNumber;
   strcpy(tempPanel, hg.panelName.c_str());
   tr.Branch("panel", tempPanel, "panel[200]/C");
   strcpy(tempSource, hg.sourceName.c_str());
@@ -230,7 +83,8 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
   tempAttenHV = hg.attenHV;
   tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
-
+  runNumber = hg.runNumber;
+  tr.Branch("runNumber", &runNumber, "runNumber/L");
   //add all info from the after-pulse header
   Double_t tempVolt = ha.voltage;
   Int_t tempPix = ha.numPixels;
@@ -243,9 +97,9 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
     readoutLines[i] = 0;
   }
   tr.Branch("hvVal", &tempVolt, "hvVal/D");
-  tr.Branch("num_pix", &tempPix, "num_pix/i");
-  tr.Branch("readoutLines", readoutLines, "readoutLines[20]/i");
-  tr.Branch("numReadings", numReadings, "numReadings/i");
+  tr.Branch("num_pix", &tempPix, "num_pix/I");
+  tr.Branch("readoutLines", readoutLines, "readoutLines[20]/I");
+  tr.Branch("numReadings", numReadings, "numReadings/I");
   //add all info from the message  
   /*int voltage;
 	std::string filename;
@@ -265,7 +119,36 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
 	int column;
 
 	std::vector<int> pixX, pixY;*/
-  
+  Int_t time, numPix, maxOffsetX, maxOffsetY, maxStepX, maxStepY, motorStepX, motorStepY, voltageStart, voltageStep, voltageEnd, row, column;
+  char runType[200];
+  time = message.time;
+  tr.Branch("time", &time, "hvVal/I");
+  numPix = message.numPix;
+  tr.Branch("numPix", &numPix, "numPix/I");
+  maxOffsetX = message.maxOffsetX;
+  tr.Branch("maxOffsetX", &maxOffsetX, "maxOffsetX/I");
+  maxOffsetY = message.maxOffsetY;
+  tr.Branch("maxOffsetY", &maxOffsetY, "maxOffsetY/I");
+  maxStepX = message.maxStepX;
+  tr.Branch("maxStepX", &maxStepX, "maxStepX/I");
+  maxStepY = message.maxStepY;
+  tr.Branch("maxStepY", &maxStepY, "maxStepY/I");
+  motorStepX = message.motorstepx;
+  tr.Branch("motorStepX", &motorStepX, "motorStepX/I");
+  motorStepY = message.motorstepy;
+  tr.Branch("motorStepY", &motorStepY, "motorStepY/I");
+  voltageStart = message.voltageStart;
+  tr.Branch("voltageStart", &voltageStart, "voltageStart/I");
+  voltageStep = message.voltageStep;
+  tr.Branch("voltageStep", &voltageStep, "voltageStep/I");
+  voltageEnd = message.voltageEnd;
+  tr.Branch("voltageEnd", &voltageEnd, "voltageEnd/I");
+  row = message.row;
+  tr.Branch("row", &row, "row/I");
+  column = message.column;
+  tr.Branch("column", &column, "column/I");
+  strcpy(runType, message.runtype.c_str());
+  tr.Branch("runType", &runType, "runType[200]/C");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t.front();
   elapsed = t.front() - first;
@@ -385,43 +268,8 @@ static string initWeinerFile(HeaderInfoGen *header, string const & runType, stri
   return sstream.str();
 }
 
-void doWeinerCount(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, double measurementDuration, vector<int> activeReadout){
-  time_t tm = time(nullptr);
-  string runFullName;
-  runFullName = ".\\CollectedData\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  runFullName += hg->panelName + "\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  runFullName += hg->gas + "\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  runFullName += to_string(hg->pressure) + "torr\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  runFullName += runType + "\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  if (runName != ""){
-    runFullName += runName + "\\";
-    CreateDirectory(runFullName.c_str(), NULL);
-  }
-  runFullName += hg->panelName +"_" + hg->gas + "_" + to_string(hg->pressure)+ "torr_" + to_string(volt) + "V" + "_" + to_string(tm) + "_AP";
-  int numSamples = measurementDuration * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
-  HeaderInfoAfter ha;
-  ha.numPixels = activeReadout.size();
-  ha.numReadings = numSamples;
-  ha.voltage = volt;
-  ha.readoutLines = activeReadout;
-  //get the number of samples for this number of lines
-  vector <Spsc_int> q(activeReadout.size());
-  Spsc_time t;
-  atomic<bool> done = false;
-  atomic<bool> control = false;
-  thread t2(writeInfoAfterN, ref(q), ref(t), &done, runFullName, ha, *hg);
-  readFromPixAfterN(activeReadout, &done, run, q, t, nim, numSamples);
-  if (t2.joinable()){
-    t2.join();
-  }
-}
 
-void doWeinerCounta(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool> *run){ 
+void doWeinerCount(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, Voltage* volt, atomic<bool> *run){ 
   string runFullName = initWeinerFile(header, message->runtype, runName, message->voltage);
   vector<int> activeReadout;
   for (size_t i = 0; i < readout->active.size(); ++i){
@@ -429,7 +277,7 @@ void doWeinerCounta(WeinerCounter *nim, string runName, HeaderInfoGen* header, M
       activeReadout.push_back(i + 1);
     }
   }
-  int numSamples = 10000 * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
+  int numSamples = message->time * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
   HeaderInfoAfter ha;
   ha.numPixels = activeReadout.size();
   ha.numReadings = numSamples;
@@ -440,48 +288,44 @@ void doWeinerCounta(WeinerCounter *nim, string runName, HeaderInfoGen* header, M
   Spsc_time t;
   atomic<bool> done = false;
   atomic<bool> control = false;
+  volt->setVoltage(message->voltage);
+  volt->turnOn();
   thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, *header, *message);
   readFromPixAfterN(activeReadout, &done, run, q, t, nim, numSamples);
   if (t2.joinable()){
     t2.join();
   }
+  volt->turnOff();
 }
 
-void doWeinerCountInf(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, vector<int> activeReadout){
-  time_t tm = time(nullptr);
-  string runFullName;
-  runFullName = ".\\CollectedData\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  runFullName += hg->panelName + "\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  runFullName += hg->gas + "\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  runFullName += to_string(hg->pressure) + "torr\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  runFullName += runType + "\\";
-  CreateDirectory(runFullName.c_str(), NULL);
-  if (runName != ""){
-    runFullName += runName += "\\";
-    CreateDirectory(runFullName.c_str(), NULL);
+void doWeinerCountInf(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, Voltage* volt, atomic<bool> *run){
+  string runFullName = initWeinerFile(header, message->runtype, runName, message->voltage);
+  vector<int> activeReadout;
+  for (size_t i = 0; i < readout->active.size(); ++i){
+    if (readout->active[i]){
+      activeReadout.push_back(i + 1);
+    }
   }
-  runFullName += hg->panelName + "_" + hg->gas + "_" + to_string(hg->pressure) + "torr_" + to_string(volt) + "V" + "_" + to_string(tm) + "_AP";
+  int numSamples = -1 * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
   HeaderInfoAfter ha;
   ha.numPixels = activeReadout.size();
-  ha.numReadings = -1;
-  ha.voltage = volt;
+  ha.numReadings = numSamples;
+  ha.voltage = message->voltage;
   ha.readoutLines = activeReadout;
   //get the number of samples for this number of lines
   vector <Spsc_int> q(activeReadout.size());
   Spsc_time t;
   atomic<bool> done = false;
   atomic<bool> control = false;
-  thread t2(writeInfoAfterN, ref(q), ref(t), &done, runFullName, ha, *hg);
+  volt->setVoltage(message->voltage);
+  volt->turnOn();
+  thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, *header, *message);
   readFromPixAfterNInf(activeReadout, &done, run, q, t, nim);
   if (t2.joinable()){
     t2.join();
   }
+  volt->turnOff();
 }
-
 
 void measureLines(WeinerCounter* nim, double time, double& actualTime, vector<int>& count, double intervalLength){
 
@@ -567,8 +411,7 @@ double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLen
   return count[lineNum-1] / elapsed.count();
 }
 
-void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run)
-{
+void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run){
 	string path = ".\\CollectedData\\";
 	string runName;
 	ofstream log;
@@ -615,54 +458,43 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	volt->setVoltage(0);
 	volt->turnOn();
 	string fullFile = "test.txt";
-		if (header->sourceConfig == "Dynamic")
-		{
+		if (header->sourceConfig == "Dynamic"){
 			volt->setVoltage(starting);
 			volt->turnOn();
 			log << "Going to home" << endl;
 			mot->goZero();
 			//mot->stepMotor(2, -motstepy);
-			if (motstepx != 0)
-			{
+			if (motstepx != 0){
 				mot->stepMotor(1, -motstepx);
 			}
 			//mot->stepMotor(2, motstep);
 			//mot->mapPixel(fullFile, nim, 1, 1, duration, 0, motend, 0, motstep);
-			if (motstepy == 0)
-			{
+			if (motstepy == 0){
 				motbeginy = motendy;
 				step = 10000;
 			}
 
 			int stepsiny = 0;
 
-			for (int i = motbeginx; i <= motendx && *run == true; i += motstepx)
-			{
+			for (int i = motbeginx; i <= motendx && *run == true; i += motstepx){
 				mot->stepMotor(2, -stepsiny*motendy);
 				mot->stepMotor(2, -motstepy);
-				//mot->stepMotor(2, motstepy);
 				mot->stepMotor(1, motstepx); 
 
 				log << "At " << i << "steps x" << ", ";
-
-				for (int j = motbeginy; j <= motendy && *run == true; j += motstepy) // loop y
-				{	
+        //loop over y
+				for (int j = motbeginy; j <= motendy && *run == true; j += motstepy){	
 					stepsiny=1;
 					mot->stepMotor(2, motstepy);
 					log << i << "steps y" << endl;
 
-					for (int k = starting; k <= stop && *run == true; k += step)
-					{
-						//if (end == true)
-						//break;
+					for (int k = starting; k <= stop && *run == true; k += step){
 						log << "Setting Voltage to: " << k << endl;
-						volt->setVoltage(k);
 						log << "Begin Counting" << endl;
-						temp = runName + to_string(k) + "_" + "volts" + "_" + to_string((long)i) + "_x" + to_string((long)j) + "_y" + ".txt";
             time_t tm = time(nullptr);
-            doWeinerCount(nim, k, header, "LineScan", "LineScan_" + to_string(tm), run, message->time);
+            message->voltage = k;
+            doWeinerCount(nim, message->runtype + "_" + to_string(tm), header, message, readout, volt, run);
             log << "Finished Counting" << endl;
-
 					}
 				}
 			}
@@ -702,15 +534,14 @@ void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltag
   }
   string scanName = "Scan_" + header->panelName + "_" + header->gas + "_" + to_string(header->pressure) + "torr_" + to_string(time(nullptr));
   for (double i = message->voltageStart; i <= message->voltageEnd && run; i += message->voltageStep){
-    doWeinerCount(nim, i, header, "Scan", scanName, run, message->time, activeReadout);
+    doWeinerCount(nim, scanName, header, message, readout, volt, run);
   }
   return;
 }
 
 
 
-void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run)
-{
+void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run){
 	string path = ".\\CollectedData\\";
 	string runName;
 	ofstream log;
@@ -804,10 +635,9 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 					log << "Setting Voltage to: " << k << endl;
 					volt->setVoltage(k);
 					log << "Begin Counting" << endl;
-					temp = runName + to_string(k) + "_" + "volts" + "_" + to_string((long)i) + "_x" + to_string((long)j) + "_y" + ".txt";
           time_t tm = time(nullptr);
-          doWeinerCount(nim, k, header, "doHexScanX", "doHexScanX_" + to_string(tm), run, message->time);
-					log << "Finished Counting" << endl;
+          doWeinerCount(nim, "doHexScanX_" + to_string(tm), header, message, readout, volt, run);
+          log << "Finished Counting" << endl;
 
 				}
 			}
@@ -822,8 +652,7 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	*run = false;
 }
 
-void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run)
-{
+void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run){
 	try{
 		string path = ".\\CollectedData\\";
 		string runName;
@@ -923,8 +752,8 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 						//volt->setVoltage(k);
 						log << "Begin Counting" << endl;
             time_t tm = time(nullptr);
-            doWeinerCount(nim, k, header, "XYScan", "XYScan_" + to_string(tm), run, message->time);
-						log << "Finished Counting" << endl;
+            doWeinerCount(nim, "XYScan_" + to_string(tm), header, message, readout, volt, run);
+            log << "Finished Counting" << endl;
 					}
 					//mot->stepMotor(2, -motendy);
 				}

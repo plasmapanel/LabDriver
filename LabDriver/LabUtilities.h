@@ -23,14 +23,13 @@ using Spsc_time = boost::lockfree::spsc_queue < HighResClock::time_point, boost:
 
 //uses the nim box to produce a counter file for the entire device saved in a file with the name fileName
 //counter functions
-//time-dependent non interruptable version
-void doWeinerCount(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run, double measurementDuration,
-  vector<int> activeReadout = {1, 2, 3, 4, 5, 6, 7, 8 , 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20});
 
-void doWeinerCounta(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, atomic<bool> *run);
+//time-dependent non interruptable version
+void doWeinerCount(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, Voltage* volt, atomic<bool> *run);
+
 //time independent verison
-void doWeinerCountInf(WeinerCounter *nim, double volt, const HeaderInfoGen *hg, string runType, string runName, atomic<bool> *run,
-  vector<int> activeReadout = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 });
+void doWeinerCountInf(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, Voltage* volt, atomic<bool> *run);
+
 
 //IF YOU ARE USING THINS PACKAGE JUST FOR THE UTILITIES YOU DO NOT NEED TO BE CONCERNED WITH THE CODE BELOW
 //ALL CODE BELOW IS HELPER FUNCTIONS OR CONSTANTS
@@ -42,7 +41,7 @@ void measureLines(WeinerCounter* nim, double time, double &actualTime, vector<in
 const int OVER = 65536;
 
 //for GUI
-void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
+void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run);
 
 string createFileName(HeaderInfoGen *header, Messages* message, time_t t);
 
@@ -50,8 +49,8 @@ void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltag
 
 
 
-void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
-void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, HeaderInfoGen* header, atomic<bool>* run);
+void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run);
+void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run);
 
 
 
