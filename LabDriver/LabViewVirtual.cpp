@@ -469,7 +469,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxString m_radioBox4Choices[] = { wxT("H"), wxT("M1"), wxT("M2"), wxT("M3"), wxT("M4") };
 	int m_radioBox4NChoices = sizeof( m_radioBox4Choices ) / sizeof( wxString );
 	m_radioBox4 = new wxRadioBox( this, wxID_ANY, wxT("Marks"), wxDefaultPosition, wxDefaultSize, m_radioBox4NChoices, m_radioBox4Choices, 1, wxRA_SPECIFY_COLS );
-	m_radioBox4->SetSelection( 0 );
+	m_radioBox4->SetSelection( 1 );
 	bSizer25->Add( m_radioBox4, 0, wxALL, 5 );
 	
 	wxGridSizer* gSizer1;
@@ -539,7 +539,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	sbSizer5->Add( bSizer40, 1, wxEXPAND, 5 );
 	
-	wxString m_choice1Choices[] = { wxT("Free"), wxT("FreeAP"), wxT("Line Scan"), wxT("Hex Scan X"), wxT("Hex Scan Y"), wxT("X Y Scan") };
+	wxString m_choice1Choices[] = { wxT("Free"), wxT("Voltage_Scan"), wxT("Line_Scan"), wxT("Hex_Scan_X"), wxT("Hex_Scan_Y"), wxT("X_Y_Scan") };
 	int m_choice1NChoices = sizeof( m_choice1Choices ) / sizeof( wxString );
 	m_choice1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1NChoices, m_choice1Choices, 0 );
 	m_choice1->SetSelection( 0 );
@@ -616,7 +616,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_textCtrl29 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("400"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textCtrl29, 0, wxALL, 5 );
 	
-	m_staticText22 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Start Voltage (V)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText22 = new wxStaticText( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Current/Start Voltage (V)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText22->Wrap( -1 );
 	fgSizer2->Add( m_staticText22, 0, wxALL, 5 );
 	

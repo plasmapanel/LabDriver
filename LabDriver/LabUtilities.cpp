@@ -1,6 +1,10 @@
 #include "LabUtilities.h"
 #include <iomanip>
 #include <functional>
+////
+#include <exception>
+#include <stdexcept>
+///
 //#include "LabView.h"
 #include "headers.h"
 
@@ -51,8 +55,9 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
 
   //add all info from the general header
   char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
-  Double_t tempPress, tempDiscThr, tempQuench, tempNumHv, tempNumRo, tempAttenRo, tempAttenHV;
-  Long_t runNumber;
+  Double_t tempPress, tempDiscThr, tempQuench, tempAttenRo, tempAttenHV;
+  Int_t tempNumRo, tempNumHv;
+  Long64_t runNumber;
   strcpy(tempPanel, hg.panelName.c_str());
   tr.Branch("panel", tempPanel, "panel[200]/C");
   strcpy(tempSource, hg.sourceName.c_str());
@@ -68,21 +73,21 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tempQuench = hg.quench;
   tr.Branch("quench", &tempQuench, "quench/D");
   tempNumRo = hg.numRO;
-  tr.Branch("nch_ro", &tempNumRo, "nch_ro/s");
+  tr.Branch("nch_ro", &tempNumRo, "nch_ro/I");
   strcpy(tempRO, hg.roLines.c_str());
   tr.Branch("line_ro", tempRO, "line_ro[200]/C");
   strcpy(tempTrigRO, hg.triggerRO.c_str());
   tr.Branch("trg_ro", tempTrigRO, "trg_ro[200]/C");
   tempAttenRo = hg.attenRO;
-  tr.Branch("dB_ro", &tempAttenRo, "dB_ro/s");
+  tr.Branch("dB_ro", &tempAttenRo, "dB_ro/D");
   tempNumHv = hg.numHV;
-  tr.Branch("nch_hv", &tempNumHv, "nch_hv/s");
+  tr.Branch("nch_hv", &tempNumHv, "nch_hv/I");
   strcpy(tempHV, hg.linesHV.c_str());
   tr.Branch("line_hv", tempHV, "line_hv[200]/C");
   strcpy(tempTrigHV, hg.triggerHV.c_str());
   tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
   tempAttenHV = hg.attenHV;
-  tr.Branch("dB_hv", &tempAttenHV, "dB_hv/s");
+  tr.Branch("dB_hv", &tempAttenHV, "dB_hv/D");
   runNumber = hg.runNumber;
   tr.Branch("runNumber", &runNumber, "runNumber/L");
   //add all info from the after-pulse header
@@ -99,7 +104,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("hvVal", &tempVolt, "hvVal/D");
   tr.Branch("num_pix", &tempPix, "num_pix/I");
   tr.Branch("readoutLines", readoutLines, "readoutLines[20]/I");
-  tr.Branch("numReadings", numReadings, "numReadings/I");
+  tr.Branch("numReadings", &numReadings, "numReadings/I");
   //add all info from the message  
   /*int voltage;
 	std::string filename;
@@ -161,7 +166,6 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
 
   for (auto &x : q){ x.pop(); }
   t.pop();
-
   tr.Fill();
   //loop until data is done being taken
   while (!*done){
@@ -244,7 +248,7 @@ void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<boo
 	*done = true;
 }
 
-static string initWeinerFile(HeaderInfoGen *header, string const & runType, string const & runName, double voltage){
+static string initWeinerFile(const HeaderInfoGen &header, const Messages &message, string const & runType, string const & runName, double voltage){
   static const string DEFAULT_DIR = ".\\CollectedData\\";
   time_t tm = time(nullptr);
   stringstream sstream;
@@ -252,11 +256,11 @@ static string initWeinerFile(HeaderInfoGen *header, string const & runType, stri
   sstream.precision(2);
   sstream << DEFAULT_DIR;
   CreateDirectory(sstream.str().c_str(), NULL);
-  sstream << header->panelName << "\\";  
+  sstream << header.panelName << "\\";  
   CreateDirectory(sstream.str().c_str(), NULL);
-  sstream << header->gas << "\\";
+  sstream << header.gas << "\\";
   CreateDirectory(sstream.str().c_str(), NULL);
-  sstream << header->pressure << "torr\\";
+  sstream << header.pressure << "torr\\";
   CreateDirectory(sstream.str().c_str(), NULL);
   sstream << runType << "\\";
   CreateDirectory(sstream.str().c_str(), NULL);
@@ -264,33 +268,60 @@ static string initWeinerFile(HeaderInfoGen *header, string const & runType, stri
     sstream << runName << "\\";
     CreateDirectory(sstream.str().c_str(), NULL);
   }
-  sstream << header->panelName << "_" << header->gas << "_" << header->pressure << "torr_" << voltage << "V" << "_" << tm << "_AP";
+  sstream << header.panelName << "_" << header.gas << "_" << header.pressure << "torr_" << voltage << "V_";
+  if (runType == "Hex_Scan_X" || runType == "XY_Scan" || runType == "Line_Scan" || runType == "Hex_Scan_Y"){
+    sstream << "X" << message.motorstepx << "_Y" << message.motorstepy << "_";
+  }
+    sstream << tm << "_AP";
   return sstream.str();
 }
 
+static string initWeinerLogFile(const HeaderInfoGen &header, const Messages &message, string const & runType, string const & runName){
+  static const string DEFAULT_DIR = ".\\CollectedData\\";
+  time_t tm = time(nullptr);
+  stringstream sstream;
+  sstream << fixed;
+  sstream.precision(2);
+  sstream << DEFAULT_DIR;
+  CreateDirectory(sstream.str().c_str(), NULL);
+  sstream << header.panelName << "\\";
+  CreateDirectory(sstream.str().c_str(), NULL);
+  sstream << header.gas << "\\";
+  CreateDirectory(sstream.str().c_str(), NULL);
+  sstream << header.pressure << "torr\\";
+  CreateDirectory(sstream.str().c_str(), NULL);
+  sstream << runType << "\\";
+  CreateDirectory(sstream.str().c_str(), NULL);
+  if (runName != ""){
+    sstream << runName << "\\";
+    CreateDirectory(sstream.str().c_str(), NULL);
+  }
+  sstream << "log.txt";
+  return sstream.str();
+}
 
-void doWeinerCount(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, Voltage* volt, atomic<bool> *run){ 
-  string runFullName = initWeinerFile(header, message->runtype, runName, message->voltage);
+void doWeinerCount(WeinerCounter *nim, string runName, HeaderInfoGen header, Messages message, Readout readout, Voltage* volt, atomic<bool> *run){ 
+  string runFullName = initWeinerFile(header, message, message.runtype, runName, message.voltage);
   vector<int> activeReadout;
-  for (size_t i = 0; i < readout->active.size(); ++i){
-    if (readout->active[i]){
+  for (size_t i = 0; i < readout.active.size(); ++i){
+    if (readout.active[i]){
       activeReadout.push_back(i + 1);
     }
   }
-  int numSamples = message->time * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
+  int numSamples = message.time * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
   HeaderInfoAfter ha;
   ha.numPixels = activeReadout.size();
   ha.numReadings = numSamples;
-  ha.voltage = message->voltage;
+  ha.voltage = message.voltage;
   ha.readoutLines = activeReadout;
   //get the number of samples for this number of lines
   vector <Spsc_int> q(activeReadout.size());
   Spsc_time t;
   atomic<bool> done = false;
   atomic<bool> control = false;
-  volt->setVoltage(message->voltage);
+  volt->setVoltage(message.voltage);
   volt->turnOn();
-  thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, *header, *message);
+  thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, header, message);
   readFromPixAfterN(activeReadout, &done, run, q, t, nim, numSamples);
   if (t2.joinable()){
     t2.join();
@@ -298,28 +329,28 @@ void doWeinerCount(WeinerCounter *nim, string runName, HeaderInfoGen* header, Me
   volt->turnOff();
 }
 
-void doWeinerCountInf(WeinerCounter *nim, string runName, HeaderInfoGen* header, Messages* message, Readout* readout, Voltage* volt, atomic<bool> *run){
-  string runFullName = initWeinerFile(header, message->runtype, runName, message->voltage);
+void doWeinerCountInf(WeinerCounter *nim, string runName, HeaderInfoGen header, Messages message, Readout readout, Voltage* volt, atomic<bool> *run){
+  string runFullName = initWeinerFile(header, message, message.runtype, runName, message.voltage);
   vector<int> activeReadout;
-  for (size_t i = 0; i < readout->active.size(); ++i){
-    if (readout->active[i]){
+  for (size_t i = 0; i < readout.active.size(); ++i){
+    if (readout.active[i]){
       activeReadout.push_back(i + 1);
     }
   }
-  int numSamples = -1 * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
+  int numSamples = 0 * 1000 / NIM_MS_PER_CHANNEL_MEASUREMENT / activeReadout.size();
   HeaderInfoAfter ha;
   ha.numPixels = activeReadout.size();
   ha.numReadings = numSamples;
-  ha.voltage = message->voltage;
+  ha.voltage = message.voltage;
   ha.readoutLines = activeReadout;
   //get the number of samples for this number of lines
   vector <Spsc_int> q(activeReadout.size());
   Spsc_time t;
   atomic<bool> done = false;
   atomic<bool> control = false;
-  volt->setVoltage(message->voltage);
+  volt->setVoltage(message.voltage);
   volt->turnOn();
-  thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, *header, *message);
+  thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, header, message);
   readFromPixAfterNInf(activeReadout, &done, run, q, t, nim);
   if (t2.joinable()){
     t2.join();
@@ -411,54 +442,33 @@ double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLen
   return count[lineNum-1] / elapsed.count();
 }
 
-void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run){
-	string path = ".\\CollectedData\\";
-	string runName;
+void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages message, Readout readout, HeaderInfoGen header, atomic<bool>* run){
 	ofstream log;
-	vector<string> pix;
-	pix.push_back("1");
-	int motbeginy = 0, motendy = message->maxOffsetY, motstepy = message->maxStepY;
-	int motbeginx = 0, motendx = message->maxOffsetX, motstepx = message->maxStepX;
-	int starting = message->voltageStart;
-	int stop = message->voltageEnd;
-	int duration = message->time;
-	//int num;
-	//vector<int> x;
-	//vector<int> y;
-	//double freq;
-	int step = message->voltageStep;
-	char tempc = 25;
-	string temp;
-	//vector<string> pix;
+	
+  string runName = message.runtype + "_" + header.panelName + "_" + header.gas + "_" + to_string(header.pressure) + "torr_" + to_string(time(nullptr));
+  log.open(initWeinerLogFile(header, message, message.runtype, runName), ofstream::ate);
 
-	time_t t = time(nullptr);
-	// TODO: add identifier to first directory, possibly panel name?
-	CreateDirectory(path.c_str(), NULL);
-	runName = path + "\\";
-	runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
-	CreateDirectory(runName.c_str(), NULL);
-	//runName = path + header->gas + "\\";
-	//CreateDirectory(runName.c_str(), NULL);
-	runName += to_string((int)header->pressure);
-	runName += +"torr\\";
-	CreateDirectory(runName.c_str(), NULL);
-	//runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
-	//CreateDirectory(runName.c_str(), NULL);
-	log.open(runName + "log.txt", ofstream::ate);
-	runName += "LineScan\\";
-	CreateDirectory(runName.c_str(), NULL);
+
+  int motbeginy = 0, motendy = message.maxOffsetY, motstepy = message.maxStepY;
+  int motbeginx = 0, motendx = message.maxOffsetX, motstepx = message.maxStepX;
+  int starting = message.voltageStart;
+  int stop = message.voltageEnd;
+  int duration = message.time;
+  int step = message.voltageStep;
+
+
 	log << "Intitalized Line Scan Run" << endl;
 	log << "Starting: " << starting << endl;
 	log << "Stop: " << stop << endl;
 	log << "Step Size: " << step << endl;
-	log << "Interval Duration: " << message->time << endl;
-	log << "Sampling Frequency: " << message->frequency << endl;
+	log << "Interval Duration: " << message.time << endl;
+	log << "Sampling Frequency: " << message.frequency << endl;
 	
 	log << "Turning On High Voltage" << endl;
 	volt->setVoltage(0);
 	volt->turnOn();
 	string fullFile = "test.txt";
-		if (header->sourceConfig == "Dynamic"){
+		if (header.sourceConfig == "Dynamic"){
 			volt->setVoltage(starting);
 			volt->turnOn();
 			log << "Going to home" << endl;
@@ -491,9 +501,8 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 					for (int k = starting; k <= stop && *run == true; k += step){
 						log << "Setting Voltage to: " << k << endl;
 						log << "Begin Counting" << endl;
-            time_t tm = time(nullptr);
-            message->voltage = k;
-            doWeinerCount(nim, message->runtype + "_" + to_string(tm), header, message, readout, volt, run);
+            message.voltage = k;
+            doWeinerCount(nim, runName, header, message, readout, volt, run);
             log << "Finished Counting" << endl;
 					}
 				}
@@ -508,32 +517,11 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	*run = false;
 }
 
-string createFileName(HeaderInfoGen *header, Messages* message, time_t t){
-	string runName;
-	runName = ".\\CollectedData\\";
-	// TODO: add identifier to first directory, possibly panel name?
-	CreateDirectory(runName.c_str(), NULL);
-	//runName = path + header->gas + "\\";
-	//CreateDirectory(runName.c_str(), NULL);
-	runName += to_string((int)header->pressure);
-	runName += +"Torr\\";
-	CreateDirectory(runName.c_str(), NULL);
-	runName += header->panelName + "_" + to_string(t) + "\\";// +"_" + header->gas + "_" + to_string((int)header->pressure) + "_" + to_string(t) + "\\";
-	CreateDirectory(runName.c_str(), NULL);
-	runName += message->runtype;
-	CreateDirectory(runName.c_str(), NULL);
-	return runName;
-}
 
-void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltage *volt, Messages* message, Readout* readout, atomic<bool>* run){
-  vector<int> activeReadout;
-  for (size_t i = 0; i < readout->active.size(); ++i){
-    if (readout->active[i]){
-      activeReadout.push_back(i + 1);
-    }
-  }
-  string scanName = "Scan_" + header->panelName + "_" + header->gas + "_" + to_string(header->pressure) + "torr_" + to_string(time(nullptr));
-  for (double i = message->voltageStart; i <= message->voltageEnd && run; i += message->voltageStep){
+void doVoltageScan(WeinerCounter *nim, HeaderInfoGen header, Voltage *volt, Messages message, Readout readout, atomic<bool>* run){
+  string scanName = message.runtype + "_" + header.panelName + "_" + header.gas + "_" + to_string(header.pressure) + "torr_" + to_string(time(nullptr));
+  for (double i = message.voltageStart; i <= message.voltageEnd && *run; i += message.voltageStep){
+    message.voltage = i;
     doWeinerCount(nim, scanName, header, message, readout, volt, run);
   }
   return;
@@ -541,66 +529,47 @@ void doAfterScanGraphMultiFree(WeinerCounter *nim, HeaderInfoGen* header, Voltag
 
 
 
-void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run){
-	string path = ".\\CollectedData\\";
-	string runName;
-	ofstream log;
-	vector<string> pix;
-	pix.push_back("1");
-	int motbeginy = 0, motendy = message->maxOffsetY, motstepy = message->maxStepY;
-	int motbeginx = 0, motendx = message->maxOffsetX, motstepx = message->maxStepX;
-	int starting = message->voltageStart;
-	int stop = message->voltageEnd;
-	int duration = message->time;
+void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages message, Readout readout, HeaderInfoGen header, atomic<bool>* run){
+  string runName = message.runtype + "_" + header.panelName + "_" + header.gas + "_" + to_string(header.pressure) + "torr_" + to_string(time(nullptr));
+  ofstream log;
+  log.open(initWeinerLogFile(header, message, message.runtype, runName), ofstream::ate);
 
-	int step = message->voltageStep;
-	char tempc = 25;
-	string temp;
 
-	time_t t = time(nullptr);
-	CreateDirectory(path.c_str(), NULL);
-	runName = path + "\\";
-	runName += header->panelName + "_" + to_string(t) + "\\";
-	CreateDirectory(runName.c_str(), NULL);
-	runName += to_string((int)header->pressure);
-	runName += +"torr\\";
-	CreateDirectory(runName.c_str(), NULL);
-	log.open(runName + "log.txt", ofstream::ate);
-	runName += "HexScanX\\";
-	CreateDirectory(runName.c_str(), NULL);
+  int motbeginy = 0, motendy = message.maxOffsetY, motstepy = message.maxStepY;
+  int motbeginx = 0, motendx = message.maxOffsetX, motstepx = message.maxStepX;
+  int starting = message.voltageStart;
+  int stop = message.voltageEnd;
+  int duration = message.time;
+  int step = message.voltageStep;
+
 	log << "Intitalized Line Scan Run" << endl;
 	log << "Starting: " << starting << endl;
 	log << "Stop: " << stop << endl;
 	log << "Step Size: " << step << endl;
-	log << "Interval Duration: " << message->time << endl;
-	log << "Sampling Frequency: " << message->frequency << endl;
+	log << "Interval Duration: " << message.time << endl;
+	log << "Sampling Frequency: " << message.frequency << endl;
 
 	log << "Turning On High Voltage" << endl;
 	volt->setVoltage(0);
 	volt->turnOn();
-	string fullFile = "test.txt";
-	if (header->sourceConfig == "Dynamic")
-	{
+	if (header.sourceConfig == "Dynamic"){
 		int row;
 		int column = 0;
 		volt->setVoltage(starting);
 		volt->turnOn();
 		log << "Going to home" << endl;
 		mot->goZero();
-		if (motstepx != 0)
-		{
+		if (motstepx != 0){
 			mot->stepMotor(1, -motstepx);
 		}
-		if (motstepy == 0)
-		{
+		if (motstepy == 0){
 			motbeginy = motendy;
 			step = 10000;
 		}
 
 		int stepsiny = 0;
 
-		for (int i = motbeginx; i <= motendx && *run == true; i += motstepx)
-		{
+		for (int i = motbeginx; i <= motendx && *run == true; i += motstepx){
 			++column;
 			//mot->stepMotor(2, -stepsiny*motendy);
 			mot->goZeroY();
@@ -608,15 +577,14 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 
 			mot->stepMotor(1, motstepx);
 
-			if (column % 2 == 0 && column != 1)
-			{
+			if (column % 2 == 0 && column != 1){
 				//mot->stepMotor(2, motstepy);
 				mot->stepMotor(2, motstepy/2); // step motor on even columns to line up with hex
 				//motendy = message->maxOffsetY;// -motstepy;
 			}
 			else if (column % 2 == 1 && column != 1)
 			{
-				motendy = message->maxOffsetY;
+				motendy = message.maxOffsetY;
 				//mot->stepMotor(2, -motstepy / 2);
 				//mot->stepMotor(2, motstepy);
 			}
@@ -633,12 +601,10 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 				{
 
 					log << "Setting Voltage to: " << k << endl;
-					volt->setVoltage(k);
 					log << "Begin Counting" << endl;
-          time_t tm = time(nullptr);
-          doWeinerCount(nim, "doHexScanX_" + to_string(tm), header, message, readout, volt, run);
+          message.voltage = k;
+          doWeinerCount(nim, runName, header, message, readout, volt, run);
           log << "Finished Counting" << endl;
-
 				}
 			}
 		}
@@ -652,47 +618,30 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 	*run = false;
 }
 
-void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages* message, Readout* readout, HeaderInfoGen* header, atomic<bool>* run){
+void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages message, Readout readout, HeaderInfoGen header, atomic<bool>* run){
 	try{
-		string path = ".\\CollectedData\\";
-		string runName;
 		ofstream log;
-		vector<string> pix;
-		pix.push_back("1");
-		int motbeginy = 0, motendy = message->maxOffsetY, motstepy = message->maxStepY;
-		int motbeginx = 0, motendx = message->maxOffsetX, motstepx = message->maxStepX;
-		int starting = message->voltageStart;
-		int stop = message->voltageEnd;
-		int duration = message->time;
+    string runName = message.runtype + "_" + header.panelName + "_" + header.gas + "_" + to_string(header.pressure) + "torr_" + to_string(time(nullptr));
+    log.open(initWeinerLogFile(header, message, message.runtype, runName), ofstream::ate);
 
-		int step = message->voltageStep;
-		char tempc = 25;
-		string temp;
+    int step = message.voltageStep;
+    int motbeginy = 0, motendy = message.maxOffsetY, motstepy = message.maxStepY;
+    int motbeginx = 0, motendx = message.maxOffsetX, motstepx = message.maxStepX;
+    int starting = message.voltageStart;
+    int stop = message.voltageEnd;
+    int duration = message.time;
 
-		time_t t = time(nullptr);
-		CreateDirectory(path.c_str(), NULL);
-		runName = path + "\\";
-		runName += header->panelName + "_" + to_string(t) + "\\";
-		CreateDirectory(runName.c_str(), NULL);
-		runName += to_string((int)header->pressure);
-		runName += +"torr\\";
-		CreateDirectory(runName.c_str(), NULL);
-		log.open(runName + "log.txt", ofstream::ate);
-		runName += "HexScanX\\";
-		CreateDirectory(runName.c_str(), NULL);
 		log << "Intitalized Line Scan Run" << endl;
 		log << "Starting: " << starting << endl;
 		log << "Stop: " << stop << endl;
 		log << "Step Size: " << step << endl;
-		log << "Interval Duration: " << message->time << endl;
-		log << "Sampling Frequency: " << message->frequency << endl;
+		log << "Interval Duration: " << message.time << endl;
+		log << "Sampling Frequency: " << message.frequency << endl;
 
 		log << "Turning On High Voltage" << endl;
 		volt->setVoltage(0);
 		volt->turnOn();
-		string fullFile = "test.txt";
-		if (header->sourceConfig == "Dynamic")
-		{
+		if (header.sourceConfig == "Dynamic"){
 			int row;
 			int column = 0;
 			volt->setVoltage(starting);
@@ -703,8 +652,7 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 			//Sleep(4);
 			mot->stepMotor(1, -motstepx);
 			log << mot->getAbsolutePositionX() << " absolute X" << endl;
-			if (motstepy == 0)
-			{
+			if (motstepy == 0){
 				motbeginy = motendy;
 				step = 10000;
 			}
@@ -745,14 +693,11 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages*
 					log << j << " steps y" << endl;
 					log << posY << " abs Y" << endl;
 
-					for (int k = starting; k <= stop && *run == true; k += step)
-					{
-
+					for (int k = starting; k <= stop && *run == true; k += step){
 						log << "Setting Voltage to: " << k << endl;
-						//volt->setVoltage(k);
 						log << "Begin Counting" << endl;
-            time_t tm = time(nullptr);
-            doWeinerCount(nim, "XYScan_" + to_string(tm), header, message, readout, volt, run);
+            message.voltage = k;
+            doWeinerCount(nim, runName, header, message, readout, volt, run);
             log << "Finished Counting" << endl;
 					}
 					//mot->stepMotor(2, -motendy);

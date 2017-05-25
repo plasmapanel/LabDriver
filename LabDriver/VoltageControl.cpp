@@ -1,7 +1,6 @@
 #include "VoltageControl.h"
-  void VoltageControl::init(int num)
-  {
-	  //set up port name
+  void VoltageControl::init(int num){
+    //set up port name
 	  comNum = num;
 	  string temp;
 	  stringstream ss;
@@ -11,10 +10,7 @@
 	  //open port
 	  DWORD error = 0;
 	  error = PxSerialOpen(port);
-	  if (error != 0){
-		  throw;
-  }
-
+	  if (error != 0){throw;}
 }
 //VoltageControl::~VoltageControl(){
 //  DWORD error = 0;
@@ -78,6 +74,7 @@ void VoltageControl::turnOn(){
   if (error != 0){
     throw;
   }
+  this_thread::sleep_for(chrono::seconds(2));
 }
 void VoltageControl::turnOff(){
   DWORD error = 0;
@@ -93,6 +90,7 @@ void VoltageControl::turnOff(){
   if (error != 0){
     throw;
   }
+  this_thread::sleep_for(chrono::seconds(2));
 }
 
 void VoltageControl::end()

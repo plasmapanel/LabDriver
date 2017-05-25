@@ -40,19 +40,18 @@ static bool connected = false;
 Offset offsets[4];
 
 BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent){
-	//mot = new MotorController(3, 9600);
-	//volt = new VoltageNI();
-	//volt = new VoltageControl(5);
 	message = new Messages();
 	pglobalheader = &globalHeader;
 	vf = new VoltageFactory();
 	readout = new Readout();
+
+  stop->Disable();
+  setScanType();
 }
 
 void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 {
-	if (volt)
-	{
+	if (volt){
 		volt->turnOff();
 		volt->end();
 	}
@@ -63,20 +62,13 @@ void BigFrame::onQuit(wxCommandEvent& WXUNUSED(event))
 	delete message;
 	delete readout;
 	Close(true);
-
 }
 
-//
-void BigFrame::yUpButtonClicked(wxCommandEvent & event)
-{
-	//distanceToMove = distanceBox->GetSelection();
-	try
-	{
+void BigFrame::yUpButtonClicked(wxCommandEvent & event){
+	try{
 		mot->stepMotor(2, distanceToMoveY);
 	}
-	catch (...)
-	{ }
-
+	catch (...){ }
 }
 
 void BigFrame::yDownButtonClicked(wxCommandEvent & event)
@@ -170,62 +162,101 @@ int BigFrame::convertDistance(int radioButton, int motor)
 	return ret;
 }
 
-void BigFrame::scanTypeSelected(wxCommandEvent & event)
-{
-	int scanChosen = m_choice1->GetSelection();
-	switch (scanChosen)
-	{
-	case 0:
-		scanType = "Free";
-		break;
-	case 1:
-		scanType = "FreeAP";
-		break;
-	case 2:
-		scanType = "LineScan";
-		break;
-	case 3:
-		scanType = "HexScanX";
-		break;
-	case 4:
-		scanType = "HexScanY";
-		break;
-	case 5:
-		scanType = "XYScan";
-		break;
-	default:
-		scanType = "None";
-		break;
-	}
+void BigFrame::scanTypeSelected(wxCommandEvent & event){
+  setScanType();
 }
 
-void BigFrame::setScanType()
-{
-	int scanChosen = m_choice1->GetSelection();
-	switch (scanChosen)
-	{
+void BigFrame::setScanType(){
+  //probably want to make these field disabling things into functions calls
+  switch (m_choice1->GetSelection()){
 	case 0:
 		scanType = "Free";
+    m_textCtrl18->Disable();
+    m_textCtrl19->Disable();
+    m_textCtrl20->Disable();
+    m_textCtrl21->Disable();
+    m_textCtrl41->Disable();
+    m_textCtrl29->Disable();
+    m_textCtrl22->Enable(); //start voltage
+    m_textCtrl23->Disable();
+    m_textCtrl40->Disable();
+    m_textCtrl42->Disable();
+    m_textCtrl43->Disable(); //this value isnt need anymore it should be removed at some point
 		break;
 	case 1:
-		scanType = "FreeAP";
-		break;
+		scanType = "Voltage_Scan";
+    m_textCtrl18->Disable();
+    m_textCtrl19->Disable();
+    m_textCtrl20->Disable();
+    m_textCtrl21->Disable();
+    m_textCtrl41->Disable();
+    m_textCtrl29->Disable();
+    m_textCtrl22->Enable(); //start voltage
+    m_textCtrl23->Enable(); //end voltage
+    m_textCtrl40->Enable(); //voltage step
+    m_textCtrl42->Enable(); // measuremnt time
+    m_textCtrl43->Disable();
+    break;
 	case 2:
-		scanType = "LineScan";
+		scanType = "Line_Scan";
+    m_textCtrl18->Enable();
+    m_textCtrl19->Enable();
+    m_textCtrl20->Enable();
+    m_textCtrl21->Enable();
+    m_textCtrl41->Enable();
+    m_textCtrl29->Enable();
+    m_textCtrl22->Enable(); //start voltage
+    m_textCtrl23->Enable();
+    m_textCtrl40->Enable();
+    m_textCtrl42->Enable();
+    m_textCtrl43->Disable();
 		break;
 	case 3:
-		scanType = "HexScanX";
-		break;
+		scanType = "Hex_Scan_X";
+    m_textCtrl18->Enable();
+    m_textCtrl19->Enable();
+    m_textCtrl20->Enable();
+    m_textCtrl21->Enable();
+    m_textCtrl41->Enable();
+    m_textCtrl29->Enable();
+    m_textCtrl22->Enable(); //start voltage
+    m_textCtrl23->Enable();
+    m_textCtrl40->Enable();
+    m_textCtrl42->Enable();
+    m_textCtrl43->Disable();
+    break;
 	case 4:
-		scanType = "HexScanY";
+		scanType = "Hex_Scan_Y";
+    m_textCtrl18->Enable();
+    m_textCtrl19->Enable();
+    m_textCtrl20->Enable();
+    m_textCtrl21->Enable();
+    m_textCtrl41->Enable();
+    m_textCtrl29->Enable();
+    m_textCtrl22->Enable(); //start voltage
+    m_textCtrl23->Enable();
+    m_textCtrl40->Enable();
+    m_textCtrl42->Enable();
+    m_textCtrl43->Disable();
 		break;
 	case 5:
-		scanType = "XYScan";
-		break;
+		scanType = "XY_Scan";
+    m_textCtrl18->Enable();
+    m_textCtrl19->Enable();
+    m_textCtrl20->Enable();
+    m_textCtrl21->Enable();
+    m_textCtrl41->Enable();
+    m_textCtrl29->Enable();
+    m_textCtrl22->Enable(); //start voltage
+    m_textCtrl23->Enable();
+    m_textCtrl40->Enable();
+    m_textCtrl42->Enable();
+    m_textCtrl43->Disable();
+    break;
 	default:
 		scanType = "None";
 		break;
-}
+  }
 }
 
 //wxStaticBoxSizer* test;
@@ -266,26 +297,23 @@ void BigFrame::motorControllerConnectClicked(wxCommandEvent & event)
 	}
 }
 
-void BigFrame::motorControllerDisconnectClicked(wxCommandEvent & event)
-{
+void BigFrame::motorControllerDisconnectClicked(wxCommandEvent & event){
 	mot->portClose();
 	mot = nullptr;
 	m_button15->Enable();
 	m_button16->Disable();
-	delete(mot);
+	delete mot;
 	connected = false;
 }
 
-void BigFrame::HVConnectClicked(wxCommandEvent & event)
-{
+void BigFrame::HVConnectClicked(wxCommandEvent & event){
 	string hv = hvChoice->GetStringSelection();
-
-		volt = vf->newVolt(hv);
-		volt->init(5);
-		volt->turnOff();
-		hvChoice->Disable();
-		m_button17->Disable();
-		m_button18->Enable();
+  volt = vf->newVolt(hv);
+	volt->init(5);
+	volt->turnOff();
+	hvChoice->Disable();
+	m_button17->Disable();
+	m_button18->Enable();
 }
 
 void BigFrame::HVDisconnectClicked(wxCommandEvent& event)
@@ -312,97 +340,109 @@ void BigFrame::setEndVoltage(wxCommandEvent & event)
 	//}
 }
 
-void BigFrame::updateButtonClicked(wxCommandEvent& event)
-{
+void BigFrame::updateButtonClicked(wxCommandEvent& event){
 	int startvoltage, endvoltage, xoffset, yoffset, xstepsize, ystepsize, voltagestepsize, dwelltime;
 	int numsteps, frequency;
 	int motorstepx, motorstepy;
 
 	double xoffsetmm, yoffsetmm, xstepsizemm, ystepsizemm;
 	double totaltime;
-	//string filename;
 
 	startvoltage = wxAtoi(m_textCtrl22->GetLineText(0));
 	endvoltage = wxAtoi(m_textCtrl23->GetLineText(0));
 	voltagestepsize = wxAtoi(m_textCtrl40->GetLineText(0));
-	numsteps = (endvoltage - startvoltage) / voltagestepsize;
+  xoffsetmm = wxAtof(m_textCtrl18->GetLineText(0));
+  yoffsetmm = wxAtof(m_textCtrl19->GetLineText(0));
+  xstepsizemm = wxAtof(m_textCtrl20->GetLineText(0));
+  ystepsizemm = wxAtof(m_textCtrl21->GetLineText(0));
+  motorstepx = wxAtoi(m_textCtrl41->GetLineText(0));
+  motorstepy = wxAtoi(m_textCtrl29->GetLineText(0));
+  dwelltime = wxAtoi(m_textCtrl42->GetLineText(0));
+  frequency = wxAtoi(m_textCtrl43->GetLineText(0));
+
+  numsteps = 0;
+  for (double i = startvoltage; i <= endvoltage; i += voltagestepsize){
+    ++numsteps;
+  }
+  if (scanType == "Free"){ numsteps = 1; }
 	
-	m_textCtrl45->SelectAll();
-	m_textCtrl45->WriteText(wxString::Format(wxT("%i"), numsteps));
+  if (scanType == "Hex_Scan_X" || scanType == "XY_Scan" || scanType == "Line_Scan" || scanType == "Hex_Scan_Y"){
+    if (xstepsizemm == 0){
+      wxMessageBox("Invalid x-step yize. Defaulting to 0.1 mm");
+      xstepsizemm = 0.1;
+      m_textCtrl20->SelectAll();
+      m_textCtrl20->WriteText(wxString::Format(wxT("%f"), xstepsizemm));
+      
+    }
+    if (ystepsizemm == 0){
+      wxMessageBox("Invalid y-step size. Defaulting to 0.1 mm");
+      ystepsizemm = 0.1;
+      m_textCtrl21->SelectAll();
+      m_textCtrl21->WriteText(wxString::Format(wxT("%f"), ystepsizemm));
+    }
+    if (motorstepx == 0){
+      wxMessageBox("Invalid x steps/mm. Defaulting to 398 steps/mm");
+      motorstepx = 398;
+      m_textCtrl41->SelectAll();
+      m_textCtrl41->WriteText(wxString::Format(wxT("%i"), motorstepx));
 
-	xoffsetmm = wxAtof(m_textCtrl18->GetLineText(0));
-	yoffsetmm = wxAtof(m_textCtrl19->GetLineText(0));
-	xstepsizemm = wxAtof(m_textCtrl20->GetLineText(0));
-	ystepsizemm = wxAtof(m_textCtrl21->GetLineText(0));
-	motorstepx = wxAtoi(m_textCtrl41->GetLineText(0));
-	motorstepy = wxAtoi(m_textCtrl29->GetLineText(0));
+    }
+    if (motorstepy == 0){
+      wxMessageBox("Invalid y steps/mm. Defaulting to 400 steps/mm");
+      motorstepy = 400;
+      m_textCtrl29->SelectAll();
+      m_textCtrl29->WriteText(wxString::Format(wxT("%i"), motorstepy));
+    }
 
-	dwelltime = wxAtoi(m_textCtrl42->GetLineText(0));
-	if (xstepsizemm && ystepsizemm != 0)
-	{
 		xoffset = motorstepx * xoffsetmm;
 		xstepsize = motorstepx * xstepsizemm;
 
 		yoffset = motorstepy * yoffsetmm;
 		ystepsize = motorstepy * ystepsizemm;
-
-		if (endvoltage != startvoltage)
-			totaltime = xoffset / xstepsize * yoffset / ystepsize * (endvoltage - startvoltage) / voltagestepsize*dwelltime;
-		else
-			totaltime = xoffset / xstepsize * yoffset / ystepsize / dwelltime;
+		totaltime = xoffset / xstepsize * yoffset / ystepsize * numsteps * dwelltime;
+    message->maxOffsetX = xoffset;
+    message->maxStepX = xstepsize;
+    message->maxStepY = ystepsize;
+    message->maxOffsetY = yoffset;
 	}
-	else
-	{
-		if (endvoltage != startvoltage)
-			totaltime = (endvoltage - startvoltage) / voltagestepsize*dwelltime;
-		else
-		{
-			totaltime = dwelltime;
-		}
-
+	else if(scanType == "Voltage_Scan"){
+    totaltime = numsteps * dwelltime;
 	}
-	frequency = wxAtoi(m_textCtrl43->GetLineText(0));
+  else{
+    totaltime = -1;
+  }
+	
+
+  m_textCtrl45->SelectAll();
+  m_textCtrl45->WriteText(wxString::Format(wxT("%i"), numsteps));
 
 	m_textCtrl46->SelectAll();
 	m_textCtrl46->WriteText(wxString::Format(wxT("%f"), totaltime / 3600));
 
-	setScanType();
+	
 
 	message->frequency = frequency;
-	message->maxOffsetX = xoffset;
-	message->maxStepX = xstepsize;
-	message->maxStepY = ystepsize;
-	message ->maxOffsetY = yoffset;
+	
 	message->numPix = 1;
 	message->time = dwelltime;
 	message->voltageStart = startvoltage;
 	message->voltageEnd = endvoltage;
 	message->voltageStep = voltagestepsize;
-	//message->temp = m_textCtrl44->GetLineText(0);
 	message->runtype = scanType;
-	//message->motorstepx = motorstepx;
-	//message->motorstepy = motorstepy;
-	//globalHeader.motorstepx = motorstepx;
-	//globalHeader.motorstepy = motorstepy;
 
 }
 
-HeaderEdit::HeaderEdit(wxWindow* parent) : header(parent)
-{
+HeaderEdit::HeaderEdit(wxWindow* parent) : header(parent){}
 
-}
-
-void BigFrame::openHeaderFrame(wxCommandEvent& event)
-{
-	if (!HeaderWindow)
-		HeaderWindow = new HeaderEdit(this);
+void BigFrame::openHeaderFrame(wxCommandEvent& event){
+  if (!HeaderWindow){
+    HeaderWindow = new HeaderEdit(this);
+  }
 	HeaderWindow->Show(true);
 }
 
-string HeaderEdit::getSourceConfig()
-{
-	switch (m_radioBox1->GetSelection())
-	{
+string HeaderEdit::getSourceConfig(){
+	switch (m_radioBox1->GetSelection()){
 	case 0:
 		return string("Dynamic");
 		break;
@@ -418,37 +458,30 @@ string HeaderEdit::getSourceConfig()
 	}
 }
 
-void HeaderEdit::setSourceConfig(string type)
-{
-	if (type.compare("Dynamic"))
-	{
+void HeaderEdit::setSourceConfig(string type){
+	if (type.compare("Dynamic")){
 		m_radioBox1->SetSelection(0);
 	}
-
-	else if (type.compare("Static"))
-	{
+	else if (type.compare("Static")){
 		m_radioBox1->SetSelection(1);
 	}
-	else if (type.compare("User"))
-	{
+	else if (type.compare("User")){
 		m_radioBox1->SetSelection(2);
 	}
-	else
-		wxMessageBox(wxT("No Source Type Found!"));
+  else{
+    wxMessageBox(wxT("No Source Type Found!"));
+  }
 }
 
-void HeaderEdit::headerOkClicked(wxCommandEvent& event)
-{
+void HeaderEdit::headerOkClicked(wxCommandEvent& event){
 	copyData(globalHeader);
 	Show(false);
 }
-void HeaderEdit::headerCancelClicked(wxCommandEvent& event)
-{
+void HeaderEdit::headerCancelClicked(wxCommandEvent& event){
 	Show(false);
 }
 
-void HeaderEdit::saveHeader(wxCommandEvent& event)
-{
+void HeaderEdit::saveHeader(wxCommandEvent& event){
 	copyData(globalHeader);
 	string fullpath;
 	wxFileDialog* SaveDialog = new wxFileDialog(
@@ -458,9 +491,8 @@ void HeaderEdit::saveHeader(wxCommandEvent& event)
 	//if (SaveDialog->ShowModal() == wxID_CANCEL)
 	//	SaveDialog->Destroy();     // the user changed idea...
 
-
-	if (SaveDialog->ShowModal() == wxID_OK) // if the user click "Save" instead of "Cancel"
-	{
+  // if the user click "Save" instead of "Cancel"
+	if (SaveDialog->ShowModal() == wxID_OK){
 
 		fullpath = SaveDialog->GetFilename();
 		//wxMessageBox(fullpath);
@@ -476,14 +508,12 @@ void HeaderEdit::saveHeader(wxCommandEvent& event)
 		SaveDialog->Destroy();
 }
 
-void HeaderEdit::openHeader(wxCommandEvent& event)
-{
+void HeaderEdit::openHeader(wxCommandEvent& event){
 	string fullpath;
 	wxFileDialog* OpenDialog = new wxFileDialog(
 		this, _("Choose header file to open"), wxT("Text File (*.txt) | *.txt"));
-
-	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Save" instead of "Cancel"
-	{
+  // if the user click "Save" instead of "Cancel"
+	if (OpenDialog->ShowModal() == wxID_OK){
 
 		fullpath = OpenDialog->GetPath();
 		//wxMessageBox(fullpath);
@@ -495,8 +525,7 @@ void HeaderEdit::openHeader(wxCommandEvent& event)
 		OpenDialog->Destroy();
 }
 
-void HeaderEdit::updateGas(wxCommandEvent& event)
-{
+void HeaderEdit::updateGas(wxCommandEvent& event){
 	wxString gasMix;
 	int gasTotal = 0;
 
@@ -511,8 +540,7 @@ void HeaderEdit::updateGas(wxCommandEvent& event)
 	gasPercent.push_back(m_textCtrl50->GetLineText(0));
 	gasPercent.push_back(m_textCtrl49->GetLineText(0));
 
-	while (!gasTypes.empty())
-	{
+	while (!gasTypes.empty()){
 		gasMix += gasPercent.back() + "_";
 		gasTotal += wxAtoi(gasPercent.back());
 		gasMix += gasTypes.back() + "-";
@@ -527,8 +555,7 @@ void HeaderEdit::updateGas(wxCommandEvent& event)
 	m_textCtrl52->WriteText(wxString::Format(wxT("%i",gasTotal)));
 }
 
-void HeaderEdit::copyData(HeaderInfoGen &headerInfo)
-{
+void HeaderEdit::copyData(HeaderInfoGen &headerInfo){
 	headerInfo.panelName = m_textCtrl1->GetLineText(0);
 	headerInfo.sourceName = m_textCtrl11->GetLineText(0);
 	headerInfo.sourceConfig = getSourceConfig();
@@ -547,8 +574,7 @@ void HeaderEdit::copyData(HeaderInfoGen &headerInfo)
 	//headerInfo.attenHV = wxAtof(m_textCtrl1326->GetLineText(0));
 }
 
-void HeaderEdit::putData(HeaderInfoGen &headerInfo)
-{
+void HeaderEdit::putData(HeaderInfoGen &headerInfo){
 	m_textCtrl1->Clear();
 	m_textCtrl1->WriteText(headerInfo.panelName);
 	m_textCtrl11->Clear();
@@ -576,19 +602,18 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo)
 	setSourceConfig(headerInfo.sourceConfig);
 }
 
-void BigFrame::connectNIMClicked(wxCommandEvent& event)
-{
+void BigFrame::connectNIMClicked(wxCommandEvent& event){
 	nim = new WeinerCounter(0);
 	m_button19->Disable();
 }
 
-void BigFrame::stopSelected(wxCommandEvent& event)
-{
+void BigFrame::stopSelected(wxCommandEvent& event){
 	run = false;
+  start->Enable();
+  stop->Disable();
 }
 
-void BigFrame::startSelected(wxCommandEvent& event)
-{
+void BigFrame::startSelected(wxCommandEvent& event){
 	fstream runfile;
 	runfile.open("runfile.txt", std::fstream::in | std::fstream::out);
 	char temp[200];
@@ -599,87 +624,66 @@ void BigFrame::startSelected(wxCommandEvent& event)
 	runfile.seekg(0, ios::beg);
 	runfile << tempNum;
 	runfile.close();
-
 	if (!volt){
 		wxMessageBox("Voltage controller not connected");
-		run = true;
 	}
-	if (!nim){
+	else if (!nim){
 		wxMessageBox("NIMBox not connected");
-		run = true;
 	}
-
-	if (!mot && !(scanType == "Free" || scanType == "FreeAP")){
+	else if (!mot && !(scanType == "Free" || scanType == "Voltage_Scan")){
 		wxMessageBox("X-Y controller not connected");
-		run = true;
 	}
-
-	if (!pglobalheader)
-	{
+	else if (!pglobalheader){
 		wxMessageBox("Header information not found");
-		run = true;
 	}
-
-	if (!message)
-	{
+  else if (!message){
 		wxMessageBox("Please update run type information");
-		run = true;
 	}
-
-	if (!readout)
-	{
+	else if (!readout){
 		wxMessageBox("Readout information not found");
-		run = true;
 	}
-
-	if (scanType == "LineScan" && run == false)
-	{
+	else if (scanType == "Line_Scan" && !run){
 		run = true;
-		thread t1(doLineScan, mot, nim, volt, message, readout, pglobalheader, &run);
+    start->Disable();
+		thread t1(doLineScan, mot, nim, volt, *message, *readout, *pglobalheader, &run);
 		t1.detach();
 	}
-	else if (scanType == "Free" && run == false)
-	{
+	else if (scanType == "Free" && !run){
 		run = true;
-    //cant use default params for some reason
-    vector<int> activeReadout;
-    for (size_t i = 0; i < readout->active.size(); ++i){
-      if (readout->active[i]){
-        activeReadout.push_back(i + 1);
-      }
-    }
+    start->Disable();
+    stop->Enable();
     message->voltage = message->voltageStart;
-    thread t1(doWeinerCountInf, nim, "", pglobalheader, message, readout, volt, &run);
+    thread t1(doWeinerCountInf, nim, "", *pglobalheader, *message, *readout, volt, &run);
 		t1.detach();
 	}
-	else if (scanType == "FreeAP" && run == false){
+	else if (scanType == "Voltage_Scan" && !run){
 		run = true;
-    thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
+    start->Disable();
+    stop->Enable();
+    thread t1(doVoltageScan, nim, *pglobalheader, volt, *message, *readout, &run);
     t1.detach();
 	}
-	else if (scanType == "ScanAP" && run == false){
+	else if (scanType == "Hex_Scan_X" && !run){
 		run = true;
-		thread t1(doAfterScanGraphMultiFree, nim, pglobalheader, volt, message, readout, &run);
+    start->Disable();
+    stop->Enable();
+		thread t1(doHexScanX, mot, nim, volt, *message, *readout, *pglobalheader, &run);
 		t1.detach();
 	}
-	else if (scanType == "HexScanX" && run == false){
+	else if (scanType == "XY_Scan" && !run){
 		run = true;
-		thread t1(doHexScanX, mot, nim, volt, message, readout, pglobalheader, &run);
-		t1.detach();
-	}
-
-	else if (scanType == "XYScan" && run == false){
-		run = true;
-		thread t1(doXYScan, mot, nim, volt, message, readout, pglobalheader, &run);
+    start->Disable();
+    stop->Enable();
+    thread t1(doXYScan, mot, nim, volt, *message, *readout, *pglobalheader, &run);
 		t1.detach();
 	}
 }
 
-void BigFrame::openReadoutPane(wxCommandEvent& event)
-{
-	if (!readoutframe)
-		readoutframe = new readoutedit(this);
-	readoutframe->update();
+void BigFrame::openReadoutPane(wxCommandEvent& event){
+  if (!readoutframe){
+    readoutframe = new readoutedit(this);
+  }
+  readoutframe->update();
 	readoutframe->Show(true);
 
 }
@@ -796,107 +800,27 @@ void readoutedit::okbuttonclicked(wxCommandEvent &event){
 	readoutframe->Show(false);
 }
 
-void readoutedit::update()
-{
-	if (readout->active[0] == true)
-		m_checkBox77->SetValue(true);
-	else
-		m_checkBox77->SetValue(false);
-
-	if (readout->active[1] == true)
-		m_checkBox78->SetValue(true);
-	else
-		m_checkBox78->SetValue(false);
-
-	if (readout->active[2] == true)
-		m_checkBox79->SetValue(true);
-	else
-		m_checkBox79->SetValue(false);
-
-	if (readout->active[3] == true)
-		m_checkBox80->SetValue(true);
-	else
-		m_checkBox80->SetValue(false);
-
-	if (readout->active[4] == true)
-		m_checkBox81->SetValue(true);
-	else
-		m_checkBox81->SetValue(false);
-
-	if (readout->active[5] == true)
-		m_checkBox82->SetValue(true);
-	else
-		m_checkBox82->SetValue(false);
-
-	if (readout->active[6] == true)
-		m_checkBox83->SetValue(true);
-	else
-		m_checkBox83->SetValue(false);
-
-	if (readout->active[7] == true)
-		m_checkBox84->SetValue(true);
-	else
-		m_checkBox84->SetValue(false);
-
-	if (readout->active[8] == true)
-		m_checkBox85->SetValue(true);
-	else
-		m_checkBox85->SetValue(false);
-
-	if (readout->active[9] == true)
-		m_checkBox86->SetValue(true);
-	else
-		m_checkBox86->SetValue(false);
-
-	if (readout->active[10] == true)
-		m_checkBox771->SetValue(true);
-	else
-		m_checkBox771->SetValue(false);
-
-	if (readout->active[11] == true)
-		m_checkBox781->SetValue(true);
-	else
-		m_checkBox781->SetValue(false);
-
-	if (readout->active[12] == true)
-		m_checkBox791->SetValue(true);
-	else
-		m_checkBox791->SetValue(false);
-
-	if (readout->active[13] == true)
-		m_checkBox801->SetValue(true);
-	else
-		m_checkBox801->SetValue(false);
-
-	if (readout->active[14] == true)
-		m_checkBox811->SetValue(true);
-	else
-		m_checkBox811->SetValue(false);
-
-	if (readout->active[15] == true)
-		m_checkBox821->SetValue(true);
-	else
-		m_checkBox821->SetValue(false);
-
-	if (readout->active[16] == true)
-		m_checkBox831->SetValue(true);
-	else
-		m_checkBox831->SetValue(false);
-
-	if (readout->active[17] == true)
-		m_checkBox841->SetValue(true);
-	else
-		m_checkBox841->SetValue(false);
-
-	if (readout->active[18] == true)
-		m_checkBox851->SetValue(true);
-	else
-		m_checkBox851->SetValue(false);
-
-	if (readout->active[19] == true)
-		m_checkBox861->SetValue(true);
-	else
-		m_checkBox861->SetValue(false);
+void readoutedit::update(){
+  m_checkBox77->SetValue(readout->active[0]);
+  m_checkBox78->SetValue(readout->active[1]);
+  m_checkBox79->SetValue(readout->active[2]);
+  m_checkBox80->SetValue(readout->active[3]);
+  m_checkBox81->SetValue(readout->active[4]);
+  m_checkBox82->SetValue(readout->active[5]);
+  m_checkBox83->SetValue(readout->active[6]);
+  m_checkBox84->SetValue(readout->active[7]);
+  m_checkBox85->SetValue(readout->active[8]);
+  m_checkBox86->SetValue(readout->active[9]);
+  m_checkBox771->SetValue(readout->active[10]);
+  m_checkBox781->SetValue(readout->active[11]);
+  m_checkBox791->SetValue(readout->active[12]);
+  m_checkBox801->SetValue(readout->active[13]);
+  m_checkBox811->SetValue(readout->active[14]);
+  m_checkBox821->SetValue(readout->active[15]);
+  m_checkBox831->SetValue(readout->active[16]);
+  m_checkBox841->SetValue(readout->active[17]);
+  m_checkBox851->SetValue(readout->active[18]);
+  m_checkBox861->SetValue(readout->active[19]);
 }
 
 Histogram::Histogram(wxWindow* parent) : ImageFrame(parent)
@@ -915,11 +839,8 @@ Histogram::Histogram(wxWindow* parent) : ImageFrame(parent)
 
 }
 
-void Histogram::updateImage(string filename, atomic<bool> run)
-{
-
-	while (run == true)
-	{
+void Histogram::updateImage(string filename, atomic<bool> run){
+	while (run){
 		//delay 1 second
 		this_thread::sleep_for(chrono::microseconds(1000));
 
@@ -927,18 +848,14 @@ void Histogram::updateImage(string filename, atomic<bool> run)
 		Update();
 		//display image
 	}
-
-
 }
 
-void Histogram::paintNow()
-{
+void Histogram::paintNow(){
 	wxClientDC dc(this);
 	render(dc);
 }
 
-void Histogram::render(wxDC& dc)
-{
+void Histogram::render(wxDC& dc){
 	dc.DrawBitmap(image, 0, 0, false);
 }
 
