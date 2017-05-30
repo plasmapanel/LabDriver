@@ -67,6 +67,7 @@ public:
 	void goToHome(wxCommandEvent& event);
 	void openHeaderFrame(wxCommandEvent& event);
 	void connectNIMClicked(wxCommandEvent& event);
+  void disconnectNIM(wxCommandEvent& event);
 	void startSelected(wxCommandEvent& event);
 	void HVDisconnectClicked(wxCommandEvent& event);
 	void setScanType();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 class Messages{
@@ -24,7 +25,5 @@ public:
 	int column;
 
 	std::vector<int> pixX, pixY;
-
-
-
 };
+std::ostream& operator<<(std::ostream& os, const Messages& h);

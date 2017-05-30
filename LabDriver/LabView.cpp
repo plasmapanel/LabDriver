@@ -46,6 +46,8 @@ BigFrame::BigFrame(wxWindow* parent) : MainFrame(parent){
 	readout = new Readout();
 
   stop->Disable();
+  m_button23->Disable();
+  m_button18->Disable();
   setScanType();
 }
 
@@ -128,17 +130,14 @@ void BigFrame::distanceBoxClicked(wxCommandEvent & event)
 
 
 //
-int BigFrame::convertDistance(int radioButton, int motor)
-{
+int BigFrame::convertDistance(int radioButton, int motor){
 	int ret;
 	int stepsmm = 400;
 	if (motor == 1)
 		stepsmm = wxAtoi(m_textCtrl41->GetLineText(0));
 	if (motor == 2)
 		stepsmm = wxAtoi(m_textCtrl29->GetLineText(0));
-
-	switch (radioButton)
-	{
+	switch (radioButton){
 	case 0:
 		ret = (int)(0.1 * stepsmm);
 		break;
@@ -261,34 +260,27 @@ void BigFrame::setScanType(){
 
 //wxStaticBoxSizer* test;
 
-void BigFrame::toggleHV(wxCommandEvent& event)
-{
+void BigFrame::toggleHV(wxCommandEvent& event){
 	int voltageStatus = m_radioBox3->GetSelection();
-	if (voltageStatus == 0)
-	{
+	if (voltageStatus == 0){
 		string voltage = m_textCtrl22->GetLineText(0);
-
-			volt->setVoltage(stoi(voltage));
-			volt->turnOn();
-
+    volt->setVoltage(stoi(voltage));
+		volt->turnOn();
 	}
 	if (voltageStatus == 1)
 		volt->turnOff();
 }
 
-void BigFrame::setStartVoltage(wxCommandEvent& event)
-{
+void BigFrame::setStartVoltage(wxCommandEvent& event){
 	//string voltage = m_textCtrl22->GetLineText(0);
 	
 }
 
-void BigFrame::motorControllerConnectClicked(wxCommandEvent & event)
-{
+void BigFrame::motorControllerConnectClicked(wxCommandEvent & event){
 	//static bool connected = false;
 	static int portnum;
 
-	if (!connected)
-	{
+	if (!connected){
 		portnum = wxAtoi(m_choice2->GetStringSelection());
 		mot = new MotorController(portnum, 9600);
 		connected = true;
@@ -316,12 +308,12 @@ void BigFrame::HVConnectClicked(wxCommandEvent & event){
 	m_button18->Enable();
 }
 
-void BigFrame::HVDisconnectClicked(wxCommandEvent& event)
-{
+void BigFrame::HVDisconnectClicked(wxCommandEvent& event){
+  delete volt;
 	volt = nullptr;
 	hvChoice->Enable();
 	m_button17->Enable();
-	m_button18->Enable();
+	m_button18->Disable();
 }
 
 void BigFrame::openPanelFrame(wxCommandEvent& event) 
@@ -559,6 +551,8 @@ void HeaderEdit::copyData(HeaderInfoGen &headerInfo){
 	headerInfo.panelName = m_textCtrl1->GetLineText(0);
 	headerInfo.sourceName = m_textCtrl11->GetLineText(0);
 	headerInfo.sourceConfig = getSourceConfig();
+  headerInfo.sourceHeight = wxAtof(m_textCtrl30->GetLineText(0));
+  headerInfo.collimatorSize = wxAtof(m_textCtrl29->GetLineText(0));
 	//headerInfo.triggerSetup = m_textCtrl1322->GetLineText(0);
 	headerInfo.gas = m_textCtrl13->GetLineText(0);
 	headerInfo.pressure = wxAtof(m_textCtrl131->GetLineText(0));
@@ -579,6 +573,8 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo){
 	m_textCtrl1->WriteText(headerInfo.panelName);
 	m_textCtrl11->Clear();
 	m_textCtrl11->WriteText(headerInfo.sourceName);
+  m_textCtrl30->WriteText(wxString::Format(wxT("%f"), headerInfo.sourceHeight));
+  m_textCtrl29->WriteText(wxString::Format(wxT("%f"), headerInfo.collimatorSize));
 	//m_textCtrl1322->WriteText(headerInfo.triggerSetup);
 	m_textCtrl13->Clear();
 	m_textCtrl13->WriteText(headerInfo.gas);
@@ -605,8 +601,14 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo){
 void BigFrame::connectNIMClicked(wxCommandEvent& event){
 	nim = new WeinerCounter(0);
 	m_button19->Disable();
+  m_button23->Enable();
 }
-
+void BigFrame::disconnectNIM(wxCommandEvent& event){
+  delete nim;
+  nim = nullptr;
+  m_button19->Enable();
+  m_button23->Disable();
+}
 void BigFrame::stopSelected(wxCommandEvent& event){
 	run = false;
   start->Enable();

@@ -26,7 +26,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   std::chrono::duration<double, std::milli> elapsed;
   ofstream out;
   out.open(fileName + ".txt");
-  out << hg << ha;
+  out << hg << ha<< message;
   out << " Time (ms)   ";
   for (int i = 0, leni = ha.readoutLines.size(); i < leni; ++i){
     out << "Count " << left << setw(13) << ha.readoutLines[i];
@@ -55,7 +55,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
 
   //add all info from the general header
   char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
-  Double_t tempPress, tempDiscThr, tempQuench, tempAttenRo, tempAttenHV;
+  Double_t tempPress, tempDiscThr, tempQuench, tempAttenRo, tempAttenHV, sourceHeight, collimatorSize;
   Int_t tempNumRo, tempNumHv;
   Long64_t runNumber;
   strcpy(tempPanel, hg.panelName.c_str());
@@ -64,6 +64,10 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("source", tempSource, "source[200]/C");
   strcpy(tempSetup, hg.sourceConfig.c_str());
   tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
+  sourceHeight = hg.sourceHeight;
+  tr.Branch("sourceHeight", &sourceHeight, "sourceHeight/D");
+  collimatorSize = hg.collimatorSize;
+  tr.Branch("collimatorSize", &collimatorSize, "collimatorSize/D");
   strcpy(tempGas, hg.gas.c_str());
   tr.Branch("gasmix", tempGas, "gasmix[200]/C");
   tempPress = hg.pressure;
@@ -106,24 +110,6 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("readoutLines", readoutLines, "readoutLines[20]/I");
   tr.Branch("numReadings", &numReadings, "numReadings/I");
   //add all info from the message  
-  /*int voltage;
-	std::string filename;
-	std::string fullFile;
-	
-	int time;
-	int numPix, maxOffsetX;
-	int maxOffsetY, maxStepX;
-	int maxStepY;
-	int motorstepx;
-	int motorstepy;
-	int voltageStart, voltageStep, voltageEnd;
-	int frequency;
-	std::string temp = "";
-	std::string runtype = "";
-	int row;
-	int column;
-
-	std::vector<int> pixX, pixY;*/
   Int_t time, numPix, maxOffsetX, maxOffsetY, maxStepX, maxStepY, motorStepX, motorStepY, voltageStart, voltageStep, voltageEnd, row, column;
   char runType[200];
   time = message.time;
@@ -237,7 +223,7 @@ void readFromPixAfterN(const vector<int>& pix, atomic<bool>* done, atomic<bool> 
 
 void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim){
 	//assert(q->size() == pix.size());
-    size_t size = pix.size();
+  size_t size = pix.size();
 	nim->resetAll();
 	while(*control){
 		t.push(HighResClock::now());
@@ -328,7 +314,6 @@ void doWeinerCount(WeinerCounter *nim, string runName, HeaderInfoGen header, Mes
   }
   volt->turnOff();
 }
-
 void doWeinerCountInf(WeinerCounter *nim, string runName, HeaderInfoGen header, Messages message, Readout readout, Voltage* volt, atomic<bool> *run){
   string runFullName = initWeinerFile(header, message, message.runtype, runName, message.voltage);
   vector<int> activeReadout;
@@ -502,6 +487,7 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 						log << "Setting Voltage to: " << k << endl;
 						log << "Begin Counting" << endl;
             message.voltage = k;
+            
             doWeinerCount(nim, runName, header, message, readout, volt, run);
             log << "Finished Counting" << endl;
 					}

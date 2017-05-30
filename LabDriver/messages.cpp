@@ -1,4 +1,7 @@
 #include "messages.h"
+#include <iostream>
+#include <string>
+using namespace std;
 //#include "freeMode.h"
 
 
@@ -285,3 +288,44 @@
 //    }
 //  }
 //}
+std::ostream& operator<<(std::ostream& os, const Messages& h){
+  int voltage;
+  std::string filename;
+  std::string fullFile;
+
+  int time;
+  int numPix, maxOffsetX;
+  int maxOffsetY, maxStepX;
+  int maxStepY;
+  int motorstepx;
+  int motorstepy;
+  int voltageStart, voltageStep, voltageEnd;
+  int frequency;
+  std::string temp = "";
+  std::string runtype = "";
+  int row;
+  int column;
+
+  std::vector<int> pixX, pixY;
+
+
+  os << "Message Header:" << endl;
+  os << "Voltage  " << h.voltage << endl;
+  os << "File Name   " << h.filename << endl;
+  os << "Full File   " << h.fullFile << endl;
+  os << "Time   " << h.time << endl;
+  os << "Num Pix   " << h.numPix << endl;
+  os << "Max Offset X   " << h.maxOffsetX << endl;
+  os << "Max Offset X   " << h.maxOffsetY << endl;
+  os << "Max Step X   " << h.maxStepX << endl;
+  os << "Max Step Y   " << h.maxStepY << endl;
+  os << "Motor Step X   " << h.motorstepx << endl;
+  os << "Motor Step Y   " << h.motorstepy << endl;
+  os << "Voltage Start   " << h.voltageStart << endl;
+  os << "Voltage Step   " << h.voltageStep << endl;
+  os << "Voltage End   " << h.voltageEnd << endl;
+  os << "Run Typee   " << h.runtype << endl;
+  os << "Row   " << h.row << endl;
+  os << "Column   " << h.column << endl;
+  return os;
+}

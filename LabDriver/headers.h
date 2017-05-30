@@ -13,6 +13,8 @@ struct HeaderInfoGen{
   string panelName = "MC";
   string sourceName = "RU";
   string sourceConfig = "Dynamic";
+  double sourceHeight = 0; //cm
+  double collimatorSize = 0; //mm
   string triggerSetup = "0"; //remove
   string gas = "TEST";
   double pressure = 740.0;
@@ -38,21 +40,9 @@ struct HeaderInfoAfter{
   vector<int> readoutLines;
   int numReadings;
 };
-struct HeaderInfoCounter{
-  double voltage;
-  vector<string> pixels;
-  double timeLength;
-  double samplingLength;
-};
 //These functions allow for the easy outputing of headers
 ostream& operator<<(ostream& os, const HeaderInfoGen &h);
 ostream& operator<<(ostream& os, const HeaderInfoAfter& h);
-ostream& operator<<(ostream& os, const HeaderInfoCounter& h);
-//this functions creates a command line prompt that will fill out the header
-void makeGenHead(HeaderInfoGen &hg);
 //this functions reads the header in from a template file
 void makeGenHeadFile(HeaderInfoGen &hg, string file);
-bool isHeaderValid(string filename);
-//sets up the run parameters for a voltage scan from a file. Returns true if it is successful and false otherwise
-bool makeVSRun(string file, int &start, int &stop, int &step, int &interval, double &freq, int &numPix, vector<int> &pixX, vector<int> &pixY);
 #endif

@@ -26,7 +26,6 @@ using Spsc_time = boost::lockfree::spsc_queue < HighResClock::time_point, boost:
 
 //time-dependent non interruptable version
 void doWeinerCount(WeinerCounter *nim, string runName, HeaderInfoGen header, Messages message, Readout readout, Voltage* volt, atomic<bool> *run);
-
 //time independent verison
 void doWeinerCountInf(WeinerCounter *nim, string runName, HeaderInfoGen header, Messages message, Readout readout, Voltage* volt, atomic<bool> *run);
 
