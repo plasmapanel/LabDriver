@@ -17,6 +17,7 @@ This file contains all of the utilities that will be used with our lab setup
 #include "Messages.h"
 #include "VoltageFactory.h"
 #include "Readout.h"
+#include <boost/lockfree/spsc_queue.hpp>
 using namespace std;
 using Spsc_int = boost::lockfree::spsc_queue < int, boost::lockfree::capacity<10000> >;
 using Spsc_time = boost::lockfree::spsc_queue < HighResClock::time_point, boost::lockfree::capacity<10000> > ;
