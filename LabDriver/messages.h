@@ -18,7 +18,7 @@ public:
 	int motorstepx;
 	int motorstepy;
 	int voltageStart, voltageStep, voltageEnd;
-	int frequency;
+	int frequency = 0;
 	std::string temp = "";
 	std::string runtype = "";
 	int row;

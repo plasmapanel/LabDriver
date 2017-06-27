@@ -180,7 +180,7 @@ void BigFrame::setScanType(){
     m_textCtrl23->Disable();
     m_textCtrl40->Disable();
     m_textCtrl42->Disable();
-    m_textCtrl43->Disable(); //this value isnt need anymore it should be removed at some point
+    m_textCtrl43->Enable(); //this value isnt need anymore it should be removed at some point
 		break;
 	case 1:
 		scanType = "Voltage_Scan";

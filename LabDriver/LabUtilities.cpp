@@ -208,7 +208,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
 
 }
 
-void readFromPixAfterN(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim, int numSamples){
+void readFromPixAfterN(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim, int numSamples, int frequency){
 	//assert(q->size() == pix.size());
 	size_t size = pix.size();
 	nim->resetAll();
@@ -217,11 +217,14 @@ void readFromPixAfterN(const vector<int>& pix, atomic<bool>* done, atomic<bool> 
 		for (size_t j = 0; j < size; ++j){
 			q[j].push(nim->readCounter(pix[j]));
 		}
+    if (frequency > 0){
+      this_thread::sleep_for(chrono::milliseconds(frequency));
+    }
 	}
 	*done = true;
 }
 
-void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim){
+void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<bool> *control, vector<Spsc_int> &q, Spsc_time &t, WeinerCounter* nim, int frequency){
 	//assert(q->size() == pix.size());
   size_t size = pix.size();
 	nim->resetAll();
@@ -230,6 +233,9 @@ void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<boo
 		for (size_t j = 0; j < size; ++j){
 			q[j].push(nim->readCounter(pix[j]));
 		}
+    if (frequency > 0) {
+      this_thread::sleep_for(chrono::milliseconds(frequency));
+    }
 	}
 	*done = true;
 }
@@ -308,7 +314,7 @@ void doWeinerCount(WeinerCounter *nim, string runName, HeaderInfoGen header, Mes
   volt->setVoltage(message.voltage);
   volt->turnOn();
   thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, header, message);
-  readFromPixAfterN(activeReadout, &done, run, q, t, nim, numSamples);
+  readFromPixAfterN(activeReadout, &done, run, q, t, nim, numSamples, message.frequency);
   if (t2.joinable()){
     t2.join();
   }
@@ -336,7 +342,7 @@ void doWeinerCountInf(WeinerCounter *nim, string runName, HeaderInfoGen header, 
   volt->setVoltage(message.voltage);
   volt->turnOn();
   thread t2(writeInfoAfterNa, ref(q), ref(t), &done, runFullName, ha, header, message);
-  readFromPixAfterNInf(activeReadout, &done, run, q, t, nim);
+  readFromPixAfterNInf(activeReadout, &done, run, q, t, nim, message.frequency);
   if (t2.joinable()){
     t2.join();
   }
