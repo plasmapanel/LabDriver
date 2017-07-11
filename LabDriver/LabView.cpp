@@ -679,6 +679,11 @@ void BigFrame::startSelected(wxCommandEvent& event){
     thread t1(doXYScan, mot, nim, volt, *message, *readout, *pglobalheader, &run);
 		t1.detach();
 	}
+
+	//if (runArduino == true)
+	//{
+	//	thread t2(doArduino, *message, *pglobalheader, &run);
+	//}
 }
 
 void BigFrame::openReadoutPane(wxCommandEvent& event){

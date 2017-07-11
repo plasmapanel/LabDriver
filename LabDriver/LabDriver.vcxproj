@@ -71,7 +71,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\National Instruments\Shared\ExternalCompilerSupport\C\include;C:\Users\plasmapanel\Documents\devlibs\wxWidgets-3.1.0\include;C:\Users\plasmapanel\Documents\devlibs\wxWidgets-3.1.0\include\msvc;C:\Users\plasmapanel\Documents\devlibs\boost_1_58_0;C:\Users\plasmapanel\Documents\devlibs\root\include;C:\Python27\include;C:\Users\plasmapanel\Documents\devlibs\CImg</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\National Instruments\Shared\ExternalCompilerSupport\C\include;C:\Users\plasmapanel\Documents\devlibs\wxWidgets-3.1.0\include;C:\Users\plasmapanel\Documents\devlibs\wxWidgets-3.1.0\include\msvc;C:\Users\plasmapanel\Documents\devlibs\boost_1_58_0;C:\Users\plasmapanel\Documents\devlibs\root\include;C:\Python27\include;C:\Users\plasmapanel\Documents\devlibs\CImg;C:\Users\plasmapanel\Documents\devlibs\json</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;WXUSINGDLL;wxMSVC_VERSION_AUTO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Arduino.h" />
     <ClInclude Include="ComPort.h" />
     <ClInclude Include="headers.h" />
     <ClInclude Include="HighResClock.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="WeinerCounter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Arduino.cpp" />
     <ClCompile Include="ComPort.cpp" />
     <ClCompile Include="headers.cpp" />
     <ClCompile Include="HighResClock.cpp" />

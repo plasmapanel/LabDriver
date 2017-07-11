@@ -31,6 +31,7 @@ struct HeaderInfoGen{
   //int motorstepx = 400;
   //int motorstepy = 400;
   long int runNumber = 0;
+  int runStartTime;
 };
 
 //the header for after-pulse tests

@@ -56,7 +56,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   //add all info from the general header
   char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
   Double_t tempPress, tempDiscThr, tempQuench, tempAttenRo, tempAttenHV, sourceHeight, collimatorSize;
-  Int_t tempNumRo, tempNumHv;
+  Int_t tempNumRo, tempNumHv, runStartTime;
   Long64_t runNumber;
   strcpy(tempPanel, hg.panelName.c_str());
   tr.Branch("panel", tempPanel, "panel[200]/C");
@@ -91,9 +91,11 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   strcpy(tempTrigHV, hg.triggerHV.c_str());
   tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
   tempAttenHV = hg.attenHV;
-  tr.Branch("dB_hv", &tempAttenHV, "dB_hv/D");
-  runNumber = hg.runNumber;
+  //tr.Branch("dB_hv", &tempAttenHV, "dB_hv/D");
+  //runNumber = hg.runNumber;
   tr.Branch("runNumber", &runNumber, "runNumber/L");
+  runStartTime = hg.runStartTime;
+  tr.Branch("runStartTime", &runNumber, "runStartTime/I");
   //add all info from the after-pulse header
   Double_t tempVolt = ha.voltage;
   Int_t tempPix = ha.numPixels;
@@ -106,14 +108,14 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
     readoutLines[i] = 0;
   }
   tr.Branch("hvVal", &tempVolt, "hvVal/D");
-  tr.Branch("num_pix", &tempPix, "num_pix/I");
+  //tr.Branch("num_pix", &tempPix, "num_pix/I");
   tr.Branch("readoutLines", readoutLines, "readoutLines[20]/I");
   tr.Branch("numReadings", &numReadings, "numReadings/I");
   //add all info from the message  
   Int_t time, numPix, maxOffsetX, maxOffsetY, maxStepX, maxStepY, motorStepX, motorStepY, voltageStart, voltageStep, voltageEnd, row, column;
   char runType[200];
   time = message.time;
-  tr.Branch("time", &time, "hvVal/I");
+  tr.Branch("sampleInterval", &time, "sampleInterval/I");
   numPix = message.numPix;
   tr.Branch("numPix", &numPix, "numPix/I");
   maxOffsetX = message.maxOffsetX;
@@ -242,7 +244,6 @@ void readFromPixAfterNInf(const vector<int>& pix, atomic<bool>* done, atomic<boo
 
 static string initWeinerFile(const HeaderInfoGen &header, const Messages &message, string const & runType, string const & runName, double voltage){
   static const string DEFAULT_DIR = ".\\CollectedData\\";
-  time_t tm = time(nullptr);
   stringstream sstream;
   sstream << fixed;
   sstream.precision(2);
@@ -260,17 +261,16 @@ static string initWeinerFile(const HeaderInfoGen &header, const Messages &messag
     sstream << runName << "\\";
     CreateDirectory(sstream.str().c_str(), NULL);
   }
-  sstream << header.panelName << "_" << header.gas << "_" << header.pressure << "torr_" << voltage << "V_";
+  sstream << header.panelName << "_Run_" << header.runNumber << "_" << header.gas << "_" << header.pressure << "torr_" << voltage << "V_";
   if (runType == "Hex_Scan_X" || runType == "XY_Scan" || runType == "Line_Scan" || runType == "Hex_Scan_Y"){
     sstream << "X" << message.motorstepx << "_Y" << message.motorstepy << "_";
   }
-    sstream << tm << "_AP";
+    sstream << "_AP";
   return sstream.str();
 }
 
 static string initWeinerLogFile(const HeaderInfoGen &header, const Messages &message, string const & runType, string const & runName){
   static const string DEFAULT_DIR = ".\\CollectedData\\";
-  time_t tm = time(nullptr);
   stringstream sstream;
   sstream << fixed;
   sstream.precision(2);
@@ -334,6 +334,9 @@ void doWeinerCountInf(WeinerCounter *nim, string runName, HeaderInfoGen header, 
   ha.numReadings = numSamples;
   ha.voltage = message.voltage;
   ha.readoutLines = activeReadout;
+
+  time_t tm = time(nullptr);
+  header.runStartTime = tm;
   //get the number of samples for this number of lines
   vector <Spsc_int> q(activeReadout.size());
   Spsc_time t;
@@ -436,7 +439,7 @@ double findRate(WeinerCounter* nim, int lineNum, double time, double intervalLen
 void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages message, Readout readout, HeaderInfoGen header, atomic<bool>* run){
 	ofstream log;
 	
-  string runName = message.runtype + "_" + header.panelName + "_" + header.gas + "_" + to_string(header.pressure) + "torr_" + to_string(time(nullptr));
+	string runName = "Run_Number_" + to_string(header.runNumber) + "_" + message.runtype + "_" + header.panelName + "_" + header.gas + "_" + to_string(header.pressure) + "torr";
   log.open(initWeinerLogFile(header, message, message.runtype, runName), ofstream::ate);
 
 

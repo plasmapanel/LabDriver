@@ -22,6 +22,7 @@ ostream& operator<<(ostream& os, const HeaderInfoGen &h){
   os << "Attenuation HV (db)   " << h.attenHV << endl;
   //os << "X Drive step/mm   " << h.motorstepx << endl;
   //os << "Y Drive step/mm   " << h.motorstepy << endl;
+  os << "Run Start Time   " << h.runStartTime << endl;
   os << "Run Number  " << h.runNumber << endl;
   return os;
 }
