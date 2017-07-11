@@ -86,16 +86,10 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("dB_ro", &tempAttenRo, "dB_ro/D");
   tempNumHv = hg.numHV;
   tr.Branch("nch_hv", &tempNumHv, "nch_hv/I");
-  strcpy(tempHV, hg.linesHV.c_str());
-  tr.Branch("line_hv", tempHV, "line_hv[200]/C");
-  strcpy(tempTrigHV, hg.triggerHV.c_str());
-  tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
-  tempAttenHV = hg.attenHV;
-  //tr.Branch("dB_hv", &tempAttenHV, "dB_hv/D");
-  //runNumber = hg.runNumber;
+  runNumber = hg.runNumber;
   tr.Branch("runNumber", &runNumber, "runNumber/L");
   runStartTime = hg.runStartTime;
-  tr.Branch("runStartTime", &runNumber, "runStartTime/I");
+  tr.Branch("runStartTime", &runStartTime, "runStartTime/I");
   //add all info from the after-pulse header
   Double_t tempVolt = ha.voltage;
   Int_t tempPix = ha.numPixels;
