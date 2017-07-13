@@ -1,12 +1,12 @@
 #include "headers.h"
 using namespace std;
 ostream& operator<<(ostream& os, const HeaderInfoGen &h){
-
   os << "Panel Name   " << h.panelName << endl;
+  os << "Run Number  " << h.runNumber << endl;
   os << "Source   " << h.sourceName << endl;
-  os << "Source Config  " << h.sourceConfig << endl;
-  os << "Source Height  " << h.sourceHeight << endl;
-  os << "Collimator Size  " << h.collimatorSize << endl;
+  //os << "Source Config  " << h.sourceConfig << endl;
+  os << "Source Height  (mm)" << h.sourceHeight << endl;
+  os << "Collimator Size  (mm)" << h.collimatorSize << endl;
   os << "Gas Mixture   " << h.gas << endl;
   os << "Gas Pressure (Torr)   " << h.pressure << endl;
   os << "R-quench (MOhm)   " << h.quench << endl;
@@ -18,23 +18,22 @@ ostream& operator<<(ostream& os, const HeaderInfoGen &h){
   os << "Attenuation RO (db)  " << h.attenRO << endl;
   os << "Number HV lines " << h.numHV << endl;
   os << "HV lines  " << h.linesHV << endl;
-  //os << "Trigger HV	 " << h.triggerHV << endl;
+  os << "Trigger HV	 " << h.triggerHV << endl;
   os << "Attenuation HV (db)   " << h.attenHV << endl;
   //os << "X Drive step/mm   " << h.motorstepx << endl;
   //os << "Y Drive step/mm   " << h.motorstepy << endl;
   os << "Run Start Time   " << h.runStartTime << endl;
-  os << "Run Number  " << h.runNumber << endl;
+  
   return os;
 }
 ostream& operator<<(ostream& os, const HeaderInfoAfter& h){
-  os << "After-Pulse Test" << endl;
-  os << "Voltage   " << h.voltage << endl;
-  os << "# Readout Lines Tested   " << h.numPixels << endl;
-  os << "Readout Lines Tested   ";
-  for (int i = 0, len = h.readoutLines.size(); i < len; ++i){
-    os << h.readoutLines[i] << " ";
-  }
-  os << endl;
+   os << "Voltage   " << h.voltage << endl;
+ // os << "# Readout Lines Tested   " << h.numPixels << endl;
+ // os << "Readout Lines Tested   ";
+ // for (int i = 0, len = h.readoutLines.size(); i < len; ++i){
+ //   os << h.readoutLines[i] << " ";
+ // }
+ // os << endl;
   os << "# Readings Taken " << h.numReadings << endl;
   return os;
 }

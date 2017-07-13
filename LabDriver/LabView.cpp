@@ -171,17 +171,26 @@ void BigFrame::setScanType(){
 	case 0:
 		scanType = "Free";
     m_textCtrl18->Disable();
+	m_textCtrl18->SetValue(wxT("0"));
     m_textCtrl19->Disable();
-    m_textCtrl20->Disable();
+	m_textCtrl19->SetValue(wxT("0"));
+	m_textCtrl20->Disable();
+	m_textCtrl20->SetValue(wxT("0"));
     m_textCtrl21->Disable();
+	m_textCtrl21->SetValue(wxT("0"));
     m_textCtrl41->Disable();
+	m_textCtrl41->SetValue(wxT("0"));
     m_textCtrl29->Disable();
+	m_textCtrl29->SetValue(wxT("0"));
     m_textCtrl22->Enable(); //start voltage
     m_textCtrl23->Disable();
+	m_textCtrl23->SetValue(wxT("0"));
     m_textCtrl40->Disable();
+	m_textCtrl40->SetValue(wxT("0"));
     m_textCtrl42->Disable();
-    m_textCtrl43->Enable(); //this value isnt need anymore it should be removed at some point
-		break;
+	m_textCtrl42->SetValue(wxT("0"));
+    m_textCtrl43->Enable(); //nim interval time 
+	break;
 	case 1:
 		scanType = "Voltage_Scan";
     m_textCtrl18->Disable();
@@ -194,7 +203,7 @@ void BigFrame::setScanType(){
     m_textCtrl23->Enable(); //end voltage
     m_textCtrl40->Enable(); //voltage step
     m_textCtrl42->Enable(); // measuremnt time
-    m_textCtrl43->Disable();
+    m_textCtrl43->Enable();
     break;
 	case 2:
 		scanType = "Line_Scan";
@@ -208,7 +217,7 @@ void BigFrame::setScanType(){
     m_textCtrl23->Enable();
     m_textCtrl40->Enable();
     m_textCtrl42->Enable();
-    m_textCtrl43->Disable();
+	m_textCtrl43->Enable();
 		break;
 	case 3:
 		scanType = "Hex_Scan_X";
@@ -222,7 +231,7 @@ void BigFrame::setScanType(){
     m_textCtrl23->Enable();
     m_textCtrl40->Enable();
     m_textCtrl42->Enable();
-    m_textCtrl43->Disable();
+    m_textCtrl43->Enable();
     break;
 	case 4:
 		scanType = "Hex_Scan_Y";
@@ -236,7 +245,7 @@ void BigFrame::setScanType(){
     m_textCtrl23->Enable();
     m_textCtrl40->Enable();
     m_textCtrl42->Enable();
-    m_textCtrl43->Disable();
+    m_textCtrl43->Enable();
 		break;
 	case 5:
 		scanType = "XY_Scan";
@@ -250,7 +259,7 @@ void BigFrame::setScanType(){
     m_textCtrl23->Enable();
     m_textCtrl40->Enable();
     m_textCtrl42->Enable();
-    m_textCtrl43->Disable();
+    m_textCtrl43->Enable();
     break;
 	default:
 		scanType = "None";
@@ -356,7 +365,12 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event){
   for (double i = startvoltage; i <= endvoltage; i += voltagestepsize){
     ++numsteps;
   }
-  if (scanType == "Free"){ numsteps = 1; }
+  if (scanType == "Free")
+  { 
+	  numsteps = 1;
+	  endvoltage = startvoltage;
+	  m_textCtrl23->SetValue(wxString::Format(wxT("%i"), endvoltage));
+  }
 	
   if (scanType == "Hex_Scan_X" || scanType == "XY_Scan" || scanType == "Line_Scan" || scanType == "Hex_Scan_Y"){
     if (xstepsizemm == 0){

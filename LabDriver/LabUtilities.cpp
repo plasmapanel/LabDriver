@@ -62,8 +62,8 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("panel", tempPanel, "panel[200]/C");
   strcpy(tempSource, hg.sourceName.c_str());
   tr.Branch("source", tempSource, "source[200]/C");
-  strcpy(tempSetup, hg.sourceConfig.c_str());
-  tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
+  //strcpy(tempSetup, hg.sourceConfig.c_str());
+  //tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
   sourceHeight = hg.sourceHeight;
   tr.Branch("sourceHeight", &sourceHeight, "sourceHeight/D");
   collimatorSize = hg.collimatorSize;
@@ -95,21 +95,21 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   Int_t tempPix = ha.numPixels;
   Int_t numReadings = ha.numReadings;
   Int_t readoutLines[20];
-  for (int i = 0, leni = ha.readoutLines.size(); i < leni; ++i){
-    readoutLines[i] = ha.readoutLines[i];
-  }
-  for (int i = ha.readoutLines.size(); i < 20; ++i){
-    readoutLines[i] = 0;
-  }
+  //for (int i = 0, leni = ha.readoutLines.size(); i < leni; ++i){
+  //  readoutLines[i] = ha.readoutLines[i];
+  //}
+  //for (int i = ha.readoutLines.size(); i < 20; ++i){
+  //  readoutLines[i] = 0;
+ // }
   tr.Branch("hvVal", &tempVolt, "hvVal/D");
   //tr.Branch("num_pix", &tempPix, "num_pix/I");
-  tr.Branch("readoutLines", readoutLines, "readoutLines[20]/I");
+  //tr.Branch("readoutLines", readoutLines, "readoutLines[20]/I");
   tr.Branch("numReadings", &numReadings, "numReadings/I");
   //add all info from the message  
-  Int_t time, numPix, maxOffsetX, maxOffsetY, maxStepX, maxStepY, motorStepX, motorStepY, voltageStart, voltageStep, voltageEnd, row, column;
+  Int_t time, interval, numPix, maxOffsetX, maxOffsetY, maxStepX, maxStepY, motorStepX, motorStepY, voltageStart, voltageStep, voltageEnd, row, column;
   char runType[200];
   time = message.time;
-  tr.Branch("sampleInterval", &time, "sampleInterval/I");
+  tr.Branch("sampleTime", &time, "sampleTime/I");
   numPix = message.numPix;
   tr.Branch("numPix", &numPix, "numPix/I");
   maxOffsetX = message.maxOffsetX;
@@ -130,11 +130,13 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("voltageStep", &voltageStep, "voltageStep/I");
   voltageEnd = message.voltageEnd;
   tr.Branch("voltageEnd", &voltageEnd, "voltageEnd/I");
-  row = message.row;
-  tr.Branch("row", &row, "row/I");
-  column = message.column;
-  tr.Branch("column", &column, "column/I");
-  strcpy(runType, message.runtype.c_str());
+  interval = message.frequency;
+  tr.Branch("timeInterval", &interval, "timeInterval/I");
+  //row = message.row;
+  //tr.Branch("row", &row, "row/I");
+  //column = message.column;
+  //tr.Branch("column", &column, "column/I");
+  //strcpy(runType, message.runtype.c_str());
   tr.Branch("runType", &runType, "runType[200]/C");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t.front();
