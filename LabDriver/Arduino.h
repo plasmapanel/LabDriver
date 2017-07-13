@@ -14,8 +14,9 @@ public:
 	~Arduino();
 	void doArduino(Messages* message, HeaderInfoGen* info, bool* run);
 	void readArduino();
+	int port;
 
 private:
-	int port;
+	
 };
 
