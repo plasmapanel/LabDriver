@@ -18,7 +18,7 @@ ostream& operator<<(ostream& os, const HeaderInfoGen &h){
   os << "Attenuation RO (db)  " << h.attenRO << endl;
   os << "Number HV lines " << h.numHV << endl;
   os << "HV lines  " << h.linesHV << endl;
-  os << "Trigger HV	 " << h.triggerHV << endl;
+  //os << "Trigger HV	 " << h.triggerHV << endl;
   os << "Attenuation HV (db)   " << h.attenHV << endl;
   //os << "X Drive step/mm   " << h.motorstepx << endl;
   //os << "Y Drive step/mm   " << h.motorstepy << endl;
