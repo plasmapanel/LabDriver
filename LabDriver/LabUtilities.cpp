@@ -203,6 +203,8 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   }
   tr.Write();
   f.Save();
+  out.close();
+  f.Close();
 
 }
 
@@ -261,8 +263,7 @@ static string initWeinerFile(const HeaderInfoGen &header, const Messages &messag
   if (runType == "Hex_Scan_X" || runType == "XY_Scan" || runType == "Line_Scan" || runType == "Hex_Scan_Y"){
     sstream << "X" << message.motorstepx << "_Y" << message.motorstepy << "_";
   }
-    sstream << "_AP";
-  return sstream.str();
+    return sstream.str();
 }
 
 static string initWeinerLogFile(const HeaderInfoGen &header, const Messages &message, string const & runType, string const & runName){

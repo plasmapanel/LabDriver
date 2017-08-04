@@ -74,6 +74,10 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl24;
 		wxStaticText* discThr;
 		wxTextCtrl* m_textCtrl48;
+		wxStaticText* m_staticText37;
+		wxTextCtrl* m_textCtrl35;
+		wxStaticText* m_staticText36;
+		wxTextCtrl* m_textCtrl341;
 		wxStaticText* m_staticText33;
 		wxTextCtrl* m_textCtrl33;
 		wxStaticText* m_staticText34;
@@ -101,7 +105,7 @@ class header : public wxFrame
 	
 	public:
 		
-		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 914,756 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1115,756 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~header();
 	
@@ -178,6 +182,12 @@ class MainFrame : public wxFrame
 		wxButton* stop;
 		wxButton* m_button23;
 		wxButton* m_button24;
+		wxStaticText* m_staticText34;
+		wxChoice* m_choice4;
+		wxButton* m_button25;
+		wxButton* m_button26;
+		wxStaticText* m_staticText35;
+		wxChoice* m_choice5;
 		wxStatusBar* m_statusBar1;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -219,11 +229,13 @@ class MainFrame : public wxFrame
 		virtual void stopSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void disconnectNIM( wxCommandEvent& event ) { event.Skip(); }
 		virtual void startCamera( wxCommandEvent& event ) { event.Skip(); }
+		virtual void connectArduino( wxCommandEvent& event ) { event.Skip(); }
+		virtual void disconnectArduino( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("LabDriver"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1144,653 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("LabDriver"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1020,653 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~MainFrame();
 	
