@@ -5,7 +5,7 @@
 #include "TFile.h"
 #include "ComPort.h"
 
-#include <json/json.h>
+//#include <json/json.h>
 
 class Arduino
 {

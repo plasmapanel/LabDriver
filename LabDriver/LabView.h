@@ -27,7 +27,7 @@
 #include "Readout.h"
 #include "LabUtilities.h"
 #include "Offset.h"
-#include "json/json.h"
+//#include "json/json.h"
 
 #ifndef APP_CATALOG
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
