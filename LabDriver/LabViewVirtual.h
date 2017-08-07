@@ -70,6 +70,8 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl1324;
 		wxStaticText* m_staticText1425;
 		wxTextCtrl* m_textCtrl1325;
+		wxStaticText* m_staticText38;
+		wxTextCtrl* m_textCtrl36;
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_textCtrl24;
 		wxStaticText* discThr;

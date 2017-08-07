@@ -46,7 +46,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   string tempst;
   tempst = fileName + ".root";
   TFile f(tempst.c_str(), "RECREATE");
-  tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V) AP";
+  tempst = "TTree for panel " + hg.panelName + " filled with " + hg.gas + " at " + to_string(ha.voltage) + " (V)";
   TTree tr("ap", tempst.c_str());
   //add the count variables
   Double_t tstamp;
@@ -87,8 +87,8 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tempNumHv = hg.numHV;
   tr.Branch("nch_hv", &tempNumHv, "nch_hv/I");
   runNumber = hg.runNumber;
-  tr.Branch("runNumber", &runNumber, "runNumber/L");
-  runStartTime = hg.runStartTime;
+  //tr.Branch("runNumber", &runNumber, "runNumber/L");
+  //runStartTime = hg.runStartTime;
   tr.Branch("runStartTime", &runStartTime, "runStartTime/I");
   //add all info from the after-pulse header
   Double_t tempVolt = ha.voltage;
@@ -201,6 +201,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
       t.pop();
     }
   }
+  
   tr.Write();
   f.Save();
   out.close();

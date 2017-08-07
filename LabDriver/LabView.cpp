@@ -532,6 +532,11 @@ void HeaderEdit::openHeader(wxCommandEvent& event){
 }
 
 void HeaderEdit::updateGas(wxCommandEvent& event){
+	updateGas();
+}
+
+void HeaderEdit::updateGas()
+{
 	wxString gasMix;
 	int gasTotal = 0;
 
@@ -558,7 +563,7 @@ void HeaderEdit::updateGas(wxCommandEvent& event){
 	m_textCtrl13->WriteText(gasMix);
 
 	m_textCtrl52->SelectAll();
-	m_textCtrl52->WriteText(wxString::Format(wxT("%i",gasTotal)));
+	m_textCtrl52->WriteText(wxString::Format(wxT("%i", gasTotal)));
 }
 
 void HeaderEdit::copyData(HeaderInfoGen &headerInfo){
@@ -598,8 +603,10 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo){
 	m_textCtrl48->WriteText(wxString::Format(wxT("%f"), headerInfo.discThresh));
 	m_textCtrl132->Clear();
 	m_textCtrl132->WriteText(wxString::Format(wxT("%f"), headerInfo.quench));
-	//m_textCtrl47->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
-	//m_textCtrl1321->WriteText(headerInfo.roLines);
+	m_textCtrl35->Clear();
+	m_textCtrl35->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
+	m_textCtrl341->Clear();
+	m_textCtrl341->WriteText(headerInfo.roLines);
 	//m_textCtrl12->WriteText(headerInfo.triggerRO);
 	m_textCtrl24->Clear();
 	m_textCtrl24->WriteText(wxString::Format(wxT("%f"), headerInfo.attenRO));
@@ -608,7 +615,8 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo){
 	m_textCtrl1325->Clear();
 	m_textCtrl1325->WriteText(headerInfo.linesHV);
 	//m_textCtrl1323->WriteText(headerInfo.triggerHV);
-	//m_textCtrl1326->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
+	m_textCtrl36->Clear();
+	m_textCtrl36->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
 	setSourceConfig(headerInfo.sourceConfig);
 }
 

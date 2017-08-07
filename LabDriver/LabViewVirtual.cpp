@@ -224,6 +224,13 @@ header::header( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_textCtrl1325 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("1-20"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer326->Add( m_textCtrl1325, 0, wxALL, 5 );
 	
+	m_staticText38 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Attenuation (dB)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText38->Wrap( -1 );
+	bSizer326->Add( m_staticText38, 0, wxALL, 5 );
+	
+	m_textCtrl36 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer326->Add( m_textCtrl36, 0, wxALL, 5 );
+	
 	
 	sbSizer2->Add( bSizer326, 1, wxEXPAND, 5 );
 	

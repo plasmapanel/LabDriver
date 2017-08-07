@@ -100,6 +100,7 @@ public:
 	void copyData(HeaderInfoGen &);
 	void putData(HeaderInfoGen &);
 	void updateGas(wxCommandEvent& event);
+	void updateGas();
 	
 
 private:
