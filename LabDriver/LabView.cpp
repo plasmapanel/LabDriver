@@ -482,6 +482,8 @@ void HeaderEdit::setSourceConfig(string type){
 void HeaderEdit::headerOkClicked(wxCommandEvent& event){
 	copyData(globalHeader);
 	Show(false);
+	HeaderWindow->Destroy();
+	HeaderWindow = nullptr;
 }
 void HeaderEdit::headerCancelClicked(wxCommandEvent& event){
 	Show(false);
@@ -588,12 +590,45 @@ void HeaderEdit::copyData(HeaderInfoGen &headerInfo){
 }
 
 void HeaderEdit::putData(HeaderInfoGen &headerInfo){
+		m_textCtrl1->Clear();
+		m_textCtrl1->WriteText(headerInfo.panelName);
+		m_textCtrl11->Clear();
+		m_textCtrl11->WriteText(headerInfo.sourceName);
+	  m_textCtrl30->WriteText(wxString::Format(wxT("%f"), headerInfo.sourceHeight));
+	  m_textCtrl29->WriteText(wxString::Format(wxT("%f"), headerInfo.collimatorSize));
+		//m_textCtrl1322->WriteText(headerInfo.triggerSetup);
+		m_textCtrl13->Clear();
+		m_textCtrl13->WriteText(headerInfo.gas);
+		m_textCtrl131->Clear();
+		m_textCtrl131->WriteText(wxString::Format(wxT("%f"), headerInfo.pressure));
+		m_textCtrl48->Clear();
+		m_textCtrl48->WriteText(wxString::Format(wxT("%f"), headerInfo.discThresh));
+		m_textCtrl132->Clear();
+		m_textCtrl132->WriteText(wxString::Format(wxT("%f"), headerInfo.quench));
+		m_textCtrl35->Clear();
+		m_textCtrl35->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
+		m_textCtrl341->Clear();
+		m_textCtrl341->WriteText(headerInfo.roLines);
+		//m_textCtrl12->WriteText(headerInfo.triggerRO);
+		m_textCtrl24->Clear();
+		m_textCtrl24->WriteText(wxString::Format(wxT("%f"), headerInfo.attenRO));
+		m_textCtrl1324->Clear();
+		m_textCtrl1324->WriteText(wxString::Format(wxT("%i"), headerInfo.numHV));
+		m_textCtrl1325->Clear();
+		m_textCtrl1325->WriteText(headerInfo.linesHV);
+		//m_textCtrl1323->WriteText(headerInfo.triggerHV);
+		m_textCtrl36->Clear();
+		m_textCtrl36->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
+		setSourceConfig(headerInfo.sourceConfig);
+}
+
+void HeaderEdit::putData(){
 	m_textCtrl1->Clear();
 	m_textCtrl1->WriteText(headerInfo.panelName);
 	m_textCtrl11->Clear();
 	m_textCtrl11->WriteText(headerInfo.sourceName);
-  m_textCtrl30->WriteText(wxString::Format(wxT("%f"), headerInfo.sourceHeight));
-  m_textCtrl29->WriteText(wxString::Format(wxT("%f"), headerInfo.collimatorSize));
+	m_textCtrl30->WriteText(wxString::Format(wxT("%f"), headerInfo.sourceHeight));
+	m_textCtrl29->WriteText(wxString::Format(wxT("%f"), headerInfo.collimatorSize));
 	//m_textCtrl1322->WriteText(headerInfo.triggerSetup);
 	m_textCtrl13->Clear();
 	m_textCtrl13->WriteText(headerInfo.gas);
@@ -864,7 +899,7 @@ Histogram::Histogram(wxWindow* parent) : ImageFrame(parent)
 	// run updateimage in a thread
 
 
-	//display->Connect(wxEVT_PAINT, wxCommandEventHandler(Histogram::paint);
+	//display->Connect(wxEVT_PAINT, wxCommandEventHandlepr(Histogram::paint);
 
 }
 
