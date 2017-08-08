@@ -28,6 +28,7 @@ struct HeaderInfoGen{
   string linesHV = "1-20";
   string triggerHV = "0";
   double attenHV = 0; 
+  double discHV = 0;
   //int motorstepx = 400;
   //int motorstepy = 400;
   long int runNumber = 0;

@@ -55,7 +55,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
 
   //add all info from the general header
   char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
-  Double_t tempPress, tempDiscThr, tempQuench, tempAttenRo, tempAttenHV, sourceHeight, collimatorSize;
+  Double_t tempPress, tempDiscThr, tempDiscHV, tempQuench, tempAttenRo, tempAttenHV, sourceHeight, collimatorSize;
   Int_t tempNumRo, tempNumHv, runStartTime;
   Long64_t runNumber;
   strcpy(tempPanel, hg.panelName.c_str());
@@ -87,8 +87,10 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tempNumHv = hg.numHV;
   tr.Branch("nch_hv", &tempNumHv, "nch_hv/I");
   runNumber = hg.runNumber;
-  //tr.Branch("runNumber", &runNumber, "runNumber/L");
-  //runStartTime = hg.runStartTime;
+  tr.Branch("runNumber", &runNumber, "runNumber/L");
+  tempDiscHV = hg.discHV;
+  tr.Branch("discHV", &tempDiscHV, "discHV/D");
+  runStartTime = hg.runStartTime;
   tr.Branch("runStartTime", &runStartTime, "runStartTime/I");
   //add all info from the after-pulse header
   Double_t tempVolt = ha.voltage;
@@ -136,7 +138,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   //tr.Branch("row", &row, "row/I");
   //column = message.column;
   //tr.Branch("column", &column, "column/I");
-  //strcpy(runType, message.runtype.c_str());
+  strcpy(runType, message.runtype.c_str());
   tr.Branch("runType", &runType, "runType[200]/C");
   /////////////////////////////////////////////////////
   HighResClock::time_point first = t.front();

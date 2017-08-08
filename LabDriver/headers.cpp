@@ -2,9 +2,9 @@
 using namespace std;
 ostream& operator<<(ostream& os, const HeaderInfoGen &h){
   os << "Panel Name   " << h.panelName << endl;
-  //os << "Run Number  " << h.runNumber << endl;
+  os << "Run Number  " << h.runNumber << endl;
   os << "Source   " << h.sourceName << endl;
-  //os << "Source Config  " << h.sourceConfig << endl;
+  os << "Source Config  " << h.sourceConfig << endl;
   os << "Source Height  (mm)  " << h.sourceHeight << endl;
   os << "Collimator Size  (mm)  " << h.collimatorSize << endl;
   os << "Gas Mixture   " << h.gas << endl;
@@ -19,10 +19,11 @@ ostream& operator<<(ostream& os, const HeaderInfoGen &h){
   os << "Number HV lines " << h.numHV << endl;
   os << "HV lines  " << h.linesHV << endl;
   os << "Trigger HV	 " << h.triggerHV << endl;
+  os << "Discriminator Thr HV (mV)   " << h.discHV << endl;
   os << "Attenuation HV (db)   " << h.attenHV << endl;
   //os << "X Drive step/mm   " << h.motorstepx << endl;
-  //os << "Y Drive step/mm   " << h.motorstepy << endl;
-  //os << "Run Start Time   " << h.runStartTime << endl;
+ // os << "Y Drive step/mm   " << h.motorstepy << endl;
+  os << "Run Start Time   " << h.runStartTime << endl;
   
   return os;
 }
@@ -48,9 +49,10 @@ void makeGenHeadFile(HeaderInfoGen &hg, string file){
   in >> trash >> trash;
   in >> ws >> hg.panelName;
   //getline(in, hg.panelName);
-  in >> trash;
-  in >> ws >> hg.sourceName;
+  in >> trash >> trash >> trash;
+  in >> trash >> ws >> hg.sourceName;
   //getline(in, hg.sourceName);
+  in >> trash >> trash >> trash;
   in >> trash >> trash >> trash;
   in >> ws >> hg.sourceHeight;
   in >> trash >> trash >> trash;
@@ -70,6 +72,7 @@ void makeGenHeadFile(HeaderInfoGen &hg, string file){
   in >> ws >> hg.quench;
   //in >> hg.quench;
    //getline(in, hg.triggerSetup);
+  //in >> trash >> trash >> hg.triggerSetup;
   in >> trash >> trash >> trash>> ws >> hg.discThresh;
   //in >> hg.discThresh;
   in >> trash >> trash >> trash;
@@ -86,9 +89,10 @@ void makeGenHeadFile(HeaderInfoGen &hg, string file){
 
   in >> trash >> trash >> ws >> hg.triggerHV;
   //getline(in, hg.linesHV);
-  
+  in >> trash >> trash >> trash >> trash >> ws >> hg.discHV;
   in >> trash >> trash >> trash >> ws;
   in >> hg.attenHV;
+  in >> trash >> trash >> trash >> hg.runStartTime;
   in.close();
 
 }

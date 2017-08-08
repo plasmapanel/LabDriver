@@ -64,26 +64,28 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl52;
 		wxStaticText* m_staticText141;
 		wxTextCtrl* m_textCtrl131;
-		wxStaticText* m_staticText142;
-		wxTextCtrl* m_textCtrl132;
+		wxStaticText* m_staticText41;
+		wxTextCtrl* m_textCtrl39;
 		wxStaticText* m_staticText1424;
 		wxTextCtrl* m_textCtrl1324;
 		wxStaticText* m_staticText1425;
 		wxTextCtrl* m_textCtrl1325;
 		wxStaticText* m_staticText38;
 		wxTextCtrl* m_textCtrl36;
-		wxStaticText* m_staticText25;
-		wxTextCtrl* m_textCtrl24;
+		wxStaticText* m_staticText39;
+		wxTextCtrl* m_textCtrl37;
+		wxStaticText* m_staticText142;
+		wxTextCtrl* m_textCtrl132;
 		wxStaticText* discThr;
 		wxTextCtrl* m_textCtrl48;
 		wxStaticText* m_staticText37;
 		wxTextCtrl* m_textCtrl35;
 		wxStaticText* m_staticText36;
 		wxTextCtrl* m_textCtrl341;
-		wxStaticText* m_staticText33;
-		wxTextCtrl* m_textCtrl33;
-		wxStaticText* m_staticText34;
-		wxTextCtrl* m_textCtrl34;
+		wxStaticText* m_staticText25;
+		wxTextCtrl* m_textCtrl24;
+		wxStaticText* m_staticText40;
+		wxTextCtrl* m_textCtrl38;
 		wxButton* m_button1;
 		wxButton* m_button2;
 		wxMenuBar* m_menubar1;
@@ -95,9 +97,9 @@ class header : public wxFrame
 		virtual void updateGas( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setGas( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setPressure( wxFocusEvent& event ) { event.Skip(); }
-		virtual void setQuench( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setNumHVLines( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setHVLines( wxFocusEvent& event ) { event.Skip(); }
+		virtual void setQuench( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setROAtten( wxFocusEvent& event ) { event.Skip(); }
 		virtual void headerOkClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void headerCancelClicked( wxCommandEvent& event ) { event.Skip(); }
@@ -107,7 +109,7 @@ class header : public wxFrame
 	
 	public:
 		
-		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1115,756 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 850,621 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~header();
 	
