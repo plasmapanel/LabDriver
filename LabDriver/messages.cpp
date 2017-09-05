@@ -311,8 +311,6 @@ std::ostream& operator<<(std::ostream& os, const Messages& h){
 
   os << "Message Header:" << endl;
   os << "Voltage  " << h.voltage << endl;
-  os << "File Name   " << h.filename << endl;
-  os << "Full File   " << h.fullFile << endl;
   os << "Time   " << h.time << endl;
   os << "Num Pix   " << h.numPix << endl;
   os << "Max Offset X   " << h.maxOffsetX << endl;

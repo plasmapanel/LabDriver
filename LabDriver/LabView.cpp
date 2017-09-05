@@ -482,8 +482,8 @@ void HeaderEdit::setSourceConfig(string type){
 void HeaderEdit::headerOkClicked(wxCommandEvent& event){
 	copyData(globalHeader);
 	Show(false);
-	HeaderWindow->Destroy();
-	HeaderWindow = nullptr;
+	//HeaderWindow->Destroy();
+	//HeaderWindow = nullptr;
 }
 void HeaderEdit::headerCancelClicked(wxCommandEvent& event){
 	Show(false);
@@ -574,19 +574,21 @@ void HeaderEdit::copyData(HeaderInfoGen &headerInfo){
 	headerInfo.sourceConfig = getSourceConfig();
   headerInfo.sourceHeight = wxAtof(m_textCtrl30->GetLineText(0));
   headerInfo.collimatorSize = wxAtof(m_textCtrl29->GetLineText(0));
-	//headerInfo.triggerSetup = m_textCtrl1322->GetLineText(0);
+	headerInfo.triggerSetup = m_textCtrl38->GetLineText(0);
 	headerInfo.gas = m_textCtrl13->GetLineText(0);
 	headerInfo.pressure = wxAtof(m_textCtrl131->GetLineText(0));
 	headerInfo.discThresh = wxAtof(m_textCtrl48->GetLineText(0));
 	headerInfo.quench = wxAtof(m_textCtrl132->GetLineText(0));
-	//headerInfo.numRO = wxAtoi(m_textCtrl47->GetLineText(0));
-	//headerInfo.roLines = m_textCtrl1321->GetLineText(0);
-	//headerInfo.triggerRO = m_textCtrl12->GetLineText(0);
+	headerInfo.numRO = wxAtoi(m_textCtrl35->GetLineText(0));
+	headerInfo.roLines = m_textCtrl341->GetLineText(0);
+	headerInfo.triggerRO = m_textCtrl38->GetLineText(0);
 	headerInfo.attenRO = wxAtof(m_textCtrl24->GetLineText(0));
 	headerInfo.numHV = wxAtoi(m_textCtrl1324->GetLineText(0));
 	headerInfo.linesHV = m_textCtrl1325->GetLineText(0);
-	//headerInfo.triggerHV = m_textCtrl1323->GetLineText(0);
-	//headerInfo.attenHV = wxAtof(m_textCtrl1326->GetLineText(0));
+	headerInfo.triggerHV = m_textCtrl37->GetLineText(0);
+	headerInfo.attenHV = wxAtof(m_textCtrl36->GetLineText(0));
+	headerInfo.runStartTime = 0;
+
 }
 
 void HeaderEdit::putData(HeaderInfoGen &headerInfo){
@@ -863,30 +865,39 @@ Histogram::Histogram(wxWindow* parent) : ImageFrame(parent)
 	sizer1->Add(display);
 	this->SetSizer(sizer1);
 	this->Layout();
-	// run updateimage in a thread
+	int argcc = 0 ;
+	char **argv = 0;
+	//char * argvc = argv;
 
+	
 
+	TApplication gMyRootApp("My ROOT Application", &argcc, argv);
+	gMyRootApp.SetReturnFromRun(true);
+	int width = 1280;
+	int height = 720;
+	//HWND canvasWindow = (HWND) this->GetTopWindow()->GetHWND();
+
+	int wid = gVirtualX->AddWindow((ULong_t)this, width, height);
+	TCanvas fCanvas = new TCanvas("fCanvas", width, height, wid);
 	//display->Connect(wxEVT_PAINT, wxCommandEventHandlepr(Histogram::paint);
 
 }
 
-void Histogram::updateImage(string filename, atomic<bool> run){
-	while (run){
-		//delay 1 second
-		this_thread::sleep_for(chrono::microseconds(1000));
+void Histogram::OnRefreshTimer()
+{
+	gApplication->StartIdleing();
+	gSystem->InnerLoop();
+	gApplication->StopIdleing();
+}
 
-		image.LoadFile(filename);
-		Update();
-		//display image
+
+void BigFrame::startCamera(wxCommandEvent& event)
+{
+	if (!Image){
+		Image = new Histogram(this);
+		//Image->update();
+		Image->Show(true);
 	}
-}
+	
 
-void Histogram::paintNow(){
-	wxClientDC dc(this);
-	render(dc);
 }
-
-void Histogram::render(wxDC& dc){
-	dc.DrawBitmap(image, 0, 0, false);
-}
-

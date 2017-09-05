@@ -54,7 +54,7 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("data", count, "data[20]/I");
 
   //add all info from the general header
-  char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], tempHV[200], tempTrigHV[200], tempTrigRO[200];
+  char tempPanel[200], tempSource[200], tempGas[200], tempSetup[200], tempRO[200], /*tempHV[200],*/ tempTrigHV[200], tempTrigRO[200];
   Double_t tempPress, tempDiscThr, tempDiscHV, tempQuench, tempAttenRo, tempAttenHV, sourceHeight, collimatorSize;
   Int_t tempNumRo, tempNumHv, runStartTime;
   Long64_t runNumber;
@@ -62,8 +62,8 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("panel", tempPanel, "panel[200]/C");
   strcpy(tempSource, hg.sourceName.c_str());
   tr.Branch("source", tempSource, "source[200]/C");
-  //strcpy(tempSetup, hg.sourceConfig.c_str());
-  //tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
+  strcpy(tempSetup, hg.sourceConfig.c_str());
+  tr.Branch("sourceSetup", tempSetup, "sourceSetup[200]/C");
   sourceHeight = hg.sourceHeight;
   tr.Branch("sourceHeight", &sourceHeight, "sourceHeight/D");
   collimatorSize = hg.collimatorSize;
@@ -92,6 +92,8 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   tr.Branch("discHV", &tempDiscHV, "discHV/D");
   runStartTime = hg.runStartTime;
   tr.Branch("runStartTime", &runStartTime, "runStartTime/I");
+  strcpy(tempTrigHV, hg.triggerHV.c_str());
+  tr.Branch("trg_hv", tempTrigHV, "trg_hv[200]/C");
   //add all info from the after-pulse header
   Double_t tempVolt = ha.voltage;
   Int_t tempPix = ha.numPixels;
@@ -204,7 +206,8 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
     }
   }
   
-  tr.Write();
+  if (tr.GetEntries() > 1)
+	tr.Write();
   f.Save();
   out.close();
   f.Close();

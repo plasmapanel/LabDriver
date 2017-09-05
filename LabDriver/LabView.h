@@ -27,6 +27,7 @@
 #include "Readout.h"
 #include "LabUtilities.h"
 #include "Offset.h"
+#include "TApplication.h"
 //#include "json/json.h"
 
 #ifndef APP_CATALOG
@@ -76,6 +77,7 @@ public:
 	void openReadoutPane(wxCommandEvent& event);
 	void stopSelected(wxCommandEvent& event);
 	void markButtonClicked(wxCommandEvent& event);
+	void startCamera(wxCommandEvent& event);
 
 	atomic<bool> run = false;
 
@@ -122,12 +124,13 @@ public:
 class Histogram : public ImageFrame
 {
 public:
-	wxBitmap image;
 	Histogram(wxWindow* parent);
-	void updateImage(string filename, atomic<bool> run);
-	void paintNow();
-	void render(wxDC& dc);
 	wxPanel* display;
+	void OnPaint();
+	void OnSize();
+	void OnMouseMove();
+	void OnLMouseDown();
+	void OnRefreshTimer();
 };
 
 
