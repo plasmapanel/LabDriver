@@ -114,15 +114,15 @@ void writeInfoAfterNa(vector<Spsc_int>& q, Spsc_time& t, atomic<bool>* done, str
   char runType[200];
   time = message.time;
   tr.Branch("sampleTime", &time, "sampleTime/I");
-  numPix = message.numPix;
+  numPix = message.numPixels;
   tr.Branch("numPix", &numPix, "numPix/I");
-  maxOffsetX = message.maxOffsetX;
-  tr.Branch("maxOffsetX", &maxOffsetX, "maxOffsetX/I");
-  maxOffsetY = message.maxOffsetY;
+  maxOffsetX = message.totalOffsetX;
+  tr.Branch("totalOffsetX", &maxOffsetX, "maxOffsetX/I");
+  maxOffsetY = message.totalOffsetY;
   tr.Branch("maxOffsetY", &maxOffsetY, "maxOffsetY/I");
-  maxStepX = message.maxStepX;
+  maxStepX = message.stepX;
   tr.Branch("maxStepX", &maxStepX, "maxStepX/I");
-  maxStepY = message.maxStepY;
+  maxStepY = message.stepY;
   tr.Branch("maxStepY", &maxStepY, "maxStepY/I");
   motorStepX = message.motorstepx;
   tr.Branch("motorStepX", &motorStepX, "motorStepX/I");
@@ -446,8 +446,8 @@ void doLineScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
   log.open(initWeinerLogFile(header, message, message.runtype, runName), ofstream::ate);
 
 
-  int motbeginy = 0, motendy = message.maxOffsetY, motstepy = message.maxStepY;
-  int motbeginx = 0, motendx = message.maxOffsetX, motstepx = message.maxStepX;
+  int motbeginy = 0, motendy = message.totalOffsetY, motstepy = message.stepY;
+  int motbeginx = 0, motendx = message.totalOffsetX, motstepx = message.stepX;
   int starting = message.voltageStart;
   int stop = message.voltageEnd;
   int duration = message.time;
@@ -533,8 +533,8 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
   log.open(initWeinerLogFile(header, message, message.runtype, runName), ofstream::ate);
 
 
-  int motbeginy = 0, motendy = message.maxOffsetY, motstepy = message.maxStepY;
-  int motbeginx = 0, motendx = message.maxOffsetX, motstepx = message.maxStepX;
+  int motbeginy = 0, motendy = message.totalOffsetY, motstepy = message.stepY;
+  int motbeginx = 0, motendx = message.totalOffsetX, motstepx = message.stepX;
   int starting = message.voltageStart;
   int stop = message.voltageEnd;
   int duration = message.time;
@@ -582,7 +582,7 @@ void doHexScanX(MotorController *mot, WeinerCounter *nim, Voltage *volt, Message
 			}
 			else if (column % 2 == 1 && column != 1)
 			{
-				motendy = message.maxOffsetY;
+				motendy = message.totalOffsetY;
 				//mot->stepMotor(2, -motstepy / 2);
 				//mot->stepMotor(2, motstepy);
 			}
@@ -623,8 +623,8 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages 
     log.open(initWeinerLogFile(header, message, message.runtype, runName), ofstream::ate);
 
     int step = message.voltageStep;
-    int motbeginy = 0, motendy = message.maxOffsetY, motstepy = message.maxStepY;
-    int motbeginx = 0, motendx = message.maxOffsetX, motstepx = message.maxStepX;
+    int motbeginy = 0, motendy = message.totalOffsetY, motstepy = message.stepY;
+    int motbeginx = 0, motendx = message.totalOffsetX, motstepx = message.stepX;
     int starting = message.voltageStart;
     int stop = message.voltageEnd;
     int duration = message.time;

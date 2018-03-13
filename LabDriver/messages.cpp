@@ -294,7 +294,8 @@ std::ostream& operator<<(std::ostream& os, const Messages& h){
   std::string fullFile;
 
   int time;
-  int numPix, maxOffsetX;
+  int numPixels; //numrows*numcolumns
+  int maxOffsetX;
   int maxOffsetY, maxStepX;
   int maxStepY;
   int motorstepx;
@@ -305,6 +306,15 @@ std::ostream& operator<<(std::ostream& os, const Messages& h){
   std::string runtype = "";
   int row;
   int column;
+  int voltageStepTime = 5; //seconds
+  int movementTime = 5; //seconds
+  int timeToGo; //seconds
+  int numColumns;
+  int numRows;
+  int currentColumn;
+  int currentRow;
+  int currentPixel;
+
 
   std::vector<int> pixX, pixY;
 
@@ -312,18 +322,23 @@ std::ostream& operator<<(std::ostream& os, const Messages& h){
   os << "Message Header:" << endl;
   os << "Voltage  " << h.voltage << endl;
   os << "Time   " << h.time << endl;
-  os << "Num Pix   " << h.numPix << endl;
-  os << "Max Offset X   " << h.maxOffsetX << endl;
-  os << "Max Offset X   " << h.maxOffsetY << endl;
-  os << "Max Step X   " << h.maxStepX << endl;
-  os << "Max Step Y   " << h.maxStepY << endl;
+  os << "Num Pix   " << h.numPixels << endl;
+  os << "Max Offset X   " << h.totalOffsetX << endl;
+  os << "Max Offset X   " << h.totalOffsetY << endl;
+  os << "Max Step X   " << h.stepX << endl;
+  os << "Max Step Y   " << h.stepY << endl;
   os << "Motor Step X   " << h.motorstepx << endl;
   os << "Motor Step Y   " << h.motorstepy << endl;
   os << "Voltage Start   " << h.voltageStart << endl;
   os << "Voltage Step   " << h.voltageStep << endl;
   os << "Voltage End   " << h.voltageEnd << endl;
   os << "Run Typee   " << h.runtype << endl;
-  os << "Row   " << h.row << endl;
-  os << "Column   " << h.column << endl;
+  os << "Row   " << h.numRows << endl;
+  os << "Column   " << h.numColumns << endl;
   return os;
+}
+
+void Messages::setNumberPixels()
+{
+  numPixels = numColumns*numRows;
 }

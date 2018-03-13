@@ -64,28 +64,20 @@ class header : public wxFrame
 		wxTextCtrl* m_textCtrl52;
 		wxStaticText* m_staticText141;
 		wxTextCtrl* m_textCtrl131;
-		wxStaticText* m_staticText41;
-		wxTextCtrl* m_textCtrl39;
+		wxStaticText* m_staticText142;
+		wxTextCtrl* m_textCtrl132;
 		wxStaticText* m_staticText1424;
 		wxTextCtrl* m_textCtrl1324;
 		wxStaticText* m_staticText1425;
 		wxTextCtrl* m_textCtrl1325;
-		wxStaticText* m_staticText38;
-		wxTextCtrl* m_textCtrl36;
-		wxStaticText* m_staticText39;
-		wxTextCtrl* m_textCtrl37;
-		wxStaticText* m_staticText142;
-		wxTextCtrl* m_textCtrl132;
-		wxStaticText* discThr;
-		wxTextCtrl* m_textCtrl48;
-		wxStaticText* m_staticText37;
-		wxTextCtrl* m_textCtrl35;
-		wxStaticText* m_staticText36;
-		wxTextCtrl* m_textCtrl341;
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_textCtrl24;
-		wxStaticText* m_staticText40;
-		wxTextCtrl* m_textCtrl38;
+		wxStaticText* discThr;
+		wxTextCtrl* m_textCtrl48;
+		wxStaticText* m_staticText33;
+		wxTextCtrl* m_textCtrl33;
+		wxStaticText* m_staticText34;
+		wxTextCtrl* m_textCtrl34;
 		wxButton* m_button1;
 		wxButton* m_button2;
 		wxMenuBar* m_menubar1;
@@ -97,9 +89,9 @@ class header : public wxFrame
 		virtual void updateGas( wxCommandEvent& event ) { event.Skip(); }
 		virtual void setGas( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setPressure( wxFocusEvent& event ) { event.Skip(); }
+		virtual void setQuench( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setNumHVLines( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setHVLines( wxFocusEvent& event ) { event.Skip(); }
-		virtual void setQuench( wxFocusEvent& event ) { event.Skip(); }
 		virtual void setROAtten( wxFocusEvent& event ) { event.Skip(); }
 		virtual void headerOkClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void headerCancelClicked( wxCommandEvent& event ) { event.Skip(); }
@@ -109,7 +101,7 @@ class header : public wxFrame
 	
 	public:
 		
-		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 850,621 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		header( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Edit Header"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 914,756 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~header();
 	
@@ -172,6 +164,14 @@ class MainFrame : public wxFrame
 		wxTextCtrl* m_textCtrl40;
 		wxStaticText* m_staticText47;
 		wxTextCtrl* m_textCtrl42;
+		wxStaticText* m_staticText44;
+		wxTextCtrl* m_textCtrl44;
+		wxStaticText* m_staticText451;
+		wxTextCtrl* m_textCtrl451;
+		wxStaticText* m_staticText461;
+		wxTextCtrl* m_textCtrl461;
+		wxStaticText* m_staticText472;
+		wxTextCtrl* m_textCtrl47;
 		wxStaticText* m_staticText48;
 		wxTextCtrl* m_textCtrl43;
 		wxRadioBox* m_radioBox3;
@@ -186,12 +186,6 @@ class MainFrame : public wxFrame
 		wxButton* stop;
 		wxButton* m_button23;
 		wxButton* m_button24;
-		wxStaticText* m_staticText34;
-		wxChoice* m_choice4;
-		wxButton* m_button25;
-		wxButton* m_button26;
-		wxStaticText* m_staticText35;
-		wxChoice* m_choice5;
 		wxStatusBar* m_statusBar1;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -233,13 +227,11 @@ class MainFrame : public wxFrame
 		virtual void stopSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void disconnectNIM( wxCommandEvent& event ) { event.Skip(); }
 		virtual void startCamera( wxCommandEvent& event ) { event.Skip(); }
-		virtual void connectArduino( wxCommandEvent& event ) { event.Skip(); }
-		virtual void disconnectArduino( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("LabDriver"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1020,653 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("LabDriver"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1144,653 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~MainFrame();
 	
@@ -311,19 +303,35 @@ class MyFrame4 : public wxFrame
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class ImageFrame
+/// Class InfoPane
 ///////////////////////////////////////////////////////////////////////////////
-class ImageFrame : public wxFrame 
+class InfoPane : public wxFrame 
 {
 	private:
 	
 	protected:
+		wxStaticText* m_staticText35;
+		wxTextCtrl* m_textCtrl35;
+		wxStaticText* m_staticText37;
+		wxTextCtrl* m_textCtrl37;
+		wxStaticText* m_staticText39;
+		wxTextCtrl* m_textCtrl39;
+		wxStaticText* m_staticText41;
+		wxTextCtrl* m_textCtrl41;
+		wxStaticText* m_staticText34;
+		wxTextCtrl* m_textCtrl34;
+		wxStaticText* m_staticText36;
+		wxTextCtrl* m_textCtrl36;
+		wxStaticText* m_staticText38;
+		wxTextCtrl* m_textCtrl38;
+		wxStaticText* m_staticText40;
+		wxTextCtrl* m_textCtrl40;
 	
 	public:
 		
-		ImageFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Histogram"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		InfoPane( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Test Information"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 555,231 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
-		~ImageFrame();
+		~InfoPane();
 	
 };
 

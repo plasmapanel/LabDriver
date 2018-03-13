@@ -34,7 +34,7 @@ HeaderInfoGen* pglobalheader;
 VoltageFactory* vf;
 Readout* readout;
 readoutedit* readoutframe;
-Histogram* Image;
+//Histogram* Image;
 
 static bool connected = false;
 Offset offsets[4];
@@ -169,69 +169,16 @@ void BigFrame::setScanType(){
   //probably want to make these field disabling things into functions calls
   switch (m_choice1->GetSelection()){
 	case 0:
-		scanType = "Free";
-    m_textCtrl18->Disable();
-	m_textCtrl18->SetValue(wxT("0"));
-    m_textCtrl19->Disable();
-	m_textCtrl19->SetValue(wxT("0"));
-	m_textCtrl20->Disable();
-	m_textCtrl20->SetValue(wxT("0"));
-    m_textCtrl21->Disable();
-	m_textCtrl21->SetValue(wxT("0"));
-    m_textCtrl41->Disable();
-	m_textCtrl41->SetValue(wxT("0"));
-    m_textCtrl29->Disable();
-	m_textCtrl29->SetValue(wxT("0"));
-    m_textCtrl22->Enable(); //start voltage
-    m_textCtrl23->Disable();
-	m_textCtrl23->SetValue(wxT("0"));
-    m_textCtrl40->Disable();
-	m_textCtrl40->SetValue(wxT("0"));
-    m_textCtrl42->Disable();
-	m_textCtrl42->SetValue(wxT("0"));
-    m_textCtrl43->Enable(); //nim interval time 
+    scanTypeFree();
 	break;
 	case 1:
-		scanType = "Voltage_Scan";
-    m_textCtrl18->Disable();
-    m_textCtrl19->Disable();
-    m_textCtrl20->Disable();
-    m_textCtrl21->Disable();
-    m_textCtrl41->Disable();
-    m_textCtrl29->Disable();
-    m_textCtrl22->Enable(); //start voltage
-    m_textCtrl23->Enable(); //end voltage
-    m_textCtrl40->Enable(); //voltage step
-    m_textCtrl42->Enable(); // measuremnt time
-    m_textCtrl43->Enable();
-    break;
+    scanTypeVoltage();
+  break;
 	case 2:
-		scanType = "Line_Scan";
-    m_textCtrl18->Enable();
-    m_textCtrl19->Enable();
-    m_textCtrl20->Enable();
-    m_textCtrl21->Enable();
-    m_textCtrl41->Enable();
-    m_textCtrl29->Enable();
-    m_textCtrl22->Enable(); //start voltage
-    m_textCtrl23->Enable();
-    m_textCtrl40->Enable();
-    m_textCtrl42->Enable();
-	m_textCtrl43->Enable();
+    scanTypeLine();
 		break;
 	case 3:
-		scanType = "Hex_Scan_X";
-    m_textCtrl18->Enable();
-    m_textCtrl19->Enable();
-    m_textCtrl20->Enable();
-    m_textCtrl21->Enable();
-    m_textCtrl41->Enable();
-    m_textCtrl29->Enable();
-    m_textCtrl22->Enable(); //start voltage
-    m_textCtrl23->Enable();
-    m_textCtrl40->Enable();
-    m_textCtrl42->Enable();
-    m_textCtrl43->Enable();
+    scanTypeHex();
     break;
 	case 4:
 		scanType = "Hex_Scan_Y";
@@ -248,18 +195,7 @@ void BigFrame::setScanType(){
     m_textCtrl43->Enable();
 		break;
 	case 5:
-		scanType = "XY_Scan";
-    m_textCtrl18->Enable();
-    m_textCtrl19->Enable();
-    m_textCtrl20->Enable();
-    m_textCtrl21->Enable();
-    m_textCtrl41->Enable();
-    m_textCtrl29->Enable();
-    m_textCtrl22->Enable(); //start voltage
-    m_textCtrl23->Enable();
-    m_textCtrl40->Enable();
-    m_textCtrl42->Enable();
-    m_textCtrl43->Enable();
+    scanTypeXY();
     break;
 	default:
 		scanType = "None";
@@ -406,10 +342,10 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event){
 		yoffset = motorstepy * yoffsetmm;
 		ystepsize = motorstepy * ystepsizemm;
 		totaltime = xoffset / xstepsize * yoffset / ystepsize * numsteps * dwelltime;
-    message->maxOffsetX = xoffset;
-    message->maxStepX = xstepsize;
-    message->maxStepY = ystepsize;
-    message->maxOffsetY = yoffset;
+    message->totalOffsetX = xoffset;
+    message->stepX = xstepsize;
+    message->stepY = ystepsize;
+    message->totalOffsetY = yoffset;
 	}
 	else if(scanType == "Voltage_Scan"){
     totaltime = numsteps * dwelltime;
@@ -429,7 +365,7 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event){
 
 	message->frequency = frequency;
 	
-	message->numPix = 1;
+	//message->numPix = 1;
 	message->time = dwelltime;
 	message->voltageStart = startvoltage;
 	message->voltageEnd = endvoltage;
@@ -574,19 +510,19 @@ void HeaderEdit::copyData(HeaderInfoGen &headerInfo){
 	headerInfo.sourceConfig = getSourceConfig();
   headerInfo.sourceHeight = wxAtof(m_textCtrl30->GetLineText(0));
   headerInfo.collimatorSize = wxAtof(m_textCtrl29->GetLineText(0));
-	headerInfo.triggerSetup = m_textCtrl38->GetLineText(0);
+	//headerInfo.triggerSetup = m_textCtrl38->GetLineText(0);
 	headerInfo.gas = m_textCtrl13->GetLineText(0);
 	headerInfo.pressure = wxAtof(m_textCtrl131->GetLineText(0));
 	headerInfo.discThresh = wxAtof(m_textCtrl48->GetLineText(0));
 	headerInfo.quench = wxAtof(m_textCtrl132->GetLineText(0));
-	headerInfo.numRO = wxAtoi(m_textCtrl35->GetLineText(0));
-	headerInfo.roLines = m_textCtrl341->GetLineText(0);
-	headerInfo.triggerRO = m_textCtrl38->GetLineText(0);
+	//headerInfo.numRO = wxAtoi(m_textCtrl35->GetLineText(0));
+	//headerInfo.roLines = m_textCtrl341->GetLineText(0);
+	//headerInfo.triggerRO = m_textCtrl38->GetLineText(0);
 	headerInfo.attenRO = wxAtof(m_textCtrl24->GetLineText(0));
 	headerInfo.numHV = wxAtoi(m_textCtrl1324->GetLineText(0));
 	headerInfo.linesHV = m_textCtrl1325->GetLineText(0);
-	headerInfo.triggerHV = m_textCtrl37->GetLineText(0);
-	headerInfo.attenHV = wxAtof(m_textCtrl36->GetLineText(0));
+	//headerInfo.triggerHV = m_textCtrl37->GetLineText(0);
+	//headerInfo.attenHV = wxAtof(m_textCtrl36->GetLineText(0));
 	headerInfo.runStartTime = 0;
 
 }
@@ -607,10 +543,10 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo){
 		m_textCtrl48->WriteText(wxString::Format(wxT("%f"), headerInfo.discThresh));
 		m_textCtrl132->Clear();
 		m_textCtrl132->WriteText(wxString::Format(wxT("%f"), headerInfo.quench));
-		m_textCtrl35->Clear();
-		m_textCtrl35->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
-		m_textCtrl341->Clear();
-		m_textCtrl341->WriteText(headerInfo.roLines);
+		//m_textCtrl35->Clear();
+		//m_textCtrl35->WriteText(wxString::Format(wxT("%i"), headerInfo.numRO));
+		//m_textCtrl341->Clear();
+		//m_textCtrl341->WriteText(headerInfo.roLines);
 		//m_textCtrl12->WriteText(headerInfo.triggerRO);
 		m_textCtrl24->Clear();
 		m_textCtrl24->WriteText(wxString::Format(wxT("%f"), headerInfo.attenRO));
@@ -619,8 +555,8 @@ void HeaderEdit::putData(HeaderInfoGen &headerInfo){
 		m_textCtrl1325->Clear();
 		m_textCtrl1325->WriteText(headerInfo.linesHV);
 		//m_textCtrl1323->WriteText(headerInfo.triggerHV);
-		m_textCtrl36->Clear();
-		m_textCtrl36->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
+		//m_textCtrl36->Clear();
+		//m_textCtrl36->WriteText(wxString::Format(wxT("%f"), headerInfo.attenHV));
 		setSourceConfig(headerInfo.sourceConfig);
 }
 
@@ -856,48 +792,91 @@ void readoutedit::update(){
   m_checkBox861->SetValue(readout->active[19]);
 }
 
-Histogram::Histogram(wxWindow* parent) : ImageFrame(parent)
+void BigFrame::scanTypeFree()
 {
-	display = new wxPanel();
-	wxBoxSizer* sizer1;
-	sizer1 = new wxBoxSizer(wxVERTICAL);
-
-	sizer1->Add(display);
-	this->SetSizer(sizer1);
-	this->Layout();
-	int argcc = 0 ;
-	char **argv = 0;
-	//char * argvc = argv;
-
-	
-
-	TApplication gMyRootApp("My ROOT Application", &argcc, argv);
-	gMyRootApp.SetReturnFromRun(true);
-	int width = 1280;
-	int height = 720;
-	//HWND canvasWindow = (HWND) this->GetTopWindow()->GetHWND();
-
-	int wid = gVirtualX->AddWindow((ULong_t)this, width, height);
-	TCanvas fCanvas = new TCanvas("fCanvas", width, height, wid);
-	//display->Connect(wxEVT_PAINT, wxCommandEventHandlepr(Histogram::paint);
-
+  scanType = "Free";
+  m_textCtrl18->Disable();
+  m_textCtrl18->SetValue(wxT("0"));
+  m_textCtrl19->Disable();
+  m_textCtrl19->SetValue(wxT("0"));
+  m_textCtrl20->Disable();
+  m_textCtrl20->SetValue(wxT("0"));
+  m_textCtrl21->Disable();
+  m_textCtrl21->SetValue(wxT("0"));
+  m_textCtrl41->Disable();
+  m_textCtrl41->SetValue(wxT("0"));
+  m_textCtrl29->Disable();
+  m_textCtrl29->SetValue(wxT("0"));
+  m_textCtrl22->Enable(); //start voltage
+  m_textCtrl23->Disable();
+  m_textCtrl23->SetValue(wxT("0"));
+  m_textCtrl40->Disable();
+  m_textCtrl40->SetValue(wxT("0"));
+  m_textCtrl42->Disable();
+  m_textCtrl42->SetValue(wxT("0"));
+  m_textCtrl43->Enable(); //nim interval time 
 }
 
-void Histogram::OnRefreshTimer()
+void BigFrame::scanTypeVoltage()
 {
-	gApplication->StartIdleing();
-	gSystem->InnerLoop();
-	gApplication->StopIdleing();
+  scanType = "Voltage_Scan";
+  m_textCtrl18->Disable();
+  m_textCtrl19->Disable();
+  m_textCtrl20->Disable();
+  m_textCtrl21->Disable();
+  m_textCtrl41->Disable();
+  m_textCtrl29->Disable();
+  m_textCtrl22->Enable(); //start voltage
+  m_textCtrl23->Enable(); //end voltage
+  m_textCtrl40->Enable(); //voltage step
+  m_textCtrl42->Enable(); // measuremnt time
+  m_textCtrl43->Enable();
 }
 
-
-void BigFrame::startCamera(wxCommandEvent& event)
+void BigFrame::scanTypeLine()
 {
-	if (!Image){
-		Image = new Histogram(this);
-		//Image->update();
-		Image->Show(true);
-	}
-	
+  scanType = "Line_Scan";
+  m_textCtrl18->Enable();
+  m_textCtrl19->Enable();
+  m_textCtrl20->Enable();
+  m_textCtrl21->Enable();
+  m_textCtrl41->Enable();
+  m_textCtrl29->Enable();
+  m_textCtrl22->Enable(); //start voltage
+  m_textCtrl23->Enable();
+  m_textCtrl40->Enable();
+  m_textCtrl42->Enable();
+  m_textCtrl43->Enable();
+}
 
+void BigFrame::scanTypeHex()
+{
+  scanType = "Hex_Scan_X";
+  m_textCtrl18->Enable();
+  m_textCtrl19->Enable();
+  m_textCtrl20->Enable();
+  m_textCtrl21->Enable();
+  m_textCtrl41->Enable();
+  m_textCtrl29->Enable();
+  m_textCtrl22->Enable(); //start voltage
+  m_textCtrl23->Enable();
+  m_textCtrl40->Enable();
+  m_textCtrl42->Enable();
+  m_textCtrl43->Enable();
+}
+
+void BigFrame::scanTypeXY()
+{
+  scanType = "XY_Scan";
+  m_textCtrl18->Enable();
+  m_textCtrl19->Enable();
+  m_textCtrl20->Enable();
+  m_textCtrl21->Enable();
+  m_textCtrl41->Enable();
+  m_textCtrl29->Enable();
+  m_textCtrl22->Enable(); //start voltage
+  m_textCtrl23->Enable();
+  m_textCtrl40->Enable();
+  m_textCtrl42->Enable();
+  m_textCtrl43->Enable();
 }

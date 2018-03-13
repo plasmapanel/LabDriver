@@ -77,7 +77,12 @@ public:
 	void openReadoutPane(wxCommandEvent& event);
 	void stopSelected(wxCommandEvent& event);
 	void markButtonClicked(wxCommandEvent& event);
-	void startCamera(wxCommandEvent& event);
+	//void startCamera(wxCommandEvent& event);
+  void scanTypeFree(void);
+  void scanTypeXY(void);
+  void scanTypeHex(void);
+  void scanTypeLine(void);
+  void scanTypeVoltage(void);
 
 	atomic<bool> run = false;
 
@@ -119,18 +124,6 @@ public:
 	void okbuttonclicked(wxCommandEvent& event);
 	void update();
 
-};
-
-class Histogram : public ImageFrame
-{
-public:
-	Histogram(wxWindow* parent);
-	wxPanel* display;
-	void OnPaint();
-	void OnSize();
-	void OnMouseMove();
-	void OnLMouseDown();
-	void OnRefreshTimer();
 };
 
 
