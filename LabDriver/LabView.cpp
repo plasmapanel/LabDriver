@@ -571,6 +571,26 @@ void BigFrame::disconnectNIM(wxCommandEvent& event){
   m_button19->Enable();
   m_button23->Disable();
 }
+
+//bool camActive = false;
+
+void BigFrame::startCamera(wxCommandEvent& event)
+{
+  Camera* cam = new Camera();
+
+  //if (camActive == false)
+  //{
+    //thread t3(cam->startCamera);
+    //t3.detach();
+    cam->startCamera();
+ // }
+ // else
+ // {
+ //   cam->active = false;
+ //   delete cam;
+ // }
+}
+
 void BigFrame::stopSelected(wxCommandEvent& event){
 	run = false;
   start->Enable();

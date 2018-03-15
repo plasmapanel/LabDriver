@@ -28,6 +28,7 @@
 #include "LabUtilities.h"
 #include "Offset.h"
 #include "TApplication.h"
+#include "Camera.h"
 //#include "json/json.h"
 
 #ifndef APP_CATALOG
@@ -77,12 +78,13 @@ public:
 	void openReadoutPane(wxCommandEvent& event);
 	void stopSelected(wxCommandEvent& event);
 	void markButtonClicked(wxCommandEvent& event);
-	//void startCamera(wxCommandEvent& event);
+	void startCamera(wxCommandEvent& event);
   void scanTypeFree(void);
   void scanTypeXY(void);
   void scanTypeHex(void);
   void scanTypeLine(void);
   void scanTypeVoltage(void);
+  //void cameraClicked(wxCommandEvent& event);
 
 	atomic<bool> run = false;
 
