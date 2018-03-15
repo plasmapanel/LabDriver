@@ -15,8 +15,8 @@ void Camera::startCamera(void)
 
   while (true)
   {
-    //if (active == false)
-    //  break;
+    if (active == false)
+      break;
     if (capture.isOpened())
       capture >> cam;                   // read a next frame from camera live stream
 
@@ -29,5 +29,5 @@ void Camera::startCamera(void)
       break;                           // also locks up wx if commented out
   }
 
-  //capture.release();
+  capture.release();
 }

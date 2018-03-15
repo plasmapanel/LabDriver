@@ -9,5 +9,5 @@ class Camera
   public:
     Camera(void);
     void startCamera(void);
-    //bool active = true;
+    bool active = true;
 };
