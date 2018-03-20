@@ -10,6 +10,7 @@ using namespace std;
 #include "stdafx.h"
 //The general header that details the setup for all runs
 struct HeaderInfoGen{
+  int version = 1;
   string panelName = "MC";
   string sourceName = "RU";
   string sourceConfig = "Dynamic";

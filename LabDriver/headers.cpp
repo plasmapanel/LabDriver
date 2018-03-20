@@ -1,6 +1,7 @@
 #include "headers.h"
 using namespace std;
 ostream& operator<<(ostream& os, const HeaderInfoGen &h){
+  os << h.version << endl;
   os << "Panel Name   " << h.panelName << endl;
   os << "Run Number  " << h.runNumber << endl;
   os << "Source   " << h.sourceName << endl;
