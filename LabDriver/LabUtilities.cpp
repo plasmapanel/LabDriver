@@ -267,7 +267,7 @@ static string initWeinerFile(const HeaderInfoGen &header, const Messages &messag
   }
   sstream << header.panelName << "_Run_" << header.runNumber << "_" << header.gas << "_" << header.pressure << "torr_" << voltage << "V_";
   if (runType == "Hex_Scan_X" || runType == "XY_Scan" || runType == "Line_Scan" || runType == "Hex_Scan_Y"){
-    sstream << "X" << message.motorstepx << "_Y" << message.motorstepy << "_";
+    sstream << "X" << message.currentPositionX << "_Y" << message.currentPositionY << "_";
   }
     return sstream.str();
 }
@@ -640,8 +640,8 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages 
 		volt->setVoltage(0);
 		volt->turnOn();
 		if (header.sourceConfig == "Dynamic"){
-			int row;
-			int column = 0;
+			//int row;
+			//int column = 0;
 			volt->setVoltage(starting);
 			volt->turnOn();
 			log << "Going to home" << endl;
@@ -666,16 +666,16 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages 
 					log << (int)mot->getAbsolutePositionY() << "abs Y" << endl;
 					log << "returned to y 0" << endl;
 
-				++column;
+				//++column;
 				//Sleep(4);
 
 				mot->stepMotorNoWait(2, -motstepy);
-				this_thread::sleep_for(chrono::milliseconds(1000));
+				this_thread::sleep_for(chrono::milliseconds(500));
 				log << (int)mot->getAbsolutePositionY() << " abs Y" << endl;
 
 				//Sleep(4);
 				mot->stepMotorNoWait(1, motstepx);
-				this_thread::sleep_for(chrono::milliseconds(1000));
+				this_thread::sleep_for(chrono::milliseconds(500));
 				log << (int)mot->getAbsolutePositionX() << " abs X" << endl;
 
 				log << "At " << i << " steps x" << ", ";
@@ -695,6 +695,8 @@ void doXYScan(MotorController *mot, WeinerCounter *nim, Voltage *volt, Messages 
 						log << "Setting Voltage to: " << k << endl;
 						log << "Begin Counting" << endl;
             message.voltage = k;
+            message.currentPositionX = mot->getAbsolutePositionX();
+            message.currentPositionY = posY;
             doWeinerCount(nim, runName, header, message, readout, volt, run);
             log << "Finished Counting" << endl;
 					}

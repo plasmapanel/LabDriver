@@ -41,7 +41,7 @@ public:
 	std::vector<int> pixX, pixY;
 
   void setNumberPixels();
-  void setCurrentPosition();
+  //void setCurrentPosition();
 };
 
 std::ostream& operator<<(std::ostream& os, const Messages& h);

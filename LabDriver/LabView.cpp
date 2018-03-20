@@ -172,33 +172,16 @@ void BigFrame::setScanType(){
     scanTypeFree();
 	break;
 	case 1:
-    scanTypeVoltage();
-  break;
-	case 2:
     scanTypeLine();
-		break;
-	case 3:
+    break;
+	case 2:
     scanTypeHex();
     break;
-	case 4:
-		scanType = "Hex_Scan_Y";
-    m_textCtrl18->Enable();
-    m_textCtrl19->Enable();
-    m_textCtrl20->Enable();
-    m_textCtrl21->Enable();
-    m_textCtrl41->Enable();
-    m_textCtrl29->Enable();
-    m_textCtrl22->Enable(); //start voltage
-    m_textCtrl23->Enable();
-    m_textCtrl40->Enable();
-    m_textCtrl42->Enable();
-    m_textCtrl43->Enable();
-		break;
-	case 5:
+	case 3:
     scanTypeXY();
     break;
 	default:
-		scanType = "None";
+		scanTypeFree();
 		break;
   }
 }
@@ -927,4 +910,8 @@ void BigFrame::scanTypeXY()
   m_textCtrl40->Enable();
   m_textCtrl42->Enable();
   m_textCtrl43->Enable();
+  m_textCtrl44->Disable();
+  m_textCtrl451->Disable();
+  m_textCtrl461->Disable();
+  m_textCtrl47->Disable();
 }
