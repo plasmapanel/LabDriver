@@ -23,6 +23,8 @@ void Camera::startCamera(void)
     // cv::imshow("Still image", pic);      // display the still image on a window
 
     //if (!cam.empty())
+    cv::line(cam, cv::Point(0, 218), cv::Point(640, 218), cv::Scalar(110, 220, 0), 1, 8);
+    cv::line(cam, cv::Point(344, 0), cv::Point(344, 480), cv::Scalar(110, 220, 0), 1, 8);
     cv::imshow("Camera image", cam);  // display live camera stream on another window
 
   if (cv::waitKey(1) == 27)            // exit this loop when ESC was pressed

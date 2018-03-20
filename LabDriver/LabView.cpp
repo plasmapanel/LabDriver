@@ -298,9 +298,24 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event){
   frequency = wxAtoi(m_textCtrl43->GetLineText(0));
 
   numsteps = 0;
-  for (double i = startvoltage; i <= endvoltage; i += voltagestepsize){
-    ++numsteps;
+  if (startvoltage < endvoltage)
+  {
+    for (double i = startvoltage; i <= endvoltage; i += voltagestepsize){
+      ++numsteps;
+    }
   }
+  else if (startvoltage == endvoltage)
+  {
+    numsteps = 0;
+  }
+  else if (startvoltage > endvoltage)
+  {
+    wxMessageBox(wxT("Starting voltage larger than ending voltage! Ending voltage set equal to starting voltage."));
+    endvoltage = startvoltage;
+    m_textCtrl23->SelectAll();
+    m_textCtrl23->WriteText(wxString::Format(wxT("%i"), endvoltage));
+  }
+
   if (scanType == "Free")
   { 
 	  numsteps = 1;
@@ -821,25 +836,29 @@ void BigFrame::scanTypeFree()
 {
   scanType = "Free";
   m_textCtrl18->Disable();
-  m_textCtrl18->SetValue(wxT("0"));
+  //m_textCtrl18->SetValue(wxT("0"));
   m_textCtrl19->Disable();
-  m_textCtrl19->SetValue(wxT("0"));
+  //m_textCtrl19->SetValue(wxT("0"));
   m_textCtrl20->Disable();
-  m_textCtrl20->SetValue(wxT("0"));
+  //m_textCtrl20->SetValue(wxT("0"));
   m_textCtrl21->Disable();
-  m_textCtrl21->SetValue(wxT("0"));
+  //m_textCtrl21->SetValue(wxT("0"));
   m_textCtrl41->Disable();
-  m_textCtrl41->SetValue(wxT("0"));
+  //m_textCtrl41->SetValue(wxT("0"));
   m_textCtrl29->Disable();
-  m_textCtrl29->SetValue(wxT("0"));
+  //m_textCtrl29->SetValue(wxT("0"));
   m_textCtrl22->Enable(); //start voltage
   m_textCtrl23->Disable();
-  m_textCtrl23->SetValue(wxT("0"));
+  //m_textCtrl23->SetValue(wxT("0"));
   m_textCtrl40->Disable();
-  m_textCtrl40->SetValue(wxT("0"));
+  //m_textCtrl40->SetValue(wxT("0"));
   m_textCtrl42->Disable();
-  m_textCtrl42->SetValue(wxT("0"));
+  //m_textCtrl42->SetValue(wxT("0"));
   m_textCtrl43->Enable(); //nim interval time 
+  m_textCtrl44->Disable();
+  m_textCtrl451->Disable();
+  m_textCtrl461->Disable();
+  m_textCtrl47->Disable();
 }
 
 void BigFrame::scanTypeVoltage()
