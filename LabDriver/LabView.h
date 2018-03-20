@@ -62,7 +62,7 @@ public:
 	void motorControllerConnectClicked(wxCommandEvent & event);
 	void motorControllerDisconnectClicked(wxCommandEvent & event);
 	void HVConnectClicked(wxCommandEvent & event);
-	void BigFrame::openPanelFrame(wxCommandEvent& event);
+	void openPanelFrame(wxCommandEvent& event);
 	void scanTypeSelected(wxCommandEvent & event);
 	void setEndVoltage(wxCommandEvent & event);
 	void updateButtonClicked(wxCommandEvent& event);

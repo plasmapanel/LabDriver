@@ -392,7 +392,7 @@ void BigFrame::updateButtonClicked(wxCommandEvent& event){
 HeaderEdit::HeaderEdit(wxWindow* parent) : header(parent){}
 
 void BigFrame::openHeaderFrame(wxCommandEvent& event){
-  if (!HeaderWindow){
+  if (!HeaderWindow || HeaderWindow == nullptr){
     HeaderWindow = new HeaderEdit(this);
   }
 	HeaderWindow->Show(true);
@@ -618,7 +618,9 @@ void BigFrame::stopSelected(wxCommandEvent& event){
 }
 
 void BigFrame::startSelected(wxCommandEvent& event){
-	fstream runfile;
+	
+  
+  fstream runfile;
 	runfile.open("runfile.txt", std::fstream::in | std::fstream::out);
 	char temp[200];
 	runfile.getline(temp, 200);
@@ -628,6 +630,8 @@ void BigFrame::startSelected(wxCommandEvent& event){
 	runfile.seekg(0, ios::beg);
 	runfile << tempNum;
 	runfile.close();
+
+
 	if (!volt){
 		wxMessageBox("Voltage controller not connected");
 	}
